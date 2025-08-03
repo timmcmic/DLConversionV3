@@ -31,7 +31,8 @@ Function Start-DistributionListMigration
 
     .PARAMETER GROUPSMTPADDRESS
 
-    
+    *Required*
+    This is the SMTP address of the group based on the MAIL field in Active Directory.
 
     .OUTPUTS
 
@@ -62,7 +63,50 @@ Function Start-DistributionListMigration
 
     Param
     (
-       
+        [Parameter(Mandatory = $true)]
+        [string]$groupSMTPAddress
     )
 
+    $htmlStartTime = get-date #Start time for the mirgation used in HTML reporting.
+
+    $msGraphScopesRequired = @("User.Read.All", "Group.Read.All","OnPremisesSyncBehavior.ReadWrite.All")  #Define the MSgraph scopes that are required for the module to run.
+
+    #Initialize telemetry collection.
+
+    $appInsightAPIKey = "63d673af-33f4-401c-931e-f0b64a218d89"
+    $traceModuleName = "DLConversion"
+
+    #Define variables that allow for collection of telepmetry information
+
+    #Create telemetry values.
+
+    $telemetryDLConversionV2Version = $NULL
+    $telemetryExchangeOnlineVersion = $NULL
+    $telemetryAzureADVersion = $NULL
+    $telemetryMSGraphAuthentication = $NULL
+    $telemetryMSGraphUsers = $NULL
+    $telemetryMSGraphGroups = $NULL
+    $telemetryActiveDirectoryVersion = $NULL
+    $telemetryOSVersion = (Get-CimInstance Win32_OperatingSystem).version
+    $telemetryStartTime = get-universalDateTime
+    $telemetryEndTime = $NULL
+    [double]$telemetryElapsedSeconds = 0
+    $telemetryEventName = "Start-DistributionListMigration"
+    $telemetryFunctionStartTime=$NULL
+    $telemetryFunctionEndTime=$NULL
+    [double]$telemetryNormalizeDN=0
+    [double]$telemetryValidateCloudRecipients=0
+    [double]$telemetryDependencyOnPrem=0
+    [double]$telemetryCollectOffice365Dependency=0
+    [double]$telemetryTimeToRemoveDL=0
+    [double]$telemetryCreateOffice365DL=0
+    [double]$telemetryCreateOffice365DLFirstPass=0
+    [double]$telemetryReplaceOnPremDependency=0
+    [double]$telemetryReplaceOffice365Dependency=0
+    [boolean]$telemetryError=$FALSE
+
+    if ($allowTelemetryCollection -eq $TRUE)
+    {
+        start-telemetryConfiguration -allowTelemetryCollection $allowTelemetryCollection -appInsightAPIKey $appInsightAPIKey -traceModuleName $traceModuleName
+    }
 }
