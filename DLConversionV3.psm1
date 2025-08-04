@@ -385,7 +385,7 @@ Function Start-DistributionListMigrationV3
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATIONV3"
     Out-LogFile -string "================================================================================"
 
-    out-logfile -string ("Runtime start UTC: " + $telemetryStartTime.ToString())
+    out-logfile -string ("Runtime start UTC: " + $telemetryInfo.telemetryStartTime.ToString())
 
     if ($errorActionPreference -ne "Continue")
     {
@@ -398,5 +398,71 @@ Function Start-DistributionListMigrationV3
         out-logfile -string ("Current Error Action Preference is CONTINUE: "+$errorActionPreference)
     }
 
+    $htmlStartValidationTime = get-date
 
+    $groupSMTPAddress = remove-stringSpace -stringToFix $groupSMTPAddress
+    $globalCatalogServer = remove-stringSpace -stringToFix $globalCatalogServer
+    $logFolderPath = remove-stringSpace -stringToFix $logFolderPath 
+
+    if ($aadConnectServer -ne $NULL)
+    {
+        $aadConnectServer = remove-stringSpace -stringToFix $aadConnectServer
+    }
+
+    if ($exchangeOnlineCertificateThumbPrint -ne "")
+    {
+        $exchangeOnlineCertificateThumbPrint=remove-stringSpace -stringToFix $exchangeOnlineCertificateThumbPrint
+    }
+
+    $exchangeOnlineEnvironmentName=remove-stringSpace -stringToFix $exchangeOnlineEnvironmentName
+
+    if ($exchangeOnlineOrganizationName -ne "")
+    {
+        $exchangeOnlineOrganizationName=remove-stringSpace -stringToFix $exchangeOnlineOrganizationName
+    }
+
+    if ($exchangeOnlineAppID -ne "")
+    {
+        $exchangeOnlineAppID=remove-stringSpace -stringToFix $exchangeOnlineAppID
+    }
+
+    $exchangeAuthenticationMethod=remove-StringSpace -stringToFix $exchangeAuthenticationMethod
+
+    $msGraphTenantID = remove-stringSpace -stringToFix $msGraphTenantID
+    $msGraphCertificateThumbprint = remove-stringSpace -stringToFix $msGraphCertificateThumbprint
+    $msGraphApplicationID = remove-stringSpace -stringToFix $msGraphApplicationID
+    $msGraphClientSecret = remove-stringSpace -stringToFix $msGraphClientSecret
+
+    Out-LogFile -string "********************************************************************************"
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string " RECORD VARIABLES"
+    Out-LogFile -string "********************************************************************************"
+
+    foreach ($dlProperty in $dlPropertySet)
+    {
+        Out-LogFile -string $dlProperty
+    }
+
+    Out-LogFile -string ("DL property set to be cleared legacy = ")
+
+    foreach ($dlProperty in $dlPropertiesToClearLegacy)
+    {
+        Out-LogFile -string $dlProperty
+    }
+
+    Out-LogFile -string ("DL property set to be cleared modern = ")
+
+    foreach ($dlProperty in $dlPropertiesToClearModern)
+    {
+        Out-LogFile -string $dlProperty
+    }
+
+    out-logfile -string ("Exchange legacy schema version: "+$exchangeLegacySchemaVersion)
+
+    write-hashTable -hashTable $xmlFiles
+    write-hashTable -hashTable $onPremExchangePowershell
+    write-hashTable -hashTable $office365Attributes
+    write-hashTable -hashTable $onPremADAttributes
+    write-hashTable -hashTable $coreVariables
 }
