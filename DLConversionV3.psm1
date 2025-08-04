@@ -582,4 +582,14 @@ Function Start-DistributionListMigrationV3
 
         out-xmlFile -itemToExport $office365DLMembership -itemNameToExport $xmlFiles.office365DLMembership.value
     }
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
+    Out-LogFile -string "********************************************************************************"
+
+    $htmlStartGroupValidation = get-date
+
+    Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $msGraphDLConfiguration -errorAction STOP
+
+
 }
