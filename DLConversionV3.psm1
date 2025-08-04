@@ -591,5 +591,432 @@ Function Start-DistributionListMigrationV3
 
     Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $msGraphDLConfiguration -errorAction STOP
 
+    $htmlStartAttributeNormalization = get-date
+    $telemetryInfo.FunctionStartTime = get-universalDateTime
 
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN NORMALIZE DNS FOR ALL ATTRIBUTES"
+    Out-LogFile -string "********************************************************************************"
+
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the members DN to Office 365 identifier."
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremMembers.Value) -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMembers.Value))
+        {
+            #Resetting error variable.
+
+            $isTestError="No"
+
+            try 
+            {
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -isMember:$TRUE -activeDirectoryAttribute $onPremADAttributes.onPremMembers.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremMembersCommon.Value -groupSMTPAddress $groupSMTPAddress -skipNestedGroupCheck $skipNestedGroupCheck -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else 
+                {
+                    $exchangeDLMembershipSMTP+=$normalizedTest
+                }
+                
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeDLMembershipSMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the group:"
+        
+        out-logfile -string $exchangeDLMembershipSMTP
+    }
+    else 
+    {
+        out-logFile -string "The distribution group has no members."    
+    }
+
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the reject members DN to Office 365 identifier."
+
+    Out-LogFile -string "REJECT USERS"
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromSenders.value) -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromSenders.value))
+        {
+            try 
+            {
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromSenders.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromSendersCommon.value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else 
+                {
+                    $exchangeRejectMessagesSMTP+=$normalizedTest
+                }
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    Out-LogFile -string "REJECT GROUPS"
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value) -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembers.value))
+        {
+            try 
+            {
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremRejectMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremRejectMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else {
+                    $exchangeRejectMessagesSMTP+=$normalizedTest
+                }
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeRejectMessagesSMTP -ne $NULL)
+    {
+        out-logfile -string "The group has reject messages members."
+        Out-logFile -string $exchangeRejectMessagesSMTP
+    }
+    else 
+    {
+        out-logfile "The group to be migrated has no reject messages from members."    
+    }
+    
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the accept members DN to Office 365 identifier."
+
+    Out-LogFile -string "ACCEPT USERS"
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value) -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromSenders.value))
+        {
+            try 
+            {
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromSenders.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremAcceptMessagesFromSendersCommon.value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else {
+                    $exchangeAcceptMessagesSMTP+=$normalizedTest
+                }
+            }
+            catch 
+            {
+                out-logFile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    Out-LogFile -string "ACCEPT GROUPS"
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value) -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembers.value))
+        {
+            try 
+            {
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremAcceptMessagesFromDLMembers.value -activeDirectoryAttributeCommon $onPremADAttributes.onPremAcceptMessagesFromDLMembersCommon.value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else 
+                {
+                    $exchangeAcceptMessagesSMTP+=$normalizedTest
+                }
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeAcceptMessagesSMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the accept messages from senders:"
+        
+        out-logfile -string $exchangeAcceptMessagesSMTP
+    }
+    else
+    {
+        out-logFile -string "This group has no accept message from restrictions."    
+    }
+    
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the managedBy members DN to Office 365 identifier."
+
+    Out-LogFile -string "Process MANAGEDBY"
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremManagedBy.Value) -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremManagedBy.Value))
+        {
+            try 
+            {
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else 
+                {
+                    $exchangeManagedBySMTP+=$normalizedTest
+                }
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    Out-LogFile -string "Process CoMANAGERS"
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremCoManagedBy.Value) -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedBy.Value))
+        {
+            try 
+            {
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremCoManagedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremCoManagedByCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else 
+                {
+                    $exchangeManagedBySMTP+=$normalizedTest
+                }
+                
+            }
+            catch 
+            {
+                out-logFile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeManagedBySMTP -ne $NULL)
+    {
+        #First scan is to ensure that any of the groups listed on the managed by objects are still security.
+        #It is possible someone added it to managed by and changed the group type after.
+
+        foreach ($object in $exchangeManagedBySMTP)
+        {
+            #If the objec thas a non-null group type (is a group) and the value of the group type matches none of the secuity group types.
+            #The object is a distribution list - no good.
+
+            if (($object.groupType -ne $NULL) -and ($object.groupType -ne "-2147483640") -and ($object.groupType -ne "-2147483646") -and ($object.groupType -ne "-2147483644"))
+            {
+                $object.isError=$TRUE
+                $object.isErrorMessage = "GROUP_NO_LONGER_SECURITY_EXCEPTION: A group was found on the owners attribute that is no longer a security group.  Security group is required.  Remove group or change group type to security."
+                
+                out-logfile -string object
+
+                $global:preCreateErrors+=$object
+
+                out-logfile -string "A distribution list (not security enabled) was found on managed by."
+                out-logfile -string "The group must be converted to security or removed from managed by."
+                out-logfile -string $object.primarySMTPAddressOrUPN
+            }
+        }
+
+        Out-LogFile -string "The following objects are members of the managedBY:"
+        
+        out-logfile -string $exchangeManagedBySMTP
+    }
+    else 
+    {
+        out-logfile -string "The group has no managers."    
+    }
+
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the moderatedBy members DN to Office 365 identifier."
+
+    Out-LogFile -string "Process MODERATEDBY"
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremModeratedBy.Value) -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremModeratedBy.Value))
+        {
+            try 
+            {
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremModeratedBy.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremModeratedByCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else 
+                {
+                    $exchangeModeratedBySMTP+=$normalizedTest
+                }
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeModeratedBySMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the moderatedBY:"
+        
+        out-logfile -string $exchangeModeratedBySMTP    
+    }
+    else 
+    {
+        out-logfile "The group has no moderators."    
+    }
+
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the bypass moderation users members DN to Office 365 identifier."
+
+    Out-LogFile -string "Process BYPASS USERS"
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromSenders.Value) -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromSenders.Value))
+        {
+            try 
+            {
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromSenders.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromSendersCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else 
+                {
+                    $exchangeBypassModerationSMTP+=$normalizedTest
+                }
+            }
+            catch 
+            {
+                out-logFile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    Out-LogFile -string "Invoke get-NormalizedDN to normalize the bypass moderation groups members DN to Office 365 identifier."
+
+    Out-LogFile -string "Process BYPASS GROUPS"
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDL.Value) -ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDL.Value))
+        {
+            try 
+            {
+                $normalizedTest = get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremBypassModerationFromDL.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremBypassModerationFromDLCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else 
+                {
+                    $exchangeBypassModerationSMTP+=$normalizedTest
+                }
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeBypassModerationSMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the bypass moderation:"
+        
+        out-logfile -string $exchangeBypassModerationSMTP 
+    }
+    else 
+    {
+        out-logfile "The group has no bypass moderation."    
+    }
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfTo.Value)-ne $NULL)
+    {
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfTo.Value))
+        {
+            try 
+            {
+                $normalizedTest=get-normalizedDN -globalCatalogServer $corevariables.globalCatalogWithPort.value -DN $DN -adCredential $activeDirectoryCredential -originalGroupDN $originalDLConfiguration.distinguishedName -activeDirectoryAttribute $onPremADAttributes.onPremGrantSendOnBehalfTo.Value -activeDirectoryAttributeCommon $onPremADAttributes.onPremGrantSendOnBehalfToCommon.Value -groupSMTPAddress $groupSMTPAddress -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP -cn "None"
+
+                out-logfile -string $normalizedTest
+
+                if ($normalizedTest.isError -eq $TRUE)
+                {
+                    $global:preCreateErrors+=$normalizedTest
+                }
+                else 
+                {
+                    $exchangeGrantSendOnBehalfToSMTP+=$normalizedTest
+                }
+                
+            }
+            catch 
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+        }
+    }
+
+    if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
+    {
+        Out-LogFile -string "The following objects are members of the grant send on behalf to:"
+        
+        out-logfile -string $exchangeGrantSendOnBehalfToSMTP
+    }
+    else 
+    {
+        out-logfile "The group has no grant send on behalf to."    
+    }
 }
