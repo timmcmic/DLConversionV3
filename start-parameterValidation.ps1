@@ -18,6 +18,7 @@
             [AllowNull()]
             $exchangeOnlineCredential,
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineCertAuth')]
+            [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnline')]
             [AllowNull()]
             $exchangeOnlineCertificateThumbprint,
             [Parameter(Mandatory = $true,ParameterSetName = 'ExchangeOnlineCertAuth')]
