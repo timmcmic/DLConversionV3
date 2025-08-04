@@ -51,7 +51,7 @@
         
         try{
             #$functionDLConfiguration = get-mgGroup -groupID $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
-            $functionDLConfiguration = Invoke-MgGraphRequest -Method Get -Uri $functionURI -errorAction STOP -debug 
+            $functionDLConfiguration = Invoke-MgGraphRequest -Method Get -Uri $functionURI -errorAction STOP
         }
         catch {
             out-logfile -string "Unable to obtain group configuration from Azure Active Directory"
