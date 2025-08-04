@@ -485,14 +485,24 @@ Function Start-DistributionListMigrationV3
 
     start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
-    if ($msGraphCertificateThumbprint -eq "")
+    if (($msGraphCertificateThumbprint -ne "") -and ($msGraphClientSecret -ne ""))
+    {
+        out-logfile -string "Please specify only one authenticaiton method for graph applications - either certificate or client secret." -isError:$TRUE
+    }
+    elseif ($msGraphCertificateThumbprint -ne "")
     {
         out-logfile -string "Validation all components available for MSGraph Cert Auth"
 
         start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
     }
+    elseif ($msGraphClientSecret -ne "")
+    {
+        out-logfile -string "Validation all components available for MSGraph Client Secret Auth"
+
+        start-parameterValidation -msGraphClientSecret $msGraphClientSecret -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+    }
     else
     {
-        out-logfile -string "MS graph cert auth is not being utilized - assume interactive auth."
+        out-logfile -string "MS graph client secret is not being utilized - assume interactive auth."
     }
 }
