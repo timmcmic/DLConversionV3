@@ -535,7 +535,7 @@ Function Start-DistributionListMigrationV3
 
     Out-LogFile -string "Capture the original office 365 distribution list information."
 
-    $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -isFirstPass:$TRUE -errorAction STOP
+    $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
     
     $office365GroupConfiguration = get-o365GroupConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
 
