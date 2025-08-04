@@ -85,11 +85,6 @@
 
             #Now if we're not in a do while we end up here -> go ahead and create the status file this was not a retryable operation and is a hard failure.
 
-            if ($global:ThreadNumber -gt 0)
-            {
-                out-statusFile -threadNumber $global:ThreadNumber
-            }
-
             disable-allPowerShellSessions
 
             if ($isAudit -eq $FALSE)
