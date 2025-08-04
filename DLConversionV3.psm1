@@ -114,8 +114,818 @@ Function Start-DistributionListMigrationV3
         [Parameter(Mandatory=$false)]
         [string]$customRoutingDomain="",
         [Parameter(Mandatory=$false)]
-        [boolean]$testRecipientHealth=$true
+        [boolean]$testRecipientHealth=$true,
+        #Define internal only paramters.
+        [Parameter(Mandatory=$false)]
+        [boolean]$isHealthCheck = $false
     )
+
+    function generate-HTMLFile
+    {
+        #Prepare the HTML file for output.
+        #Define the HTML file.
+
+        out-logfile -string "Preparring to generate HTML file."
+
+        $functionHTMLSuffix = "html"
+        $global:functionHTMLFile = $global:LogFile.replace("log","$functionHTMLSuffix")
+
+        out-logfile -string $global:functionHTMLFile
+        $headerString = ("Migration Summary for "+$groupSMTPAddress)
+
+        New-HTML -TitleText $groupSMTPAddress -FilePath $global:functionHTMLFile {
+            New-HTMLHeader {
+                New-HTMLText -Text $headerString -FontSize 24 -Color White -BackGroundColor Black -Alignment center
+            }
+            new-htmlMain{
+                #Define HTML table options.
+
+                New-HTMLTableOption -DataStore JavaScript
+
+                if (($global:preCreateErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:generalErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
+                {
+                    New-HTMLText -Text "Migration Errors Detected - Summary Information Below" -FontSize 24 -Color White -BackGroundColor RED -Alignment center
+
+                    out-logfile -string "Generate Error Summary List"
+
+                    New-HTMLSection -HeaderText "Error Count Summary" {
+                        New-HTMLList{
+                                new-htmlListItem -text ("Pre Office 365 Group Create Errors: "+$global:preCreateErrors.count) -fontSize 14
+                                new-htmlListItem -text ("Test Office 365 Errors: "+$global:testOffice365Errors.count) -fontSize 14
+                                new-htmlListItem -text ("Post Create Errors: "+$global:postCreateErrors.count) -fontSize 14
+                                new-htmlListItem -text ("On-Premises Replace Errors :"+$onPremReplaceErrors.count) -fontSize 14
+                                new-htmlListItem -text ("Office 365 Replace Errors: "+$office365ReplaceErrors.count) -fontSize 14
+                                new-htmlListItem -text ("Office 365 Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count) -fontSize 14
+                                new-htmlListItem -text ("On Prem Replace Permissions Errors: "+$global:onPremReplacePermissionsErrors.count) -fontSize 14
+                                new-htmlListItem -text ("General Errors: "+$global:generalErrors.count) -fontSize 14
+                            }
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
+
+
+                    out-logfile -string "Generate HTML for pre create errors."
+
+                    if ($global:preCreateErrors.count -gt 0)
+                    {
+                        out-logfile -string "Precreate errors exist."
+
+                        new-htmlSection -HeaderText ("Pre Office 365 Group Create Errors"){
+                            new-htmlTable -DataTable ($global:preCreateErrors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessage) -Filtering  {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
+                    }
+                    else 
+                    {
+                        out-logfile -string "Precreate errors do not exist."
+                    }
+
+                    out-logfile -string "Generate HTML for test office 365 errors."
+
+                    if ($global:testOffice365Errors.count -gt 0)
+                    {
+                        out-logfile -string "Test Office 365 Errors exist."
+
+                        new-htmlSection -HeaderText ("Test Office 365 Dependency Errors"){
+                            new-htmlTable -DataTable ($global:testOffice365Errors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessage) -Filtering  {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
+                    }
+                    else 
+                    {
+                        out-logfile -string "Test Office 365 Errors do not exist."
+                    }
+
+                    out-logfile -string "Generate HTML for post office 365 group creation errors."
+
+                    if ($global:postCreateErrors.count -gt 0)
+                    {
+                        out-logfile -string "Post Office 365 Group Creation Errors exist."
+
+                        new-htmlSection -HeaderText ("Post Office 365 Group Creation Errors"){
+                            new-htmlTable -DataTable ($global:postCreateErrors | select-object PrimarySMTPAddressorUPN,externalDirectoryObjectID,Name,Alias,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering  {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
+                    }
+                    else 
+                    {
+                        Out-logfile -string "Post Office 365 GRoup Creation Errors do not exist."
+                    }
+
+                    out-logfile -string "Generate html for On Premises Replacement Errors"
+
+                    if ($onPremReplaceErrors.count -gt 0)
+                    {
+                        out-logfile -string "On premsies replacement errors exist."
+
+                        new-htmlSection -HeaderText ("On Premises Replacement Errors"){
+                            new-htmlTable -DataTable ($onPremReplaceErrors | select-object DistinguishedName,CanonicalDomainName,CanonicalName,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
+                    }
+                    else
+                    {
+                        out-logfile -string "On premises replacement errors do not exist."
+                    }
+
+                    out-logfile -string "Generate HTML for Office 365 Replacement Errors."
+
+                    if ($office365ReplaceErrors.count -gt 0)
+                    {
+                        out-logfile -string "Office 365 Replacement Errors exist."
+
+                        new-htmlSection -HeaderText ("Office 365 Replacement Errors"){
+                            new-htmlTable -DataTable ($office365ReplaceErrors | select-object DistinguishedName,PrimarySMTPAddress,Alias,DisplayName,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
+                    }
+                    else 
+                    {
+                        out-logfile -string "Office 365 Replacement Errors do not eixst."
+                    }
+
+                    out-logfile -string "Generate HTML for Office 365 Replace Permissions Errors"
+
+                    if ($global:office365ReplacePermissionsErrors.count -gt 0)
+                    {
+                        out-logfile -string "Office 365 Replace Permissions Errors exist."
+
+                        new-htmlSection -HeaderText ("Office 365 Permissions Replacement Errors"){
+                            new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object permissionIdentity,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
+                    }
+                    else
+                    {
+                        out-logfile -string "Office 365 Replace Permissions Errors do not exist."
+                    }
+
+                    out-logfile -string "Generate HTML for On Premises Replace Permissions Errors"
+
+                    if ($onPremReplacePermissionsError.count -gt 0)
+                    {
+                        out-logfile -string "On Premises Replace Permissions Errors exist."
+
+                        new-htmlSection -HeaderText ("On Premises Permissions Replacement Errors"){
+                            new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object permissionIdentity,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
+                    }
+                    else 
+                    {
+                        out-logfile -string "On Premises Replace Permissions Errors do not exist."
+                    }
+
+                    out-logfile -string "Generate HTML for General Errors"
+
+                    if ($global:generalErrors.count -gt 0)
+                    {
+                        out-logfile -string "General Errors exist."
+
+                        new-htmlSection -HeaderText ("General Errors"){
+                            new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object ErrorMessage,ErrorMessageDetail ) -Filtering {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
+                    }
+                    else 
+                    {
+                        out-logfile -string "General Errors do not exist"
+                    }
+                }
+                else 
+                {
+                    New-HTMLText -Text "*****MIGRATION SUCCESSFUL*****" -FontSize 24 -Color White -BackGroundColor Green -Alignment center
+                }
+
+                out-logfile -string "Generate HTML for Summary Counts."
+
+                New-HTMLSection -HeaderText "Group Statistics" {
+                    New-HTMLList{
+                        new-htmlListItem -text ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the accept memebers: "+$exchangeAcceptMessagesSMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups on premsies that this group has send as rights on: "+$allObjectsSendAsAccessNormalized.Count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups on premises that this group has full mailbox access on: "+$allObjectsFullMailboxAccess.count) -fontSize 14
+                        new-htmlListItem -text ("The number of mailbox folders on premises that this group has access to: "+$allMailboxesFolderPermissions.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups that have this group as bypass moderation = "+$allGroupsBypassModeration.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups with accept permissions = "+$allGroupsAccept.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups with reject permissions = "+$allGroupsReject.count) -fontSize 14
+                        new-htmlListItem -text ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count) -fontSize 14
+                        new-htmlListItem -text ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL.Count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 objects that the migrated DL is a member of = "+$allOffice365MemberOf.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 objects that this group is a manager of: = "+$allOffice365ManagedBy.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 objects that this group has grant send on behalf to = "+$allOffice365GrantSendOnBehalfTo.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 objects that have this group as bypass moderation = "+$allOffice365BypassModeration.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 objects with accept permissions = "+$allOffice365Accept.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 objects with reject permissions = "+$allOffice365Reject.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count) -fontSize 14
+                        new-htmlListItem -text ("The number of recipients that have send as rights on the group to be migrated = "+$allOffice365SendAsAccessOnGroup.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 recipients where the group has send as rights = "+$allOffice365SendAsAccess.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count) -fontSize 14
+                        new-htmlListItem -text ("The number of office 365 mailbox folders with migrated group rights = "+$allOffice365MailboxFolderPermissions.count) -fontSize 14
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+
+                out-logfile -string "Generate HTML for Telemetry Times"
+
+                New-HTMLSection -HeaderText "Telemetry Time" {
+                    New-HTMLList{
+                        new-htmlListItem -text ("MigrationElapsedSeconds = "+$telemetryElapsedSeconds) -fontSize 14
+                        new-htmlListItem -text ("TimeToNormalizeDNs = "+$telemetryNormalizeDN) -fontSize 14
+                        new-htmlListItem -text ("TimeToValidateCloudRecipients = "+$telemetryValidateCloudRecipients) -fontSize 14
+                        new-htmlListItem -text ("TimeToCollectOnPremDependency = "+$telemetryDependencyOnPrem) -fontSize 14
+                        new-htmlListItem -text ("TimeToCollectOffice365Dependency = "+$telemetryCollectOffice365Dependency) -fontSize 14
+                        new-htmlListItem -text ("TimePendingRemoveDLOffice365 = "+$telemetryTimeToRemoveDL) -fontSize 14
+                        new-htmlListItem -text ("TimeToCreateOffice365DLComplete = "+$telemetryCreateOffice365DL) -fontSize 14
+                        new-htmlListItem -text ("TimeToCreateOffice365DLFirstPass = "+$telemetryCreateOffice365DLFirstPass) -fontSize 14
+                        new-htmlListItem -text ("TimeToReplaceOnPremDependency = "+$telemetryReplaceOnPremDependency) -fontSize 14
+                        new-htmlListItem -text ("TimeToReplaceOffice365Dependency = "+$telemetryReplaceOffice365Dependency) -fontSize 14
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+
+                out-logfile -string "Generate HTML for Original DL Configuration"
+
+                New-HTMLSection -HeaderText "Original DL Configuration (Active Directory)" {
+                    New-HTMLList{
+                        foreach ($object in $originalDLConfiguration.psObject.properties)
+                        {
+                            if ($object.Value.count -gt 1)
+                            {
+                                foreach ($value in $object.Value)
+                                {
+                                    $string = ($object.name + " " + $value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                            elseif ($object.value -ne $NULL)
+                            {
+                                $string = ($object.name + " " + $object.value.tostring())
+                                new-htmlListItem -text $string -fontSize 14                            }
+                            else
+                            {
+                                $string = ($object.name)
+                                new-htmlListItem -text $string -fontSize 14
+                            }
+                        }
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+
+                out-logfile -string "Generate HTML for Original DL Configuration Updated"
+
+                if ($originalDLConfigurationPostMigration -ne $NULL)
+                {
+                    New-HTMLSection -HeaderText "Original DL Configuration Updated (Active Directory)" {
+                        New-HTMLList{
+                            foreach ($object in $originalDLConfigurationUpdated.psObject.properties)
+                            {
+                                if ($object.Value.count -gt 1)
+                                {
+                                    foreach ($value in $object.Value)
+                                    {
+                                        $string = ($object.name + " " + $value.tostring())
+                                        new-htmlListItem -text $string -fontSize 14
+                                    }
+                                }
+                                elseif ($object.value -ne $NULL)
+                                {
+                                    $string = ($object.name + " " + $object.value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14                            }
+                                else
+                                {
+                                    $string = ($object.name)
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                        }
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                out-logfile -string "Generate HTML for Original Graph Configuration"
+
+                New-HTMLSection -HeaderText "Original DL Configuration (Azure Active Directory)" {
+                    New-HTMLList{
+                        foreach ($object in $msGraphDLConfiguration.psObject.properties)
+                        {
+                            if ($object.Value.count -gt 1)
+                            {
+                                foreach ($value in $object.Value)
+                                {
+                                    $string = ($object.name + " " + $value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                            elseif ($object.value -ne $NULL)
+                            {
+                                $string = ($object.name + " " + $object.value.tostring())
+                                new-htmlListItem -text $string -fontSize 14                            }
+                            else
+                            {
+                                $string = ($object.name)
+                                new-htmlListItem -text $string -fontSize 14
+                            }
+                        }
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+
+                out-logfile -string "Generate HTML for Office 365 DL Configuration"
+
+                New-HTMLSection -HeaderText "Original DL Configuration (Exchange Online)" {
+                    New-HTMLList{
+                        foreach ($object in $office365DLConfiguration.psObject.properties)
+                        {
+                            if ($object.Value.count -gt 1)
+                            {
+                                foreach ($value in $object.Value)
+                                {
+                                    $string = ($object.name + " " + $value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                            elseif ($object.value -ne $NULL)
+                            {
+                                $string = ($object.name + " " + $object.value.tostring())
+                                new-htmlListItem -text $string -fontSize 14                            }
+                            else
+                            {
+                                $string = ($object.name)
+                                new-htmlListItem -text $string -fontSize 14
+                            }
+                        }
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+
+                out-logfile -string "Generate HTML for Office 365 Group Configuration"
+
+                New-HTMLSection -HeaderText "Original Group Configuration (Exchange Online)" {
+                    New-HTMLList{
+                        foreach ($object in  $office365GroupConfiguration.psObject.properties)
+                        {
+                            if ($object.Value.count -gt 1)
+                            {
+                                foreach ($value in $object.Value)
+                                {
+                                    $string = ($object.name + " " + $value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                            elseif ($object.value -ne $NULL)
+                            {
+                                $string = ($object.name + " " + $object.value.tostring())
+                                new-htmlListItem -text $string -fontSize 14                            }
+                            else
+                            {
+                                $string = ($object.name)
+                                new-htmlListItem -text $string -fontSize 14
+                            }
+                        }
+                    }
+                }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+
+                out-logfile -string "Generate HTML for Office 365 DL Configuration Post Migration"
+
+                if ($office365DLConfigurationPostMigration -ne $NULL)
+                {
+                    New-HTMLSection -HeaderText "Office 365 DL Configuration Post Migration (Exchange Online)" {
+                        New-HTMLList{
+                            foreach ($object in  $office365DLConfigurationPostMigration.psObject.properties)
+                            {
+                                if ($object.Value.count -gt 1)
+                                {
+                                    foreach ($value in $object.Value)
+                                    {
+                                        $string = ($object.name + " " + $value.tostring())
+                                        new-htmlListItem -text $string -fontSize 14
+                                    }
+                                }
+                                elseif ($object.value -ne $NULL)
+                                {
+                                    $string = ($object.name + " " + $object.value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14                            }
+                                else
+                                {
+                                    $string = ($object.name)
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                        }
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                out-logfile -string "Generate HTML for on premsies group membership."
+
+                if ($originalDLConfiguration.member.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group Membership"){
+                        new-htmlTable -DataTable ($originalDLConfiguration.member) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                out-logfile -string "Generate HTML for MS Graph Group membership."
+
+                if ($msGraphDLMembership.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Graph Group Membership"){
+                        new-htmlTable -DataTable ($msGraphDlMembership | select-object ID) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+    
+                }
+
+                out-logfile -string "Generate HTML for Office 365 DL Membership"
+
+                if ($office365DLMembership.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 DL Membership"){
+                        new-htmlTable -DataTable ($office365DLMembership) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                out-logfile -string "Generate HTML for Office 365 DL Membership Post Migration"
+
+                if ($office365DLMembershipPostMigration.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 DL Membership Post Migration"){
+                        new-htmlTable -DataTable ($office365DLMembershipPostMigration) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                out-logfile -string "Generate HTML for all on premsies normalized attributes."
+
+                if ($exchangeDLMembership.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises DL Membership Normalized"){
+                        new-htmlTable -DataTable ($exchangeDLMembershipSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($exchangeRejectMessagesSMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Reject Normalized"){
+                        new-htmlTable -DataTable ($exchangeRejectMessagesSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($exchangeAcceptMessagesSMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Accept Normalized"){
+                        new-htmlTable -DataTable ($exchangeAcceptMessagesSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($exchangeManagedBySMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Accept Normalized"){
+                        new-htmlTable -DataTable ($exchangeManagedBySMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+
+                if ($exchangeModeratedBySMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises ModeratedBy Normalized"){
+                        new-htmlTable -DataTable ($exchangeModeratedBySMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($exchangeBypassModerationSMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises BypassModeration Normalized"){
+                        new-htmlTable -DataTable ($exchangeBypassModerationSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($exchangeGrantSendOnBehalfToSMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises GrantSendOnBehalfTo Normalized"){
+                        new-htmlTable -DataTable ($exchangeGrantSendOnBehalfToSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($exchangeSendAsSMTP.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises SendAs Normalized"){
+                        new-htmlTable -DataTable ($exchangeSendAsSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                out-logfile -string "Generate HTML for all on premises dependencies."
+
+                if ($allGroupsMemberOf.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group Member Of"){
+                        new-htmlTable -DataTable ($allGroupsMemberOf) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allGroupsReject.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group Reject"){
+                        new-htmlTable -DataTable ($allGroupsReject) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allGroupsAccept.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group Accept"){
+                        new-htmlTable -DataTable ($allGroupsAccept) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allGroupsBypassModeration.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group ModeratedBy"){
+                        new-htmlTable -DataTable ($allGroupsBypassModeration) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allUsersForwardingAddress.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group Forwarding On Objects"){
+                        new-htmlTable -DataTable ($allUsersForwardingAddress) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allGroupsGrantSendOnBehalfTo.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group SendOnBehalf Objects"){
+                        new-htmlTable -DataTable ($allGroupsGrantSendOnBehalfTo) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allGroupsManagedBy.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group ManagedBy Objects"){
+                        new-htmlTable -DataTable ($allGroupsManagedBy) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allObjectsFullMailboxAccess.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group FullMailboxAccess Objects"){
+                        new-htmlTable -DataTable ($allObjectsFullMailboxAccess) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allObjectSendAsAccess.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group SendAsAccess Objects"){
+                        new-htmlTable -DataTable ($allObjectSendAsAccess) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allObjectsSendAsAccessNormalized.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group SendAsAccessNormalized Objects"){
+                        new-htmlTable -DataTable ($allObjectsSendAsAccessNormalized) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allMailboxesFolderPermissions.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group MailboxFolderPermissions Objects"){
+                        new-htmlTable -DataTable ($allMailboxesFolderPermissions) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allGroupsCoManagedByBL.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("On Premises Group CoManagedBy Objects"){
+                        new-htmlTable -DataTable ($allGroupsCoManagedByBL) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                out-logfile -string "Generate HTML for all Office 365 dependencies."
+
+                if ($allOffice365MemberOf.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 Member of Other Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365MemberOf) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allOffice365Accept.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 Accept Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365Accept) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allOffice365Accept.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 Accept Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365Accept) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allOffice365Reject.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 Reject Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365Reject) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allOffice365BypassModeration.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 BypassModeration Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365BypassModeration) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allOffice365ManagedBy.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 ManagedBy Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365ManagedBy) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allOffice365GrantSendOnBehalfTo.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 GrantSendOnBehalfTo Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365GrantSendOnBehalfTo) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allOffice365ForwardingAddress.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 ForwardingAddress Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365ForwardingAddress) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allOffice365FullMailboxAccess.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 ForwardingAddress Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365FullMailboxAccess) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allOffice365SendAsAccess.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 SendAs on Other Groups Objects"){
+                        new-htmlTable -DataTable ($allOffice365SendAsAccess) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allOffice365SendAsAccessOnGroup.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 SendAs On Group"){
+                        new-htmlTable -DataTable ($allOffice365SendAsAccessOnGroup) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                if ($allOffice365MailboxFolderPermissions.count -gt 0)
+                {
+                    new-htmlSection -HeaderText ("Office 365 Mailbox Folder Permissions"){
+                        new-htmlTable -DataTable ($allOffice365MailboxFolderPermissions) -Filtering {
+                        } -AutoSize
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                out-logfile -string "Record routing contact configuration."
+
+                if ($routingContactConfiguration -ne $NULL)
+                {
+                    New-HTMLSection -HeaderText "Hybrid Routing Contact" {
+                        New-HTMLList{
+                            foreach ($object in  $routingContactConfiguration.psObject.properties)
+                            {
+                                if ($object.Value.count -gt 1)
+                                {
+                                    foreach ($value in $object.Value)
+                                    {
+                                        $string = ($object.name + " " + $value.tostring())
+                                        new-htmlListItem -text $string -fontSize 14
+                                    }
+                                }
+                                elseif ($object.value -ne $NULL)
+                                {
+                                    $string = ($object.name + " " + $object.value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14                            }
+                                else
+                                {
+                                    $string = ($object.name)
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                        }
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                out-logfile -string "Record routing contact configuration."
+
+                if ($routingDynamicGroupConfig -ne $NULL)
+                {
+                    New-HTMLSection -HeaderText "Hybrid Routing Group" {
+                        New-HTMLList{
+                            foreach ($object in  $routingDynamicGroupConfig.psObject.properties)
+                            {
+                                if ($object.Value.count -gt 1)
+                                {
+                                    foreach ($value in $object.Value)
+                                    {
+                                        $string = ($object.name + " " + $value.tostring())
+                                        new-htmlListItem -text $string -fontSize 14
+                                    }
+                                }
+                                elseif ($object.value -ne $NULL)
+                                {
+                                    $string = ($object.name + " " + $object.value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14                            }
+                                else
+                                {
+                                    $string = ($object.name)
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                        }
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
+                out-logfile -string "Generate timeline."
+
+                new-htmlSection -HeaderText ("Migration Timeline Highlights"){
+                    new-HTMLTimeLIne {
+                        new-HTMLTimeLineItem -HeadingText "Migration Start Time" -Date $htmlStartTime
+                        new-HTMLTimeLineItem -HeadingText "Initialization Complete" -Date $htmlFunctionStartTime
+                        new-HTMLTimeLineItem -HeadingText "Start Parameter Validation" -Date $htmlStartValidationTime
+                        new-HTMLTimeLineItem -HeadingText "Start Powershell Session Initialization" -Date $htmlStartPowershellSessions
+                        new-HTMLTimeLineItem -HeadingText "Capture On-Premises DL Information" -Date $htmlCaptureOnPremisesDLInfo
+                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Information" -Date $htmlCaptureOffice365DLConfiguration
+                        new-HTMLTimeLineItem -HeadingText "Capture Graph DL Information" -Date $htmlCaptureGraphDLConfiguration
+                        new-HTMLTimeLineItem -HeadingText "Capture Graph DL Membership" -Date $htmlCaptureGraphDLMembership
+                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Membership" -Date $htmlCaptureOffice365DLMembership
+                        new-HTMLTimeLineItem -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
+                        new-HTMLTimeLineItem -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
+                        new-HTMLTimeLineItem -HeadingText "Start Cloud Validation" -Date $htmlStartCloudValidation
+                        new-HTMLTimeLineItem -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
+                        new-HTMLTimeLineItem -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
+                        new-HTMLTimeLineItem -HeadingText "Start Create Office 365 Stub Group" -Date $htmlCreateOffice365StubGroup
+                        new-HTMLTimeLineItem -HeadingText "Start First Pass Office 365 Attributes" -Date $htmlFirstPassAttributes
+                        new-HTMLTimeLineItem -HeadingText "Start Move to Non-Sync OU" -Date $htmlMoveToNonSyncOU
+                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Sync First Pass" -Date $htmlStartADConnectFirstPass
+                        new-HTMLTimeLineItem -HeadingText "Start AD Replication First Pass" -Date $htmlReplicateActiveDirectoryFirstPass
+                        new-HTMLTimeLineItem -HeadingText "Start Remove VIA Graph" -Date $htmlRemoveGroupViaGraph
+                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Second Pass" -Date $htmlStartADConnectSecondPass
+                        new-HTMLTimeLineItem -HeadingText "Start Test Cloud DL Deletion" -Date $htmlTestCloudDLDeletion
+                        new-HTMLTimeLineItem -HeadingText "Start Second Pass Office 365 Attributes" -Date $htmlSecondPassAttributes
+                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
+                        new-HTMLTimeLineItem -HeadingText "Rename Original Group" -Date $htmlRenameorOriginalGroup
+                        new-HTMLTimeLineItem -HeadingText "Disable Original Group" -Date $htmlDisableOriginalGroup
+                        new-HTMLTimeLineItem -HeadingText "Move to Original OU" -Date $htmlMoveToOriginalOU.
+                        new-HTMLTimeLineItem -HeadingText "Create Routing Contact" -Date $htmlCreateRoutingContact
+                        new-HTMLTimeLineItem -HeadingText "Enable Hybrid Mail Flow" -Date $htmlEnableHybridMailFlow
+                        new-HTMLTimeLineItem -HeadingText "Start AD Replication Third Pass" -Date $htmlStartADReplicationThirdPass
+                        new-HTMLTimeLineItem -HeadingText "Start Replace On-Premises Dependencies" -Date $htmlStartReplaceOnPremisesDependencies
+                        new-HTMLTimeLineItem -HeadingText "Start Replace Office 365 Dependencies" -Date $htmlStartReplaceOffice365Dependencies
+                        new-HTMLTimeLineItem -HeadingText "Remove On-Premises Group" -Date $htmlRemoveOnPremGroup
+                        new-HTMLTimeLineItem -HeadingText "Start AD Replication Fourth Pass" -Date $htmlStartADReplicationFourthPath
+                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Third Pass" -Date $htmlStartADConnectThirdPass
+                        new-HTMLTimeLineItem -HeadingText "END" -Date $htmlEndTime
+                    }
+                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+            }
+        } -online -ShowHTML
+    }
 
     #Estbalish the HTML reporting start time.
     $htmlStartTime = get-date
@@ -360,11 +1170,14 @@ Function Start-DistributionListMigrationV3
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
     [string]$global:staticFolderName="\DLMigration\"
-    new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
-    $traceFilePath = $logFolderPath + $global:staticFolderName
 
-    out-logfile -string ("Log File: "+$global:logFile)
-    out-logfile -string ("Trace File: "+$traceFilePath)
+    if ($isHealthCheck -eq $false)
+    {
+        new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
+        $traceFilePath = $logFolderPath + $global:staticFolderName
+        out-logfile -string ("Log File: "+$global:logFile)
+        out-logfile -string ("Trace File: "+$traceFilePath)
+    }
 
     $htmlFunctionStartTime = get-Date
 
@@ -1358,4 +2171,66 @@ Function Start-DistributionListMigrationV3
     $telemetryValidateCloudRecipients = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
 
     out-logfile -string ("Time to validate recipients in cloud: "+ $telemetryValidateCloudRecipients.toString())
+
+    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
+    {
+        #Write the XML files first so that the error table is complete without separation.
+
+        if ($global:preCreateErrors.count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:preCreateErrors -itemNameToExport $xmlFiles.preCreateErrorsXML.value
+        }
+
+        if ($global:testOffice365Errors.Count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testOffice365ErrorsXML.value
+        }
+
+        out-logfile -string "+++++"
+        out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
+        out-logfile -string "+++++"
+        out-logfile -string ""
+
+        if ($global:preCreateErrors.count -gt 0)
+        {
+            foreach ($preReq in $global:preCreateErrors)
+            {
+                write-errorEntry -errorEntry $preReq
+
+                #Test to see if the error is a NestedGroupException - if so write it to the nested group csv.
+
+                if ($preReq.isErrorMessage -like $nestedGroupException)
+                {
+                    out-logfile -string "Nested group exception written to CSV."
+                    export-csv -Path $nestedCSVPath -inputObject $preReq -append
+                }
+            }
+        }
+
+        if ($global:testOffice365Errors.count -gt 0)
+        {
+            foreach ($preReq in $global:testOffice365Errors)
+            {
+                write-errorEntry -errorEntry $prereq
+            }
+        }
+
+        generate-HTMLFile
+        out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+
+        if ($isHealthCheck -eq $FALSE)
+        {
+            generate-HTMLFile
+            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
+        }
+        else
+        {
+            out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed."
+        }  
+    }
+
+    if ($isHealthCheck -eq $TRUE)
+    {
+        return
+    }
 }
