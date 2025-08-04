@@ -43,7 +43,9 @@
         #Get the recipient using the exchange online powershell session.
         
         try{
-            $functionDLConfiguration = get-mgGroup -groupID $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
+            #$functionDLConfiguration = get-mgGroup -groupID $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
+
+            $functionDLConfiguration 
         }
         catch {
             out-logfile -string $_
