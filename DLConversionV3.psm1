@@ -1348,4 +1348,14 @@ Function Start-DistributionListMigrationV3
 
         out-logfile -string "Begin evaluation all members with send as rights."
     }
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
+    Out-LogFile -string "********************************************************************************"
+
+    $telemetryInfo.FunctionEndTime = get-universalDateTime
+
+    $telemetryValidateCloudRecipients = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
+
+    out-logfile -string ("Time to validate recipients in cloud: "+ $telemetryValidateCloudRecipients.toString())
 }
