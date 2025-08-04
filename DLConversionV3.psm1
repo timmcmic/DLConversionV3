@@ -115,6 +115,8 @@ Function Start-DistributionListMigrationV3
         [string]$customRoutingDomain="",
         [Parameter(Mandatory=$false)]
         [boolean]$testRecipientHealth=$true,
+        [Parameter(Mandatory=$false)]
+        [boolean]$testPropertyHealth=$true,
         #Define internal only paramters.
         [Parameter(Mandatory=$false)]
         [boolean]$isHealthCheck = $false
@@ -1163,6 +1165,7 @@ Function Start-DistributionListMigrationV3
 
     [array]$global:preCreateErrors=@()
     [array]$global:testOffice365Errors=@()
+    [array]$global:testOffice365PropertyErrors=@()
     [array]$global:generalErrors=@()
     [string]$isTestError="No"
 
@@ -2147,6 +2150,268 @@ Function Start-DistributionListMigrationV3
                         out-logfile -string $member
 
                         $global:testOffice365Errors += $member
+                    }
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+        else 
+        {
+            out-logfile -string "There were no grant send on behalf to members to evaluate."    
+        }
+    }
+
+    out-logfile -string "Determine if individual properties should be reviewed to ensure they match."
+
+    if ($testPropertyHealth -eq $TRUE)
+    {
+        out-logfile -string "Being validating all distribution list members."
+    
+        if ($exchangeDLMembershipSMTP.count -gt 0)
+        {
+            out-logfile -string "Ensuring each DL member is in Office 365 / Exchange Online"
+
+            foreach ($member in $exchangeDLMembershipSMTP)
+            {
+                #Reset the failure.
+
+                $isTestError="No"
+
+                out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+                try{
+                    $isTestError=test-O365Member -member $member -membership $office365DLMembership
+
+                    if ($isTestError -eq "Yes")
+                    {
+                        $member.isError = $TRUE
+                        $member.isErrorMessage = "OFFICE_365_MEMBER_NOT_FOUND_IN_GROUP_EXCEPTION: An on premises group member was not found as a member of the Office 365 Distribution List."
+
+                        out-logfile -string $member
+
+                        $global:testOffice365PropertyErrors += $member
+                    }
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+        else 
+        {
+            out-logfile -string "There are no DL members to test."    
+        }
+
+        out-logfile -string "Begin evaluating all members with reject rights."
+
+        if ($exchangeRejectMessagesSMTP.count -gt 0)
+        {
+            out-logfile -string "Ensuring each DL reject messages is in Office 365."
+
+            foreach ($member in $exchangeRejectMessagesSMTP)
+            {
+                #Reset error variable.
+
+                $isTestError="No"
+
+                out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+                try{
+                    $isTestError=test-O365Recipient -member $member
+
+                    if ($isTestError -eq "Yes")
+                    {
+                        $member.isError = $TRUE
+                        $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+
+                        out-logfile -string $member
+
+                        $global:testOffice365PropertyErrors += $member
+                    }
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+        else 
+        {
+            out-logfile -string "There are no reject members to test."    
+        }
+
+        out-logfile -string "Begin evaluating all members with accept rights."
+
+        if ($exchangeAcceptMessagesSMTP.count -gt 0)
+        {
+            out-logfile -string "Ensuring each DL accept messages is in Office 365 / Exchange Online"
+
+            foreach ($member in $exchangeAcceptMessagesSMTP)
+            {
+                #Reset error variable.
+
+                $isTestError="No"
+                
+                out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+                try{
+                    $isTestError=test-O365Recipient -member $member
+
+                    if ($isTestError -eq "Yes")
+                    {
+                        $member.isError = $TRUE
+                        $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+
+                        out-logfile -string $member
+
+                        $global:testOffice365PropertyErrors += $member
+                    }
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+        else 
+        {
+            out-logfile -string "There are no accept members to test."    
+        }
+
+        out-logfile -string "Begin evaluating all managed by members."
+
+        if ($exchangeManagedBySMTP.count -gt 0)
+        {
+            out-logfile -string "Ensuring each DL managed by is in Office 365 / Exchange Online"
+
+            foreach ($member in $exchangeManagedBySMTP)
+            {
+                #Reset Error Variable.
+
+                $isTestError="No"
+                
+               out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+                try{
+                    $isTestError=test-O365Recipient -member $member
+
+                    if ($isTestError -eq "Yes")
+                    {
+                        $member.isError = $TRUE
+                        $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+
+                        out-logfile -string $member
+
+                        $global:testOffice365PropertyErrors += $member
+                    }
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+        else 
+        {
+            out-logfile -string "There were no managed by members to evaluate."    
+        }
+
+        out-logfile -string "Begin evaluating all moderated by members."
+
+        if ($exchangeModeratedBySMTP.count -gt 0)
+        {
+            out-logfile -string "Ensuring each DL moderated by is in Office 365 / Exchange Online"
+
+            foreach ($member in $exchangeModeratedBySMTP)
+            {
+                #Reset error variable.
+
+                $isTestError="No"
+
+                out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+                try{
+                    $isTestError=test-O365Recipient -member $member
+
+                    if ($isTestError -eq "Yes")
+                    {
+                        $member.isError = $TRUE
+                        $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+
+                        out-logfile -string $member
+
+                        $global:testOffice365PropertyErrors += $member
+                    }
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+        else 
+        {
+            out-logfile -string "There were no moderated by members to evaluate."    
+        }
+
+        out-logfile -string "Being evaluating all bypass moderation members."
+
+        if ($exchangeBypassModerationSMTP.count -gt 0)
+        {
+            out-logfile -string "Ensuring each DL bypass moderation is in Office 365 / Exchange Online"
+
+            foreach ($member in $exchangeBypassModerationSMTP)
+            {
+                #Reset error variable.
+
+                $isTestError="No"
+
+               out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+                try{
+                    $isTestError=test-O365Recipient -member $member
+
+                    if ($isTestError -eq "Yes")
+                    {
+                        $member.isError = $TRUE
+                        $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+
+                        out-logfile -string $member
+
+                        $global:testOffice365PropertyErrors += $member
+                    }
+                }
+                catch{
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
+        else 
+        {
+            out-logfile -string "There were no bypass moderation members to evaluate."    
+        }
+
+        out-logfile -string "Begin evaluation of all grant send on behalf to members."
+
+        if ($exchangeGrantSendOnBehalfToSMTP.count -gt 0)
+        {
+            out-logfile -string "Ensuring each DL grant send on behalf to is in Office 365 / Exchange Online"
+
+            foreach ($member in $exchangeGrantSendOnBehalfToSMTP)
+            {
+                $isTestError = "No"
+
+                out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
+
+                try{
+                    $isTestError=test-O365Recipient -member $member
+
+                    if ($isTestError -eq "Yes")
+                    {
+                        $member.isError = $TRUE
+                        $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+
+                        out-logfile -string $member
+
+                        $global:testOffice365PropertyErrors += $member
                     }
                 }
                 catch{
