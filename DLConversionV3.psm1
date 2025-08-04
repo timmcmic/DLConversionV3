@@ -554,4 +554,8 @@ Function Start-DistributionListMigrationV3
     $htmlCaptureGraphDLConfiguration = get-date
 
     $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration -errorAction STOP
+
+    out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
+
+    out-xmlFile -itemToExport $msGraphDLConfiguration -itemNameToExport $xmlFiles.msGraphDLConfigurationXML.value
 }

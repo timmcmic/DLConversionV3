@@ -37,7 +37,7 @@
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "BEGIN GET-AZUREADDLCONFIGURATION"
+        Out-LogFile -string "BEGIN get-msGraphDLConfiguration"
         Out-LogFile -string "********************************************************************************"
 
         #Get the recipient using the exchange online powershell session.
@@ -50,7 +50,7 @@
             out-logfile -string "Unable to obtain group configuration from Azure Active Directory"
         }
 
-        Out-LogFile -string "END GET-AzureADDlConfiguration"
+        Out-LogFile -string "END get-msGraphDLConfiguration"
         Out-LogFile -string "********************************************************************************"
         
         #This function is designed to open local and remote powershell sessions.
