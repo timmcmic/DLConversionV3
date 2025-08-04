@@ -508,4 +508,14 @@ Function Start-DistributionListMigrationV3
     Out-LogFile -string "Calling new-msGraphPowershellSession to create new connection to msGraph active directory."
 
     new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired -msGraphClientSecret $msGraphClientSecret
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END ESTABLISH POWERSHELL SESSIONS"
+    Out-LogFile -string "********************************************************************************"
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN GET ORIGINAL DL CONFIGURATION LOCAL AND CLOUD"
+    Out-LogFile -string "********************************************************************************"
+
+    $htmlCaptureOnPremisesDLInfo = get-date
 }
