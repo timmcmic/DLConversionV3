@@ -36,6 +36,10 @@
         {
             out-logfile -string "Both an Exchange Online Credential and Exchange Online Certificate Thumbprint specified - please use only one type of authentication method."
         }
+        else 
+        {
+            out-logfile -string "Only a single exchange online authentication method is specified."
+        }
         
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END start-parameterValidationExchange"
