@@ -461,8 +461,21 @@ Function Start-DistributionListMigrationV3
     out-logfile -string ("Exchange legacy schema version: "+$exchangeLegacySchemaVersion)
 
     write-hashTable -hashTable $xmlFiles
-    write-hashTable -hashTable $onPremExchangePowershell
     write-hashTable -hashTable $office365Attributes
     write-hashTable -hashTable $onPremADAttributes
     write-hashTable -hashTable $coreVariables
+
+    Out-LogFile -string "********************************************************************************"
+
+    #Perform paramter validation manually.
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "ENTERING PARAMTER VALIDATION"
+    Out-LogFile -string "********************************************************************************"
+
+    #Validate that only one method of engaging exchange online was specified.
+
+    Out-LogFile -string "Validating Exchange Online Credentials."
+
+    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint
 }
