@@ -33,7 +33,7 @@
 
         out-logfile -string "Validate that only a single Exchange credetial type is in use."
 
-        if ($exchangeOnlineCredential -eq $NULL -and (($exchangeOnlineCertificateThumbPrint -eq "") -or ($exchangeOnlineAppID -eq "") -or ($exchangeOnlineOrganizationName -eq "")))
+        if ($exchangeOnlineCredential -eq $NULL -and (($exchangeOnlineCertificateThumbPrint -eq "") -and ($exchangeOnlineAppID -eq "") -and ($exchangeOnlineOrganizationName -eq "")))
         {
             out-logfile -string "No Exchange Online credentials were specified - specify either credentials or application authentication."
         }
