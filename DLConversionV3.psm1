@@ -1101,6 +1101,7 @@ Function Start-DistributionListMigrationV3
         msGraphDLMembershipXML = @{"Value" = "msGraphADDLMembership" ; "Description" = "Export XML file holding the membership of the Azure AD group"}
         preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
         testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
+        testOffice365PropertyErrorsXML = @{"value" = "testOffice365PropertyErrors" ; "Description" = "Export XML of all property errors in Office 365."}
         office365DLMembership = @{"Value" = "office365DLMembership" ; "Description" = "Original Office 365 DL Membership"}
     }
 
@@ -2435,7 +2436,7 @@ Function Start-DistributionListMigrationV3
 
     out-logfile -string ("Time to validate recipients in cloud: "+ $telemetryValidateCloudRecipients.toString())
 
-    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
+    if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0) -or ($global:testOffice365PropertyErrors.count -gt 0))
     {
         #Write the XML files first so that the error table is complete without separation.
 
@@ -2449,6 +2450,11 @@ Function Start-DistributionListMigrationV3
             out-xmlFile -itemToExport $global:testOffice365Errors -itemNametoExport $xmlfiles.testOffice365ErrorsXML.value
         }
 
+        if ($global:testOffice365PropertyErrors.count -gt 0)
+        {
+            out-xmlFile -itemToExport $global:testOffice365PropertyErrors -itemNametoExport $xmlfiles.testOffice365PropertyErrorsXML.value
+        }
+
         out-logfile -string "+++++"
         out-logfile -string "Pre-requist checks failed.  Please refer to the following list of items that require addressing for migration to proceed."
         out-logfile -string "+++++"
@@ -2459,14 +2465,6 @@ Function Start-DistributionListMigrationV3
             foreach ($preReq in $global:preCreateErrors)
             {
                 write-errorEntry -errorEntry $preReq
-
-                #Test to see if the error is a NestedGroupException - if so write it to the nested group csv.
-
-                if ($preReq.isErrorMessage -like $nestedGroupException)
-                {
-                    out-logfile -string "Nested group exception written to CSV."
-                    export-csv -Path $nestedCSVPath -inputObject $preReq -append
-                }
             }
         }
 
@@ -2478,9 +2476,14 @@ Function Start-DistributionListMigrationV3
             }
         }
 
+        if ($global:testOffice365PropertyErrors.count -gt 0)
+        {
+            
+        }
+
         if ($isHealthCheck -eq $FALSE)
         {
-            generate-HTMLFile
+            #generate-HTMLFile
             out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
         }
         else
