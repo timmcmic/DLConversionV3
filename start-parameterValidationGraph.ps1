@@ -30,6 +30,13 @@
 
         #Start function processing.
 
+        out-logfile -string "Validate that only a single graph credetial type is in use."
+
+        if (($msGraphClientSecret -ne "") -and ($msGraphCertificateThumbprint -ne "")
+        {
+            out-logfile -string "A client secret and certificate thumbprint are specified - utilize only one method for graph app authentication."
+        }
+
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN start-parameterValidationGraph"
         Out-LogFile -string "********************************************************************************"
