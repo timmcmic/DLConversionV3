@@ -35,17 +35,17 @@
                 foreach ($value in $object.Value)
                 {
                     $string = ($object.name + " " + $value.tostring())
-                    new-htmlListItem -text $string -fontSize 14
+                    out-logfile -string
                 }
             }
             elseif ($object.value -ne $NULL)
             {
                 $string = ($object.name + " " + $object.value.tostring())
-                new-htmlListItem -text $string -fontSize 14                            }
+                out-logfile -string                         }
             else
             {
                 $string = ($object.name)
-                new-htmlListItem -text $string -fontSize 14
+                out-logfile -string 
             }
         }
 
