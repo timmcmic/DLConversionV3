@@ -2639,7 +2639,7 @@ Function Start-DistributionListMigrationV3
     out-logfile -string "Obtain all office 365 member of."
     $allOffice365MemberOf = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365Members.value -errorAction STOP
     out-logfile -string "Obtain all office 365 accept messages from senders or members."
-    $allOffice365Accept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedame -attributeType $office365Attributes.office365AcceptMessagesFrom.value -errorAction STOP
+    $allOffice365Accept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365AcceptMessagesFrom.value -errorAction STOP
     out-logfile -string "Obtain all office 365 reject messages from senders or members."
     $allOffice365Reject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365RejectMessagesFrom.value -errorAction STOP
     out-logfile -string "Obtain all office 365 bypass moderation from senders or members."
