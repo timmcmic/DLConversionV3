@@ -24,11 +24,13 @@
             $exchangeOnlineOrganizationName
         ) 
 
+        write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
+
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "START start-parameterValidation"
+        Out-LogFile -string "START start-parameterValidationExchange"
         Out-LogFile -string "********************************************************************************"
         
         Out-LogFile -string "********************************************************************************"
-        Out-LogFile -string "END start-parameterValidation"
+        Out-LogFile -string "END start-parameterValidationExchange"
         Out-LogFile -string "********************************************************************************"
     }
