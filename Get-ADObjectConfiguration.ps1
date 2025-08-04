@@ -106,13 +106,27 @@
 
                 out-logfile -string ("Spaces Removed Address Length: "+$groupsmtpAddress.length.toString())
 
-                $functionDLConfiguration=Get-ADObject -filter "mail -eq `"$groupSMTPAddress`"" -properties $parameterSet -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                try {
+                    $functionDLConfiguration=Get-ADObject -filter "mail -eq `"$groupSMTPAddress`"" -properties $parameterSet -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                }
+                catch {
+                    out-logfile -string "Unable to obtain the object from Active Directory by MAIL."
+                    out-logfile -string $_ -isError:$TRUE
+                }
+
             }
             elseif ($DN -ne "None")
             {
                 out-logfile -string ("Searching by distinguished name "+$dn)
 
-                $functionDLConfiguration=get-adObject -identity $DN -properties $parameterSet -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                try {
+                    $functionDLConfiguration=get-adObject -identity $DN -properties $parameterSet -server $globalCatalogServer -credential $adCredential -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+                }
+                catch {
+                    out-logfile -string "Unable to obtain the object from Active Directory by DN."
+                    out-logfile -string $_ -isError:$true
+                }
+
             }
             else 
             {
