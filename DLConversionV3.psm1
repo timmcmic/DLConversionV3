@@ -572,6 +572,8 @@ Function Start-DistributionListMigrationV3
 
     out-xmlFile -itemToExport $msGraphDLMembership -itemNameToExport $xmlFiles.msGraphDLMembershipXML.value
 
+    $htmlCaptureOffice365DLMembership = get-date
 
+    $office365DLMembership = @(get-O365DLMembership -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP)
 
 }

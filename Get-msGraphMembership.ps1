@@ -71,6 +71,7 @@
         }
         else
         {
+            $functionDLMembers = @()
             out-logfile -string "No Azure AD Group members in the specified group."
         }
         
