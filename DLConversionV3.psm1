@@ -344,6 +344,11 @@ Function Start-DistributionListMigrationV3
 
     $dlPropertySet = '*' #Clear all properties of a given object
 
+    [array]$global:preCreateErrors=@()
+    [array]$global:testOffice365Errors=@()
+    [array]$global:generalErrors=@()
+    [string]$isTestError="No"
+
     #Initilize the log file.
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
@@ -1041,5 +1046,5 @@ Function Start-DistributionListMigrationV3
     out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
-    
+
 }
