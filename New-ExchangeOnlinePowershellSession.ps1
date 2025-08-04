@@ -86,7 +86,7 @@
             }
             catch {
                 out-logfile -string "Unable to complete Exchange Online Interactive Authentication"
-                out-logfile -string $_
+                out-logfile -string $_ -isError:$TRUE
             }
 
         }
@@ -94,13 +94,25 @@
         {
             out-logfile -string "Attempting interactive authentication with credentials."
 
-            Connect-ExchangeOnline -credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
+            try {
+                Connect-ExchangeOnline -credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
+            }
+            catch {
+                out-logfile -string "Unable to complete Exchange Online Credential Authentication"
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
         else 
         {
             out-logfile -string "Attempting certificate authentication."
-
-            connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName -exchangeEnvironmentName $exchangeOnlineEnvironmentName -prefix $exchangeOnlineCommandPrefix -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All
+            
+            try {
+                connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName -exchangeEnvironmentName $exchangeOnlineEnvironmentName -prefix $exchangeOnlineCommandPrefix -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All
+            }
+            catch {
+                out-logfile -string "Unable to complete Exchange Online Certificate Authentication"
+                out-logfile -string $_ -isError:$TRUE
+            }
         }
                
         Out-LogFile -string "The exchange online powershell session was created successfully."
