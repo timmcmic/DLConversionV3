@@ -82,6 +82,47 @@
                 out-logfile -string $_
             }
         }
+        elseif (($msGraphCertificateThumbprint -ne "") -or ($msGraphClientSecret -ne ""))
+        {
+            out-logfile -string "Either certificate or secret authentication specified."
+
+            if ($msGraphCertificateThumbprint -ne "")
+            {
+                out-logfile -string "Certificate authentication specified."
+
+                try {
+                    Connect-MgGraph -TenantId $msGraphTenantID -CertificateThumbprint $msGraphCertificateThumbprint -ClientId $msGraphApplicationID -Environment $msGraphEnvironmentName -ErrorAction Stop
+                }
+                catch {
+                    out-logfile -string "Unable to connect to Microsoft Graph using Certificate Authentication"
+                }
+
+            }
+            else 
+            {
+                out-logfile -string "Client Secret authentication specified."
+
+                out-logfile -string "Convert the secret to secure string."
+
+                try {
+                    $securedPasswordPassword = convertTo-SecureString -string $msGraphClientSecret -AsPlainText -Force -ErrorAction Stop
+                }
+                catch {
+                    out-logfile -string "Unable to convert provided secret to secure string."
+                    out-logfile -string $_ -isError:$TRUE
+                }
+
+                $clientSecretCredential = new-object -typeName System.Management.Automation.PSCredential -argumentList $msGraphApplicationID,$securedPasswordPassword
+
+                try {
+                    Connect-MgGraph -tenantID $msGraphTenantID -environment $msGraphEnvironmentName -ClientSecretCredential $clientSecretCredential -errorAction Stop
+                }
+                catch {
+                    out-logfile -string "Unable to connect to Microsoft Graph using Client Secret Authentication"
+                    out-logfile -string $_ -isError:$TRUE
+                }
+            }
+        }
 
         Out-LogFile -string "END NEW-msGraphADPOWERSHELL SESSION"
         Out-LogFile -string "********************************************************************************"
