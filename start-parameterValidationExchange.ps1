@@ -32,7 +32,11 @@
 
         out-logfile -string "Validate that only a single Exchange credetial type is in use."
 
-        if ($exchangeOnlineCredential -ne $NULL -and (($exchangeOnlineCertificateThumbPrint -ne "") -or ($exchangeOnlineAppID -ne "") -or ($exchangeOnlineOrganizationName -ne "")))
+        if ($exchangeOnlineCredential -eq $NULL -and (($exchangeOnlineCertificateThumbPrint -eq "") -or ($exchangeOnlineAppID -eq "") -or ($exchangeOnlineOrganizationName -eq "")))
+        {
+            out-logfile -string "No Exchange Online credentials were specified - specify either credentials or application authentication."
+        }
+        elseif ($exchangeOnlineCredential -ne $NULL -and (($exchangeOnlineCertificateThumbPrint -ne "") -or ($exchangeOnlineAppID -ne "") -or ($exchangeOnlineOrganizationName -ne "")))
         {
             out-logfile -string "Both an Exchange Online Credential and portions of Exchange Online Certificate Authenciation specified - choose one."
         }
