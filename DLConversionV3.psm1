@@ -511,6 +511,8 @@ Function Start-DistributionListMigrationV3
 
     new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired -msGraphClientSecret $msGraphClientSecret
 
+    validate-GraphContext -msGraphScopesRequired $msGraphScopesRequired
+
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "END ESTABLISH POWERSHELL SESSIONS"
     Out-LogFile -string "********************************************************************************"
