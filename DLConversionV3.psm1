@@ -576,4 +576,10 @@ Function Start-DistributionListMigrationV3
 
     $office365DLMembership = @(get-O365DLMembership -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP)
 
+    if ($office365DLMembership.count -gt 0)
+    {
+        out-logfile -string "Creating an XML file backup of the Office 365 Original DL Membership"
+
+        out-xmlFile -itemToExport $office365DLMembership -itemNameToExport $xmlFiles.office365DLMembership.value
+    }
 }
