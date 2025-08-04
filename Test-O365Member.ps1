@@ -52,6 +52,8 @@
         {
             out-logfile -string "External directory object ID specified - test."
 
+            $membership.externalDirectoryObjectID
+
             if ($membership.externalDirectoryObjectID.contains($member.externalDirectoryObjectID))
             {
                 out-logfile -string "Member was located by external directory object id."
