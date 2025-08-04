@@ -20,31 +20,38 @@
             $useBeta=$false
         )
 
+        $msGraphURLGlobal = "https://graph.microsoft.com/v1.0/"
+        $msGraphURLUSGov = "https://graph.microsoft.us/v1.0/"
+        $msGraphURLUSDoD = "https://dod-graph.microsoft.us/v1.0/"
+        $msGraphURLChina = "https://microsoftgraph.chinacloudapi.cn/v1.0/"
+        $msGraphBetaURLGlobal = "https://graph.microsoft.com/beta/"
+        $msGraphBetaURLUSGov = "https://graph.microsoft.us/beta/"
+        $msGraphBetaURLUSDoD = "https://dod-graph.microsoft.us/beta/"
+        $msGraphBetaURLChina = "https://microsoftgraph.chinacloudapi.cn/beta/"
+
+        $msGraphGlobal = "Global"
+        $msGraphUSGov = "USGov"
+        $msGraphUSDOD = "USGovDOD"
+        $msGraphChina = "China"
+
+        $functionURL = ""
+
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN get-GraphEnvironment"
         Out-LogFile -string "********************************************************************************"
     
-        foreach ($object in $objectToWrite.psObject.properties)
+        Switch ($msGraphEnvironmentName)
         {
-            if ($object.Value.count -gt 1)
-            {
-                foreach ($value in $object.Value)
-                {
-                    $string = ($object.name + " " + $value.tostring())
-                    out-logfile -string $string
-                }
-            }
-            elseif ($object.value -ne $NULL)
-            {
-                $string = ($object.name + " " + $object.value.tostring())
-                out-logfile -string $string                        }
-            else
-            {
-                $string = ($object.name)
-                out-logfile -string $string
-            }
+            $msGraphGlobal { out-logfile -string "Global URL" ; if ($useBeta -eq $TRUE) {$functionURL = $msGraphBetaURLGlobal} else {$functionURL = $msGraphURLGlobal}}
+            $msGraphUSGov { out-logfile -string "USGovURL" ;  if ($useBeta -eq $TRUE) {$functionURL = $msGraphBetaURLUSGov} else {$functionURL = $msGraphURLUSGov}}
+            $msGraphUSDOD { out-logfile -string "USDODUrl" ; if ($useBeta -eq $TRUE) {$functionURL = $msGraphBetaURLUSDoD} else {$functionURL = $msGraphURLUSDoD}}
+            $msGraphChina { out-logfile -string "ChinaURL" ; if ($useBeta -eq $TRUE) {$functionURL = $msGraphBetaURLChina} else {$functionURL = $msGraphURLChina}}
         }
+
+        out-logfile -string ("Graph URL Returned: "+$functionURL)
 
         Out-LogFile -string "END get-GraphEnvironment"
         Out-LogFile -string "********************************************************************************"
+
+        return $functionURL
     }

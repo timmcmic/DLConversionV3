@@ -340,6 +340,7 @@ Function Start-DistributionListMigrationV3
     $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
     $office365DLMembership=$NULL
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
+    $msGraphURL = ""
 
     $dlPropertySet = '*' #Clear all properties of a given object
 
@@ -387,6 +388,10 @@ Function Start-DistributionListMigrationV3
     {
         out-logfile -string ("Current Error Action Preference is CONTINUE: "+$errorActionPreference)
     }
+
+    out-logfile -string "Obtain the graph URL for calls."
+
+    $msGrpahURL = get-GraphEnvironment -msGraphEnvironmentName $msGraphEnvironmentName -useBeta:$true
 
     $htmlStartValidationTime = get-date
 
