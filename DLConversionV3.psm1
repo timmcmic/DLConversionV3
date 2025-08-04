@@ -500,4 +500,32 @@ Function Start-DistributionListMigrationV3
     out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
 
     $telemetryInfo.telemetryMSGraphAuthentication = test-powershellModule -powershellmodulename $corevariables.msgraphauthenticationpowershellmodulename.value -powershellVersionTest:$TRUE
+
+    Out-LogFile -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
+    out-logfile -string ("Trace file path: "+$traceFilePath)
+
+    if ($exchangeOnlineCertificateThumbPrint -eq "")
+    {
+        #User specified non-certifate authentication credentials.
+
+            try {
+                New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $traceFilePath
+            }
+            catch {
+                out-logfile -string "Unable to create the exchange online connection using credentials."
+                out-logfile -string $_ -isError:$TRUE
+            }
+    }
+    elseif ($exchangeOnlineCertificateThumbPrint -ne "")
+    {
+        #User specified thumbprint authentication.
+
+            try {
+                new-ExchangeOnlinePowershellSession -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -exchangeOnlineAppId $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -debugLogPath $traceFilePath
+            }
+            catch {
+                out-logfile -string "Unable to create the exchange online connection using certificate."
+                out-logfile -string $_ -isError:$TRUE
+            }
+    }
 }
