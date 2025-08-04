@@ -155,7 +155,7 @@
 
                 if ($functionParameterSetName -eq $exchangeOnlineParameterSetName)
                 {
-                    out-logfile -string "Validating the exchange online credential array"
+                    out-logfie -string "Validating credential type is PSCredential"
 
                     test-credentials -credentialsToTest $exchangeOnlineCredential
                 }
