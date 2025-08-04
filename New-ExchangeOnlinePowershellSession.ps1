@@ -43,22 +43,19 @@
 
         Param
         (
-            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $false)]
+            [Parameter(Mandatory = $true)]
             [pscredential]$exchangeOnlineCredentials,
-            [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
+            [Parameter(Mandatory = $true)]
             [string]$exchangeOnlineCertificateThumbPrint,
-            [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
+            [Parameter(Mandatory = $true)]
             [string]$exchangeOnlineAppID,
-            [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
+            [Parameter(Mandatory = $true)]
             [string]$exchangeOnlineOrganizationName,
-            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $true)]
-            [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
+            [Parameter(Mandatory = $true)]
             [string]$exchangeOnlineEnvironmentName,
-            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $true)]
-            [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $true)]
+            [Parameter(Mandatory = $true)]
             [string]$debugLogPath,
-            [Parameter(ParameterSetName = "UserCredentials",Mandatory = $false)]
-            [Parameter(ParameterSetName = "CertificateCredentials",Mandatory = $false)]
+            [Parameter(Mandatory = $false)]
             [boolean]$isAudit=$FALSE
         )
 
@@ -69,9 +66,6 @@
         #Define variables that will be utilzed in the function.
 
         [string]$exchangeOnlineCommandPrefix="O365"
-        [boolean]$isCertAuth=$false
-        #$exchangeOnlineCommands=@('get-ExoRecipient','new-distributionGroup','get-recipient','set-distributionGroup','get-distributionGroupMember','get-mailbox','get-unifiedGroup','set-UnifiedGroup')
-        #Initiate the session.
         
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN NEW-EXCHANGEONLINEPOWERSHELLSESSION"
@@ -79,63 +73,39 @@
 
         #Log the parameters and variables for the function.
 
-        if ($exchangeOnlineCredentials -ne $NULL)
+        if (($exchangeOnlineCredentials -eq $NULL) -and ($exchangeOnlineCertificateThumbPrint -eq "") -and ($exchangeOnlineAppID -eq "") -and ($exchangeOnlineOrganizationName -eq ""))
         {
-            Out-LogFile -string ("ExchangeOnlineCredentialsUserName = "+$exchangeOnlineCredentials.userName.tostring())
-            out-logfile -string ("Is certificate auth = "+$isCertAuth)
-        }
-        elseif ($exchangeOnlineCertificateThumbPrint -ne "")
-        {
-            Out-LogFile -string ("ExchangeOnlineCertificate = "+$exchangeOnlineCertificateThumbPrint)
-            out-logfile -string ("ExchangeAppID = "+$exchangeOnlineAppID)
-            out-logfile -string ("ExchangeOrgName = "+$exchangeOnlineOrganizationName)
-            $isCertAuth=$true
-            out-logfile -string ("Is certificate auth = "+$isCertAuth)
-        }
+            out-logfile -string "Attempting interactive authentication."
 
-        Out-LogFile -string ("ExchangeOnlineCommandPrefix = "+$exchangeOnlineCommandPrefix)
-
-        if ($isCertAuth -eq $False)
-        {
-            if ($exchangeOnlineCredentials -ne $NULL)
-            {
-                Out-LogFile -string "Creating the exchange online powershell session."
-
-                try 
-                {
-    
-                    Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
-                }
-                catch 
-                {
-                    Out-LogFile -string $_ -isError:$TRUE -isAudit $isAudit
-                }
+            try {
+                Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
             }
-            else
-            {
-                Out-LogFile -string "Creating the exchange online powershell session."
-
-                try 
-                {
-                    Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
-                }
-                catch 
-                {
-                    Out-LogFile -string $_ -isError:$TRUE -isAudit $isAudit
-                }
+            catch {
+                out-logfile -string "Error performing interactive authentication to Exchange Online."
+                out-logfile -string $_ -isError:$TRUE
             }
         }
-        elseif ($isCertAuth -eq $TRUE) 
+        elseif ($exchangeOnlineCredentials -ne $NULL)
         {
-            try 
-            {
-                out-logfile -string "Creating the connection to exchange online powershell using certificate authentication."
+            out-logfile -string "Attempting interactive authentication with credentials."
 
-                connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName -exchangeEnvironmentName $exchangeOnlineEnvironmentName -prefix $exchangeOnlineCommandPrefix -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All 
-            } 
-            catch 
-            {
-                out-logfile -string $_ -isError:$TRUE -isAudit $isAudit
+            try {
+                Connect-ExchangeOnline -credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
+            }
+            catch {
+                out-logfile -string "Error performing credential authentication to Exchange Online."
+            }
+        }
+        else 
+        {
+            out-logfile -string "Attempting certificate authentication."
+
+            try {
+                Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
+            }
+            catch {
+                out-logfile -string "Error performing certificate authentication to Exchange Online."
+                out-logfile -string $_
             }
         }
                
