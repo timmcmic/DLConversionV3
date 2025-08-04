@@ -51,8 +51,7 @@
         if ($member.externalDirectoryObjectID -ne "")
         {
             out-logfile -string "External directory object ID specified - test."
-
-            $membership.externalDirectoryObjectID
+            out-logfile -string $member.externalDirectoryObjectID
 
             if ($membership.externalDirectoryObjectID.contains($member.externalDirectoryObjectID))
             {
