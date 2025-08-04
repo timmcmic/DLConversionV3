@@ -34,6 +34,11 @@ Function Start-DistributionListMigration
     *Required*
     This is the SMTP address of the group based on the MAIL field in Active Directory.
 
+    .PARAMETER LOGFOLDERPATH 
+
+    *Required*
+    Defines the location of the storage for log folders, exports, and trace files.
+
     .OUTPUTS
 
     Logs all activities and backs up all original data to the log folder directory.
@@ -64,7 +69,10 @@ Function Start-DistributionListMigration
     Param
     (
         [Parameter(Mandatory = $true)]
-        [string]$groupSMTPAddress
+        [string]$groupSMTPAddress,
+        #Define other mandatory parameters
+        [Parameter(Mandatory = $true)]
+        [string]$logFolderPath
     )
 
     #Estbalish the HTML reporting start time.
@@ -310,5 +318,19 @@ Function Start-DistributionListMigration
     [int]$exchangeRangeUpper=$NULL
     [int]$exchangeLegacySchemaVersion=15317 #Exchange 2016 Preview Schema - anything less is legacy.
 
-    
+    #Initilize the log file.
+
+    $global:logFile=$NULL #This is the global variable for the calculated log file name
+    new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
+    [string]$global:staticFolderName="\DLMigration\"
+    $traceFilePath = $logFolderPath + $global:staticFolderName
+
+    out-logfile -string "=============================================================================="
+    out-logfile -string "Starting Start-DistributionListMigration-V3"
+    out-logfile -string "=============================================================================="
+
+    out-logfile -string ("Log File: "+$global:logFile)
+    out-logfile -string ("Trace File: "+$traceFilePath)
+
+    $htmlFunctionStartTime = get-Date
 }
