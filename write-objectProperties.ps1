@@ -33,11 +33,7 @@
             elseif ($object.value -ne $NULL)
             {
                 $string = ($object.name + " " + $object.value.tostring())
-                out-logfile -string $string                        }
-            else
-            {
-                $string = ($object.name)
-                out-logfile -string $string
+                out-logfile -string $string                        
             }
         }
 
