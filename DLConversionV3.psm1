@@ -526,4 +526,30 @@ Function Start-DistributionListMigrationV3
     #At this point we are ready to capture the original DL configuration.  We'll use the ad provider to gather this information.
 
     $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential -isGroupTest $TRUE
+
+    Out-LogFile -string "Create an XML file backup of the on premises DL Configuration"
+
+    Out-XMLFile -itemToExport $originalDLConfiguration -itemNameToExport $xmlFiles.originalDLConfigurationADXML.value
+
+    $htmlCaptureOffice365DLConfiguration = get-date
+
+    Out-LogFile -string "Capture the original office 365 distribution list information."
+
+    $office365DLConfiguration=Get-O365DLConfiguration -groupSMTPAddress $groupSMTPAddress -isFirstPass:$TRUE -errorAction STOP
+    
+    $office365GroupConfiguration = get-o365GroupConfiguration -groupSMTPAddress $groupSMTPAddress -errorAction STOP
+
+    Out-LogFile -string $office365DLConfiguration
+
+    Out-LogFile -string "Create an XML file backup of the office 365 DL configuration."
+
+    Out-XMLFile -itemToExport $office365DLConfiguration -itemNameToExport $xmlFiles.office365DLConfigurationXML.value
+
+    out-logfile -string $office365GroupConfiguration
+
+    out-logfile -string "Create an XML file backup of the office 365 group cofniguration."
+
+    out-xmlfile -itemToExport $office365GroupConfiguration -itemNameToExport $xmlFiles.office365GroupConfigurationXML.value
+
+    
 }
