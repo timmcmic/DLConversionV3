@@ -26,9 +26,20 @@
     
         out-logfile -string "Obtain the graph context."
 
-        $functionGraphContext = Get-MgContext
+        try {
+            $functionGraphContext = Get-MgContext -ErrorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to obtain the graph context."
+            out-logfile -string $_ -isError:$true
+        }
 
-        write-objectProperties -objectToWrite $functionGraphContext
+        try {
+            write-objectProperties -objectToWrite $functionGraphContext -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to output graph context - this suggests previous unhandled exception connecting to graph." -isError:$TRUE
+        }
 
         out-logfile -string "Testing graph scopes."
 
