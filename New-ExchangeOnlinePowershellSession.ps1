@@ -81,36 +81,19 @@
         {
             out-logfile -string "Attempting interactive authentication."
 
-            try {
-                Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
-            }
-            catch {
-                out-logfile -string "Error performing interactive authentication to Exchange Online."
-                out-logfile -string $_ -isError:$TRUE
-            }
+            Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
         }
         elseif ($exchangeOnlineCredentials -ne $NULL)
         {
             out-logfile -string "Attempting interactive authentication with credentials."
 
-            try {
-                Connect-ExchangeOnline -credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
-            }
-            catch {
-                out-logfile -string "Error performing credential authentication to Exchange Online."
-            }
+            Connect-ExchangeOnline -credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
         }
         else 
         {
             out-logfile -string "Attempting certificate authentication."
 
-            try {
-                Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
-            }
-            catch {
-                out-logfile -string "Error performing certificate authentication to Exchange Online."
-                out-logfile -string $_
-            }
+            connect-exchangeOnline -certificateThumbPrint $exchangeOnlineCertificateThumbPrint -appID $exchangeOnlineAppID -Organization $exchangeOnlineOrganizationName -exchangeEnvironmentName $exchangeOnlineEnvironmentName -prefix $exchangeOnlineCommandPrefix -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All
         }
                
         Out-LogFile -string "The exchange online powershell session was created successfully."

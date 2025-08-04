@@ -503,7 +503,13 @@ Function Start-DistributionListMigrationV3
 
     Out-LogFile -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
 
-    New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -debugLogPath $traceFilePath
+    try {
+        New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -debugLogPath $traceFilePath
+    }
+    catch {
+        out-logfile -string "This didn't work."
+    }
+
 
     Out-LogFile -string "Calling new-msGraphPowershellSession to create new connection to msGraph active directory."
 
