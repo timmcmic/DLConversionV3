@@ -507,5 +507,5 @@ Function Start-DistributionListMigrationV3
 
     Out-LogFile -string "Calling new-msGraphPowershellSession to create new connection to msGraph active directory."
 
-    #new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired -msGraphClientSecret $msGraphClientSecret
+    new-msGraphPowershellSession -msGraphCertificateThumbprint $msGraphCertificateThumbprint -msGraphApplicationID $msGraphApplicationID -msGraphTenantID $msGraphTenantID -msGraphEnvironmentName $msGraphEnvironmentName -msGraphScopesRequired $msGraphScopesRequired -msGraphClientSecret $msGraphClientSecret
 }
