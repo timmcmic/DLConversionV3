@@ -85,6 +85,8 @@
 
             disable-allPowerShellSessions
 
+            out-logfile -string "Here"
+
             if ($isAudit -eq $FALSE)
             {
                 Start-ArchiveFiles -isSuccess:$FALSE -logFolderPath $logFolderPath
