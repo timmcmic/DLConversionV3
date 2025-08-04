@@ -50,27 +50,31 @@
 
         if (($exchangeOnlineAppID -eq "") -and (($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineCertificateThumbPrint -ne "")))
         {
-            out-logfile -string "Exchange Organization Name and Exchange Certificate Thumbprint required when specifing Exchange App ID."
+            out-logfile -string "Exchange Organization Name and Exchange Certificate Thumbprint required when specifing Exchange App ID." -isError:$TRUE
         }
         elseif (($exchangeOnlineCertificateThumbPrint -eq "") -and (($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineAppID -ne "")))
         {
-            out-logfile -string "Exchange Organization Name and Exchange App ID required when specifing Exchange Certificate Thumbprint."
+            out-logfile -string "Exchange Organization Name and Exchange App ID required when specifing Exchange Certificate Thumbprint." -isError:$TRUE
         }
         elseif (($exchangeOnlineOrganizationName -eq "") -and (($exchangeOnlineCertificateThumbPrint -ne "") -and ($exchangeOnlineAppID -ne "")))
         {
-            out-logfile -string "Exchange Certificate Thumbprint and Exchange App ID required when specifing Exchange Organization Name."
+            out-logfile -string "Exchange Certificate Thumbprint and Exchange App ID required when specifing Exchange Organization Name." -isError:$TRUE
         }
         elseif (($exchangeOnlineAppID -ne "") -and (($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineCertificateThumbPrint -eq "")))
         {
-            out-logfile -string "Exchange Online organization name and certificate thumbprint required when specifying app id."
+            out-logfile -string "Exchange Online organization name and certificate thumbprint required when specifying app id." -isError:$TRUE
         }
         elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and (($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq "")))
         {
-            out-logfile -string "Exchange Online organization name and app id required when specifying certificate thumbprint."
+            out-logfile -string "Exchange Online organization name and app id required when specifying certificate thumbprint." -isError:$TRUE
         }
         elseif (($exchangeOnlineOrganizationName -ne "") -and (($exchangeOnlineCertificateThumbPrint -eq "") -and ($exchangeOnlineAppID -eq "")))
         {
-            out-logfile -string "Exchange certificate thumbprint and app id required when specifying organization name."
+            out-logfile -string "Exchange certificate thumbprint and app id required when specifying organization name." -isError:$TRUE
+        }
+        else 
+        {
+            out-logfile -string "All components for Exchange Online certificate authentication specified."
         }
 
 
