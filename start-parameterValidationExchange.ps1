@@ -8,7 +8,7 @@
     This function validates the parameters within the script.  Paramter validation is shared across functions.
 
     #>
-    Function start-parameterExchange
+    Function start-parameterValidationExchange
     {
         [cmdletbinding()]
 
