@@ -2168,7 +2168,7 @@ Function Start-DistributionListMigrationV3
 
     $telemetryInfo.FunctionEndTime = get-universalDateTime
 
-    $telemetryValidateCloudRecipients = get-elapsedTime -startTime $telemetryFunctionStartTime -endTime $telemetryFunctionEndTime
+    $telemetryValidateCloudRecipients = get-elapsedTime -startTime $telemetryInfo.FunctionStartTime -endTime $telemetryInfo.FunctionEndTime
 
     out-logfile -string ("Time to validate recipients in cloud: "+ $telemetryValidateCloudRecipients.toString())
 
@@ -2214,9 +2214,6 @@ Function Start-DistributionListMigrationV3
                 write-errorEntry -errorEntry $prereq
             }
         }
-
-        generate-HTMLFile
-        out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
 
         if ($isHealthCheck -eq $FALSE)
         {
