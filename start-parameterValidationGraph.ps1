@@ -36,6 +36,10 @@
         {
             out-logfile -string "A client secret and certificate thumbprint are specified - utilize only one method for graph app authentication." -isError:$TRUE
         }
+        elseif (($msGraphClientSecret -eq "") -and ($msGraphCertificateThumbprint -eq ""))
+        {
+            out-logfile -string "Assume interactive authentication."
+        }
         else 
         {
             out-logfile -string "Proceed with authentication method verification."
@@ -82,6 +86,10 @@
             {
                 out-logfile -string "All components for graph certificate authentication are present."
             }
+        }
+        else 
+        {
+            out-logfile -string "Interactive authentication is assumed."
         }
 
         Out-LogFile -string "********************************************************************************"

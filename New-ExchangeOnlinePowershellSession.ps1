@@ -99,11 +99,12 @@
         {
             if ($exchangeOnlineCredentials -ne $NULL)
             {
+                Out-LogFile -string "Creating the exchange online powershell session."
+
                 try 
                 {
-                    Out-LogFile -string "Creating the exchange online powershell session."
     
-                    Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All
+                    Connect-ExchangeOnline -Credential $exchangeOnlineCredentials -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
                 }
                 catch 
                 {
@@ -112,11 +113,11 @@
             }
             else
             {
+                Out-LogFile -string "Creating the exchange online powershell session."
+
                 try 
                 {
-                    Out-LogFile -string "Creating the exchange online powershell session."
-    
-                    Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All
+                    Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
                 }
                 catch 
                 {
