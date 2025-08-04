@@ -77,7 +77,6 @@
             out-logfile -string "All components for Exchange Online certificate authentication specified."
         }
 
-
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END start-parameterValidationExchange"
         Out-LogFile -string "********************************************************************************"
