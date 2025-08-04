@@ -55,7 +55,9 @@
 
             $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
 
-            if ($membership.externalDirectoryObjectID.contains($functionDirectoryObjectID))
+            out-logfile -string $functionDirectoryObjectID[1]
+
+            if ($membership.externalDirectoryObjectID.contains($functionDirectoryObjectID[1]))
             {
                 out-logfile -string "Member was located by external directory object id."
             }
