@@ -81,7 +81,16 @@
             #If the call is from a function in a do while - write-error rethrows the exception.  The exception is caught by the caller where a retry occurs.
             #This is how we end up logging an error then looping back around.
 
-            out-logfile -string $ErrorActionPreference
+            if ($errorActionPreference -ne "Continue")
+            {
+                out-logfile -string ("Current Error Action Preference: "+$errorActionPreference)
+                $errorActionPreference = "Continue"
+                out-logfile -string ("New Error Action Preference: "+$errorActionPreference)
+            }
+            else
+            {
+                out-logfile -string ("Current Error Action Preference is CONTINUE: "+$errorActionPreference)
+            }
 
             write-error $logString
 
