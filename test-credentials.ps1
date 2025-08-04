@@ -32,7 +32,7 @@
         {
             if ($credential.gettype().name -eq "PSCredential")
             {
-                out-logfile -string ("Tested credential: "+$credential.userName)
+                out-logfile -string "Credential is of PSCredential type - proceed."
             }
             else 
             {
