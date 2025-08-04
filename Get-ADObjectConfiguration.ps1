@@ -180,8 +180,6 @@
         {
             out-logfile -string "Single object detected - returning DL configuration."
         }
-
-        write-objectProperties -objectToWrite $functionDLConfiguration
         
         if ($functionDLConfiguration -ne $NULL)
         {
