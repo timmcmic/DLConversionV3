@@ -2478,7 +2478,10 @@ Function Start-DistributionListMigrationV3
 
         if ($global:testOffice365PropertyErrors.count -gt 0)
         {
-            
+            foreach ($preReq in $global:testOffice365PropertyErrors)
+            {
+                write-errorEntry -errorEntry $preReq
+            }
         }
 
         if ($isHealthCheck -eq $FALSE)
