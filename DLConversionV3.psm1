@@ -2399,7 +2399,7 @@ Function Start-DistributionListMigrationV3
 
         if ($isHealthCheck -eq $FALSE)
         {
-            #generate-HTMLFile
+            generate-HTMLFile
             out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
         }
         else
@@ -2411,5 +2411,113 @@ Function Start-DistributionListMigrationV3
     if ($isHealthCheck -eq $TRUE)
     {
         return
+    }
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN RECORD DEPENDENCIES ON MIGRATED GROUP"
+    Out-LogFile -string "********************************************************************************"
+
+    $htmlCaptureOnPremisesDependencies = get-date
+
+    $telemetryInfo.FunctionStartTime = get-universalDateTime
+
+    ut-logfile -string "Get all the groups that this user is a member of - normalize to canonicalname."
+
+    #Start with groups this DL is a member of remaining on premises.
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremMemberOf.value) -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremMemberOf.value))
+        {
+            $allGroupsMemberOf += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
+        }
+    }
+
+    #Handle all recipients that have forwarding to this group based on forwarding address.
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremForwardingAddressBL.value) -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremForwardingAddressBL.value))
+        {
+            $allUsersForwardingAddress += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
+        }
+    }
+
+    #Handle all groups this object has reject permissions on.
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembersBL.value) -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremRejectMessagesFromDLMembersBL.value))
+        {
+            $allGroupsReject += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
+        }
+    }
+
+    #Handle all groups this object has accept permissions on.
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value) -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremAcceptMessagesFromDLMembersBL.value))
+        {
+            $allGroupsAccept += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
+        }
+    }
+
+    if ($originalDlConfiguration.($onPremADAttributes.onPremCoManagedByBL.value) -ne $NULL)
+    {
+        out-logfile -string "Calling get canonical name."
+
+        foreach ($dn in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value))
+        {
+            $allGroupsCoManagedByBL += get-canonicalName -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
+        }
+    }
+    else 
+    {
+        out-logfile -string "The group is not a co manager on any other groups."    
+    }
+
+    #Handle all groups this object has bypass moderation permissions on.
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDLMembersBL.value) -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremBypassModerationFromDLMembersBL.value))
+        {
+            $allGroupsBypassModeration += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
+        }
+    }
+
+    #Handle all groups this object has accept permissions on.
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfToBL.value) -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremGrantSendOnBehalfToBL.value))
+        {
+            $allGroupsGrantSendOnBehalfTo += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
+        }
+    }
+
+    #Handle all groups this object has manager permissions on.
+
+    if ($originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value) -ne $NULL)
+    {
+        out-logfile -string "Calling get-CanonicalName."
+
+        foreach ($DN in $originalDLConfiguration.($onPremADAttributes.onPremCoManagedByBL.value))
+        {
+            $allGroupsManagedBy += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
+        }
     }
 }
