@@ -61,7 +61,7 @@
             $activeDirectoryAuthenticationMethod="Negotiate",
             [Parameter(Mandatory = $false,ParameterSetName = "BySMTPAddress")]
             [Parameter(Mandatory = $false,ParameterSetName = "ByDN")]
-            [boolean]$isValidTest=$FALSE
+            [boolean]$isValidTest=$FALSE,
             [Parameter(Mandatory = $false,ParameterSetName = "BySMTPAddress")]
             [Parameter(Mandatory = $false,ParameterSetName = "ByDN")]
             [boolean]$isGroupTest=$FALSE
