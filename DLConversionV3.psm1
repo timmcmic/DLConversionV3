@@ -107,7 +107,10 @@ Function Start-DistributionListMigrationV3
         [Parameter(Mandatory=$false)]
         [string]$msGraphApplicationID="",
         [Parameter(Mandatory=$false)]
-        [string]$msGraphClientSecret=""
+        [string]$msGraphClientSecret="",
+        #Define other optional parameters
+        [Parameter(Mandatory=$false)]
+        [boolean]$overrideCentralizedMailTransportEnabled=$FALSE
     )
 
     #Estbalish the HTML reporting start time.
@@ -1046,5 +1049,21 @@ Function Start-DistributionListMigrationV3
     out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
+    $htmlStartCloudValidation = get-date
 
+    $telemetryInfo.FunctionStartTime = get-universalDateTime
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
+    Out-LogFile -string "********************************************************************************"
+
+    out-logfile -string "Begin accepted domain validation."
+
+    test-AcceptedDomain -originalDLConfiguration $originalDlConfiguration -errorAction STOP
+
+    out-logfile -string "Test for centralized mail transport."
+
+    test-outboundConnector -overrideCentralizedMailTransportEnabled $overrideCentralizedMailTransportEnabled -errorAction STOP
+
+    
 }
