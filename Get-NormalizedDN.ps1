@@ -68,7 +68,7 @@
             [Parameter(Mandatory = $true)]
             [string]$activeDirectoryAttributeCommon,
             [Parameter(Mandatory = $false)]
-            [string]$skipNestedGroupCheck=$true
+            [string]$skipNestedGroupCheck=$false
         )
 
         #Output all parameters bound or unbound and their associated values.
