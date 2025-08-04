@@ -144,7 +144,7 @@ Function Start-DistributionListMigrationV3
 
                 New-HTMLTableOption -DataStore JavaScript
 
-                if (($global:preCreateErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:postCreateErrors.count -gt 0) -or ($onPremReplaceErrors.count -gt 0) -or ($office365ReplaceErrors.count -gt 0) -or ($global:office365ReplacePermissionsErrors.count -gt 0) -or ($global:generalErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0))
+                if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0) -or ($global:testOffice365PropertyErrors.count -gt 0))
                 {
                     New-HTMLText -Text "Migration Errors Detected - Summary Information Below" -FontSize 24 -Color White -BackGroundColor RED -Alignment center
 
@@ -154,15 +154,9 @@ Function Start-DistributionListMigrationV3
                         New-HTMLList{
                                 new-htmlListItem -text ("Pre Office 365 Group Create Errors: "+$global:preCreateErrors.count) -fontSize 14
                                 new-htmlListItem -text ("Test Office 365 Errors: "+$global:testOffice365Errors.count) -fontSize 14
-                                new-htmlListItem -text ("Post Create Errors: "+$global:postCreateErrors.count) -fontSize 14
-                                new-htmlListItem -text ("On-Premises Replace Errors :"+$onPremReplaceErrors.count) -fontSize 14
-                                new-htmlListItem -text ("Office 365 Replace Errors: "+$office365ReplaceErrors.count) -fontSize 14
-                                new-htmlListItem -text ("Office 365 Replace Permissions Errors: "+$global:office365ReplacePermissionsErrors.count) -fontSize 14
-                                new-htmlListItem -text ("On Prem Replace Permissions Errors: "+$global:onPremReplacePermissionsErrors.count) -fontSize 14
-                                new-htmlListItem -text ("General Errors: "+$global:generalErrors.count) -fontSize 14
+                                new-htmlListItem -text ("Test Office 365 Property Errors: "+$global:testOffice365PropertyErrors.count) -fontSize 14
                             }
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
-
 
                     out-logfile -string "Generate HTML for pre create errors."
 
@@ -196,100 +190,20 @@ Function Start-DistributionListMigrationV3
                         out-logfile -string "Test Office 365 Errors do not exist."
                     }
 
-                    out-logfile -string "Generate HTML for post office 365 group creation errors."
+                    out-logfile -string "Generate HTML for test office 365 errors."
 
-                    if ($global:postCreateErrors.count -gt 0)
+                    if ($global:testOffice365PropertyErrors.count.count -gt 0)
                     {
-                        out-logfile -string "Post Office 365 Group Creation Errors exist."
+                        out-logfile -string "Test Office 365 Errors exist."
 
-                        new-htmlSection -HeaderText ("Post Office 365 Group Creation Errors"){
-                            new-htmlTable -DataTable ($global:postCreateErrors | select-object PrimarySMTPAddressorUPN,externalDirectoryObjectID,Name,Alias,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering  {
+                        new-htmlSection -HeaderText ("Test Office 365 Dependency Errors"){
+                            new-htmlTable -DataTable ($global:testOffice365PropertyErrors.count | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessage) -Filtering  {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                     }
                     else 
                     {
-                        Out-logfile -string "Post Office 365 GRoup Creation Errors do not exist."
-                    }
-
-                    out-logfile -string "Generate html for On Premises Replacement Errors"
-
-                    if ($onPremReplaceErrors.count -gt 0)
-                    {
-                        out-logfile -string "On premsies replacement errors exist."
-
-                        new-htmlSection -HeaderText ("On Premises Replacement Errors"){
-                            new-htmlTable -DataTable ($onPremReplaceErrors | select-object DistinguishedName,CanonicalDomainName,CanonicalName,Attribute,ErrorMessage,ErrorMessageDetail) -Filtering {
-                            } -AutoSize
-                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
-                    }
-                    else
-                    {
-                        out-logfile -string "On premises replacement errors do not exist."
-                    }
-
-                    out-logfile -string "Generate HTML for Office 365 Replacement Errors."
-
-                    if ($office365ReplaceErrors.count -gt 0)
-                    {
-                        out-logfile -string "Office 365 Replacement Errors exist."
-
-                        new-htmlSection -HeaderText ("Office 365 Replacement Errors"){
-                            new-htmlTable -DataTable ($office365ReplaceErrors | select-object DistinguishedName,PrimarySMTPAddress,Alias,DisplayName,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
-                            } -AutoSize
-                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
-                    }
-                    else 
-                    {
-                        out-logfile -string "Office 365 Replacement Errors do not eixst."
-                    }
-
-                    out-logfile -string "Generate HTML for Office 365 Replace Permissions Errors"
-
-                    if ($global:office365ReplacePermissionsErrors.count -gt 0)
-                    {
-                        out-logfile -string "Office 365 Replace Permissions Errors exist."
-
-                        new-htmlSection -HeaderText ("Office 365 Permissions Replacement Errors"){
-                            new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object permissionIdentity,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
-                            } -AutoSize
-                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
-                    }
-                    else
-                    {
-                        out-logfile -string "Office 365 Replace Permissions Errors do not exist."
-                    }
-
-                    out-logfile -string "Generate HTML for On Premises Replace Permissions Errors"
-
-                    if ($onPremReplacePermissionsError.count -gt 0)
-                    {
-                        out-logfile -string "On Premises Replace Permissions Errors exist."
-
-                        new-htmlSection -HeaderText ("On Premises Permissions Replacement Errors"){
-                            new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object permissionIdentity,Attribute,ErrorMessage,ErrorMessageDetail ) -Filtering {
-                            } -AutoSize
-                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
-                    }
-                    else 
-                    {
-                        out-logfile -string "On Premises Replace Permissions Errors do not exist."
-                    }
-
-                    out-logfile -string "Generate HTML for General Errors"
-
-                    if ($global:generalErrors.count -gt 0)
-                    {
-                        out-logfile -string "General Errors exist."
-
-                        new-htmlSection -HeaderText ("General Errors"){
-                            new-htmlTable -DataTable ($global:office365ReplacePermissionsErrors | select-object ErrorMessage,ErrorMessageDetail ) -Filtering {
-                            } -AutoSize
-                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
-                    }
-                    else 
-                    {
-                        out-logfile -string "General Errors do not exist"
+                        out-logfile -string "Test Office 365 Errors do not exist."
                     }
                 }
                 else 
@@ -308,10 +222,6 @@ Function Start-DistributionListMigrationV3
                         new-htmlListItem -text ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count) -fontSize 14
                         new-htmlListItem -text ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count) -fontSize 14
                         new-htmlListItem -text ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count) -fontSize 14
-                        new-htmlListItem -text ("The number of objects included in the send as rights: "+$exchangeSendAsSMTP.count) -fontSize 14
-                        new-htmlListItem -text ("The number of groups on premsies that this group has send as rights on: "+$allObjectsSendAsAccessNormalized.Count) -fontSize 14
-                        new-htmlListItem -text ("The number of groups on premises that this group has full mailbox access on: "+$allObjectsFullMailboxAccess.count) -fontSize 14
-                        new-htmlListItem -text ("The number of mailbox folders on premises that this group has access to: "+$allMailboxesFolderPermissions.count) -fontSize 14
                         new-htmlListItem -text ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count) -fontSize 14
                         new-htmlListItem -text ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count) -fontSize 14
                         new-htmlListItem -text ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count) -fontSize 14
@@ -329,8 +239,6 @@ Function Start-DistributionListMigrationV3
                         new-htmlListItem -text ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count) -fontSize 14
                         new-htmlListItem -text ("The number of recipients that have send as rights on the group to be migrated = "+$allOffice365SendAsAccessOnGroup.count) -fontSize 14
                         new-htmlListItem -text ("The number of office 365 recipients where the group has send as rights = "+$allOffice365SendAsAccess.count) -fontSize 14
-                        new-htmlListItem -text ("The number of office 365 recipients with full mailbox access = "+$allOffice365FullMailboxAccess.count) -fontSize 14
-                        new-htmlListItem -text ("The number of office 365 mailbox folders with migrated group rights = "+$allOffice365MailboxFolderPermissions.count) -fontSize 14
                     }
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
 
@@ -899,6 +807,8 @@ Function Start-DistributionListMigrationV3
                         new-HTMLTimeLineItem -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
                         new-HTMLTimeLineItem -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
                         new-HTMLTimeLineItem -HeadingText "Start Cloud Validation" -Date $htmlStartCloudValidation
+                        new-HTMLTimeLineItem -HeadingText "Start OnPremises -> Cloud Validation" -Date $htmlStartCloudValidationOnPremises
+                        new-HTMLTimeLineItem -HeadingText "Start OnPremises Property -> Cloud Validation" -Date $htmlStartCloudValidationOffice365
                         new-HTMLTimeLineItem -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
                         new-HTMLTimeLineItem -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
                         new-HTMLTimeLineItem -HeadingText "Start Create Office 365 Stub Group" -Date $htmlCreateOffice365StubGroup
@@ -1871,6 +1781,7 @@ Function Start-DistributionListMigrationV3
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
     $htmlStartCloudValidation = get-date
+    $htmlStartCloudValidationOnPremises = get-Date
 
     $telemetryInfo.FunctionStartTime = get-universalDateTime
 
@@ -2163,6 +2074,8 @@ Function Start-DistributionListMigrationV3
             out-logfile -string "There were no grant send on behalf to members to evaluate."    
         }
     }
+
+    $htmlStartCloudValidationOffice365 = get-Date
 
     out-logfile -string "Determine if individual properties should be reviewed to ensure they match."
 
