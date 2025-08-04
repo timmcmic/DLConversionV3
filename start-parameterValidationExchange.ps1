@@ -31,6 +31,7 @@
         Out-LogFile -string "********************************************************************************"
 
         out-logfile -string "Validate that only a single Exchange credetial type is in use."
+        out-logfile -string "here"
 
         if ($exchangeOnlineCredential -ne $NULL -and (($exchangeOnlineCertificateThumbPrint -ne "") -or ($exchangeOnlineAppID -ne "") -or ($exchangeOnlineOrganizationName -ne "")))
         {
