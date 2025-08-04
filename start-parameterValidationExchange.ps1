@@ -35,17 +35,25 @@
 
         if ($exchangeOnlineCredential -eq $NULL -and (($exchangeOnlineCertificateThumbPrint -eq "") -and ($exchangeOnlineAppID -eq "") -and ($exchangeOnlineOrganizationName -eq "")))
         {
-            out-logfile -string "No Exchange Online credentials were specified - specify either credentials or application authentication."
+            out-logfile -string "No Exchange Online credentials were specified - specify either credentials or application authentication." -isError:$TRUE
         }
         elseif ($exchangeOnlineCredential -ne $NULL -and (($exchangeOnlineCertificateThumbPrint -ne "") -or ($exchangeOnlineAppID -ne "") -or ($exchangeOnlineOrganizationName -ne "")))
         {
-            out-logfile -string "Both an Exchange Online Credential and portions of Exchange Online Certificate Authenciation specified - choose one."
+            out-logfile -string "Both an Exchange Online Credential and portions of Exchange Online Certificate Authenciation specified - choose one." -isError:$TRUE
         }
         else 
         {
             out-logfile -string "Only a single exchange online authentication method is specified."
         }
-        
+
+        out-logfile -string "If any portion of certificate authentication is specified and you've reached this point - test and advise."
+
+        if (($exchangeOnlineAppID -eq "") -and (($exchangeOnlineOrganizationName -ne "") -and ($exchangeOnlineCertificateThumbPrint -ne "")))
+        {
+            out-logfile -string "Exchange Organization Name and Exchange Certificate Thumbprint required when specifing Exchange App ID."
+        }
+
+
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END start-parameterValidationExchange"
         Out-LogFile -string "********************************************************************************"
