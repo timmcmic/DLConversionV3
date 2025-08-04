@@ -15,6 +15,7 @@
         Param
         (
             [Parameter(Mandatory = $true)]
+            [AllowNull()]
             $exchangeOnlineCredential,
             [Parameter(Mandatory = $true)]
             $exchangeOnlineAppID,
