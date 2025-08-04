@@ -72,7 +72,42 @@ Function Start-DistributionListMigrationV3
         [string]$groupSMTPAddress,
         #Define other mandatory parameters
         [Parameter(Mandatory = $true)]
-        [string]$logFolderPath
+        [string]$logFolderPath,
+        #Local Active Director Domain Controller Parameters
+        [Parameter(Mandatory = $true)]
+        [string]$globalCatalogServer,
+        [Parameter(Mandatory = $true)]
+        [pscredential]$activeDirectoryCredential,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("Basic","Negotiate")]
+        $activeDirectoryAuthenticationMethod="Negotiate",
+        #Azure Active Directory Connect Parameters
+        [Parameter(Mandatory = $false)]
+        [string]$aadConnectServer=$NULL,
+        #Exchange Online Parameters
+        [Parameter(Mandatory = $false)]
+        [pscredential]$exchangeOnlineCredential=$NULL,
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineCertificateThumbPrint="",
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineOrganizationName="",
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("O365Default","O365GermanyCloud","O365China","O365USGovGCCHigh","O365USGovDoD")]
+        [string]$exchangeOnlineEnvironmentName="O365Default",
+        [Parameter(Mandatory = $false)]
+        [string]$exchangeOnlineAppID="",
+        #Define Microsoft Graph Parameters
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("China","Global","USGov","USGovDod")]
+        [string]$msGraphEnvironmentName="Global",
+        [Parameter(Mandatory=$true)]
+        [string]$msGraphTenantID="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphCertificateThumbprint="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphApplicationID="",
+        [Parameter(Mandatory=$false)]
+        [string]$msGraphClientSecret=""
     )
 
     #Estbalish the HTML reporting start time.
@@ -325,12 +360,43 @@ Function Start-DistributionListMigrationV3
     [string]$global:staticFolderName="\DLMigration\"
     $traceFilePath = $logFolderPath + $global:staticFolderName
 
-    out-logfile -string "=============================================================================="
-    out-logfile -string "Starting Start-DistributionListMigration-V3"
-    out-logfile -string "=============================================================================="
-
     out-logfile -string ("Log File: "+$global:logFile)
     out-logfile -string ("Trace File: "+$traceFilePath)
 
     $htmlFunctionStartTime = get-Date
+
+    out-logfile -string "********************************************************************************"
+    out-logfile -string "NOTICE"
+    out-logfile -string "Telemetry collection is now enabled by default."
+    out-logfile -string "For information regarding telemetry collection see https://timmcmic.wordpress.com/2022/11/14/4288/"
+    out-logfile -string "Administrators may opt out of telemetry collection by using -allowTelemetryCollection value FALSE"
+    out-logfile -string "Telemetry collection is appreciated as it allows further development and script enhancement."
+    out-logfile -string "********************************************************************************"
+
+    #Output all parameters bound or unbound and their associated values.
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "PARAMETERS"
+    Out-LogFile -string "********************************************************************************"
+
+    write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
+
+    Out-LogFile -string "================================================================================"
+    Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATIONV3"
+    Out-LogFile -string "================================================================================"
+
+    out-logfile -string ("Runtime start UTC: " + $telemetryStartTime.ToString())
+
+    if ($errorActionPreference -ne "Continue")
+    {
+        out-logfile -string ("Current Error Action Preference: "+$errorActionPreference)
+        $errorActionPreference = "Continue"
+        out-logfile -string ("New Error Action Preference: "+$errorActionPreference)
+    }
+    else
+    {
+        out-logfile -string ("Current Error Action Preference is CONTINUE: "+$errorActionPreference)
+    }
+
+
 }
