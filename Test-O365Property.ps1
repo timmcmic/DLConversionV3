@@ -27,7 +27,9 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            $member
+            $member,
+            [Parameter(Mandatory = $true)]
+            $memberShip
         )
 
         out-logfile -string "Output bound parameters..."
@@ -39,6 +41,7 @@
         #Declare local variables.
 
         [string]$isTestError="No"
+        $functionRecipient=$NULL
 
         #Start function processing.
 
@@ -46,9 +49,59 @@
         Out-LogFile -string "BEGIN TEST-O365Property"
         Out-LogFile -string "********************************************************************************"
 
-        
+        out-logfile -string "Obtain recipient information from Office 365."
 
-        Out-LogFile -string "END TEST-O365RECIPIENT"
+        if ($member.externalDirectoryObjectID -ne "")
+        {
+            out-logfile -string "External directory object ID specified - test."
+            out-logfile -string $member.externalDirectoryObjectID
+
+            $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+
+            out-logfile -string $functionDirectoryObjectID[1]
+
+            try {
+                $functionRecipient = get-recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
+            }
+            catch {
+                out-logfile -string "Unable to locate user by external directory object id."
+                $isTestError="Yes"
+            }
+        }
+        elseif ($member.primarySMTPAddressOrUPN -ne "") 
+        {
+            out-logfile -string "Primary smtp address or upn specified - test."
+
+            try {
+                $functionRecipient = get-recipient -identity $member.primarySMTPAddressOrUPN -errorAction STOP
+            }
+            catch {
+                out-logfile -string "Unable to locate user by primary SMTP address or UPN."
+                $isTestError="Yes"
+            }
+        }
+
+        if ($isTestError -eq "No")
+        {
+            out-logfile -string "Previous errors not encountered - test further."
+            out-logfile -string $functionRecipient.name
+
+            if ($membership.contains($functionRecipient.name))
+            {
+                out-logfile -string "User was located successfully."
+            }
+            else 
+            {
+                out-logfile -string "User was not located successfully."
+                $isTestError="Yes"
+            }
+        }
+        else 
+        {
+            Out-logfile -string "No further testing required."
+        }
+
+        Out-LogFile -string "END TEST-O365Property"
         Out-LogFile -string "********************************************************************************"    
 
         return $isTestError
