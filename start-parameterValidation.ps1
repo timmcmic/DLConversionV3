@@ -41,7 +41,6 @@
             [Parameter(Mandatory = $true,ParameterSetName = 'msGraphClientSecretAuth')]
             [AllowNull()]
             $msGraphApplicationID,
-            [Parameter(Mandatory = $true,ParameterSetName = 'msGraphCertAuth')]
             [Parameter(Mandatory = $true,ParameterSetName = 'msGraphClientSecretAuth')]
             [AllowNull()]
             $msGraphClientSecret
@@ -69,6 +68,11 @@
         if ($functionParameterSetName -eq $activeDirectoryParameterSetName)
         {
             test-credentials -credentialsToTest $activeDirectoryCredential
+        }
+
+        if (($msGraphClientSecret -ne "") -and ($msGraphCertificateThumbprint -ne ""))
+        {
+            out-logfile -string "Error:  Please specify either a client secret or certificate thumbprint for graph application authentication." -isError:$TRUE
         }
 
         if ($functionParameterSetName -eq $msGraphParameterSetNameCertAuth)

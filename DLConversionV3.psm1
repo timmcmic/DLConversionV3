@@ -485,21 +485,17 @@ Function Start-DistributionListMigrationV3
 
     start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 
-    if (($msGraphCertificateThumbprint -ne "") -and ($msGraphClientSecret -ne ""))
-    {
-        out-logfile -string "Please specify only one authenticaiton method for graph applications - either certificate or client secret." -isError:$TRUE
-    }
-    elseif ($msGraphCertificateThumbprint -ne "")
+    if ($msGraphCertificateThumbprint -ne "")
     {
         out-logfile -string "Validation all components available for MSGraph Cert Auth"
 
-        start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+        start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID -msGraphClientSecret $msGraphClientSecret
     }
     elseif ($msGraphClientSecret -ne "")
     {
         out-logfile -string "Validation all components available for MSGraph Client Secret Auth"
 
-        start-parameterValidation -msGraphClientSecret $msGraphClientSecret -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+        start-parameterValidation -msGraphClientSecret $msGraphClientSecret -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID -msGraphCertificateThumbPrint $msGraphCertificateThumbprint
     }
     else
     {
