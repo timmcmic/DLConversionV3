@@ -476,7 +476,7 @@ Function Start-DistributionListMigrationV3
     #Validate any credentials passed are of type PS Credential
 
     out-logfile -string "Testing global catalog credentials"
-    test-credentials -credentialToTest $activeDirectoryCredential
+    test-credentials -credentialsToTest $activeDirectoryCredential
 
     #Validate Exchange Online Credentials
 
