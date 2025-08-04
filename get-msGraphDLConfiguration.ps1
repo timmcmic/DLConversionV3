@@ -27,7 +27,9 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            $office365DLConfiguration
+            $office365DLConfiguration,
+            [Parameter(Mandatory = $true)]
+            $msGraphURL
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -41,15 +43,19 @@
         Out-LogFile -string "********************************************************************************"
 
         #Get the recipient using the exchange online powershell session.
+
+        $functionURI = $msGraphURL + "groups/"
+        out-logfile -string $functionURI
+        $functionURI = $functionURI + $office365DLConfiguration.externalDirectoryObjectID.tostring()
+        out-logfile -string $functionURI
         
         try{
             #$functionDLConfiguration = get-mgGroup -groupID $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
-
-            $functionDLConfiguration 
+            $functionDLConfiguration = Invoke-MgGraphRequest -Method Get -Uri $functionURI -errorAction STOP -debug 
         }
         catch {
-            out-logfile -string $_
             out-logfile -string "Unable to obtain group configuration from Azure Active Directory"
+            out-logfile -string $_ -isError:$TRUE
         }
 
         Out-LogFile -string "END get-msGraphDLConfiguration"

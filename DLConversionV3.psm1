@@ -391,7 +391,9 @@ Function Start-DistributionListMigrationV3
 
     out-logfile -string "Obtain the graph URL for calls."
 
-    $msGrpahURL = get-GraphEnvironment -msGraphEnvironmentName $msGraphEnvironmentName -useBeta:$true
+    $msGraphURL = get-GraphEnvironment -msGraphEnvironmentName $msGraphEnvironmentName -useBeta:$true
+
+    out-logfile -string ("Graph URL: "+$msGraphURL)
 
     $htmlStartValidationTime = get-date
 
@@ -558,7 +560,7 @@ Function Start-DistributionListMigrationV3
 
     $htmlCaptureGraphDLConfiguration = get-date
 
-    $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration -errorAction STOP
+    $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration -msGraphURL $msGraphURL -errorAction STOP
 
     out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
 
