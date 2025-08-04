@@ -2621,4 +2621,82 @@ Function Start-DistributionListMigrationV3
     {
         out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $xmlFiles.allGroupsGrantSendOnBehalfToXML.value
     }
+
+    #Ok so at this point we have preserved all of the information regarding the on premises DL.
+    #It is possible that there could be cloud only objects that this group was made dependent on.
+    #For example - the dirSync group could have been added as a member of a cloud only group - or another group that was migrated.
+    #The issue here is that this gets VERY expensive to track - since some of the word to do do is not filterable.
+    #With the LDAP improvements we no longer offert the option to track on premises - but the administrator can choose to track the cloud
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "START RETAIN OFFICE 365 GROUP DEPENDENCIES"
+    Out-LogFile -string "********************************************************************************"
+
+    $htmlRecordOffice365Dependencies = get-date
+
+    $telemetryInfo.FunctionStartTime = get-universalDateTime
+
+    out-logfile -string "Obtain all office 365 member of."
+    $allOffice365MemberOf = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365Members.value -errorAction STOP
+    out-logfile -string "Obtain all office 365 accept messages from senders or members."
+    $allOffice365Accept = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedame -attributeType $office365Attributes.office365AcceptMessagesFrom.value -errorAction STOP
+    out-logfile -string "Obtain all office 365 reject messages from senders or members."
+    $allOffice365Reject = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365RejectMessagesFrom.value -errorAction STOP
+    out-logfile -string "Obtain all office 365 bypass moderation from senders or members."
+    $allOffice365BypassModeration = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365BypassModerationFrom.value -errorAction STOP
+    out-logfile -string "Obtain all office 365 grant send on behalf to."
+    $allOffice365GrantSendOnBehalfTo = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365GrantSendOnBehalfTo.value -errorAction STOP
+    out-logfile -string "Obtain all office 365 managedBy."
+    $allOffice365ManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365ManagedBy.value -errorAction STOP
+    out-logfile -string "Obtain all office 365 forwardingAddress."
+    $allOffice365ForwardingAddress = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365ForwardingAddress.value -errorAction STOP
+    out-logfile -string "Obtain all office 365 Send As on Others."
+    $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -isTrustee:$TRUE -office365GroupConfiguration $office365GroupConfiguration -errorAction STOP
+    out-logfile -string "Obtain all office 365 Send As on Group."
+    $allOffice365SendAsAccessOnGroup = get-o365DLSendAs -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
+
+    if ($allOffice365MemberOf -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $allOffice365MemberOf -itemNameToExport $xmlFiles.allOffice365MemberOfXML.value
+    }
+
+    if ($allOffice365Accept -ne $NULL)
+    {
+        out-xmlFile -itemToExport $allOffice365Accept -itemNameToExport $xmlFiles.allOffice365AcceptXML.value
+    }
+
+    if ($allOffice365Reject -ne $NULL)
+    {
+        out-xmlFile -itemToExport $allOffice365Reject -itemNameToExport $xmlFiles.allOffice365RejectXML.value
+    }
+    
+    if ($allOffice365BypassModeration -ne $NULL)
+    {
+        out-xmlFile -itemToExport $allOffice365BypassModeration -itemNameToExport $xmlFiles.allOffice365BypassModerationXML.value
+    }
+
+    if ($allOffice365GrantSendOnBehalfTo -ne $NULL)
+    {
+        out-xmlfile -itemToExport $allOffice365GrantSendOnBehalfTo -itemNameToExport $xmlFiles.allOffice365GrantSendOnBehalfToXML.value
+    }
+
+    if ($allOffice365ManagedBy -ne $NULL)
+    {
+        out-xmlFile -itemToExport $allOffice365ManagedBy -itemNameToExport $xmlFiles.allOffice365ManagedByXML.value
+    }
+
+    if ($allOffice365ForwardingAddress -ne $NULL)
+    {
+        out-xmlfile -itemToExport $allOffice365ForwardingAddress -itemNameToExport $xmlFiles.allOffice365ForwardingAddressXML.value
+    }
+
+    if ($allOffice365SendAsAccess -ne $NULL)
+    {
+        out-xmlfile -itemToExport $allOffice365SendAsAccess -itemNameToExport $xmlFiles.allOffic365SendAsAccessXML.value
+    }
+
+    if ($allOffice365SendAsAccessOnGroup -ne $NULL)
+    {
+        out-xmlfile -itemToExport $allOffice365SendAsAccessOnGroup -itemNameToExport $xmlFiles.allOffice365SendAsAccessOnGroupXML.value
+    }
 }
