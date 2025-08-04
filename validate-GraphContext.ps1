@@ -35,17 +35,17 @@
                 foreach ($value in $object.Value)
                 {
                     $string = ($object.name + " " + $value.tostring())
-                    out-logfile -string
+                    out-logfile -string $string
                 }
             }
             elseif ($object.value -ne $NULL)
             {
                 $string = ($object.name + " " + $object.value.tostring())
-                out-logfile -string                         }
+                out-logfile -string $string                        }
             else
             {
                 $string = ($object.name)
-                out-logfile -string 
+                out-logfile -string $string
             }
         }
 
