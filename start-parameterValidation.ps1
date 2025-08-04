@@ -56,7 +56,6 @@
         $msGraphParameterSetNameCertAuth = "MSGraphCertAuth"
         $msGraphParameterSetNameSecretAuth = "MsGraphClientSecretAuth"
         $activeDirectoryParameterSetName = "ActiveDirectory"
-        $functionTrueFalse = $false
 
         #Start function processing.
 
@@ -140,7 +139,6 @@
             else 
             {
                 out-logfile -string "All components necessary for Exchange certificate thumbprint authentication were specified."    
-                $functionTrueFalse = $TRUE
             }
         }
 
@@ -166,6 +164,4 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END start-parameterValidation"
         Out-LogFile -string "********************************************************************************"
-
-        return $functionTrueFalse
     }

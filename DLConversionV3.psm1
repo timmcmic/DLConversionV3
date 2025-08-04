@@ -478,4 +478,21 @@ Function Start-DistributionListMigrationV3
     Out-LogFile -string "Validating Exchange Online Credentials."
 
     start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint
+
+    #Validating that all portions for exchange certificate auth are present.
+
+    out-logfile -string "Validating parameters for Exchange Online Certificate Authentication"
+
+    start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
+
+    if ($msGraphCertificateThumbprint -eq "")
+    {
+        out-logfile -string "Validation all components available for MSGraph Cert Auth"
+
+        start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID
+    }
+    else
+    {
+        out-logfile -string "MS graph cert auth is not being utilized - assume interactive auth."
+    }
 }
