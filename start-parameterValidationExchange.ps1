@@ -29,6 +29,13 @@
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "START start-parameterValidationExchange"
         Out-LogFile -string "********************************************************************************"
+
+        out-logfile -string "Validate that only a single Exchange credetial type is in use."
+
+        if ($exchangeOnlineCredential -ne $NULL -and $exchangeOnlineCertificateThumbPrint -ne "")
+        {
+            out-logfile -string "Both an Exchange Online Credential and Exchange Online Certificate Thumbprint specified - please use only one type of authentication method."
+        }
         
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "END start-parameterValidationExchange"
