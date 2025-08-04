@@ -81,7 +81,7 @@
             #If the call is from a function in a do while - write-error rethrows the exception.  The exception is caught by the caller where a retry occurs.
             #This is how we end up logging an error then looping back around.
 
-            out-logfile -string "Here1"
+            out-logfile -string $ErrorActionPreference
 
             write-error $logString
 
