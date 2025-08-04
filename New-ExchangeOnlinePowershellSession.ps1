@@ -81,7 +81,14 @@
         {
             out-logfile -string "Attempting interactive authentication."
 
-            Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
+            try {
+                Connect-ExchangeOnline -prefix $exchangeOnlineCommandPrefix -exchangeEnvironmentName $exchangeOnlineEnvironmentName -EnableErrorReporting -LogDirectoryPath $debugLogPath -LogLevel All -errorAction Stop
+            }
+            catch {
+                out-logfile -string "Unable to complete Exchange Online Interactive Authentication"
+                out-logfile -string $_
+            }
+
         }
         elseif ($exchangeOnlineCredentials -ne $NULL)
         {
