@@ -2421,7 +2421,7 @@ Function Start-DistributionListMigrationV3
 
     $telemetryInfo.FunctionStartTime = get-universalDateTime
 
-    ut-logfile -string "Get all the groups that this user is a member of - normalize to canonicalname."
+    out-logfile -string "Get all the groups that this user is a member of - normalize to canonicalname."
 
     #Start with groups this DL is a member of remaining on premises.
 
@@ -2519,5 +2519,106 @@ Function Start-DistributionListMigrationV3
         {
             $allGroupsManagedBy += get-canonicalname -globalCatalog $corevariables.globalCatalogWithPort.value -dn $DN -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -errorAction STOP
         }
+    }
+
+    $telemetryInfo.FunctionEndTime = get-universalDateTime
+
+    $telemetryDependencyOnPrem = get-elapsedTime -startTime $telemetryInfo.FunctionStartTime -endTime $telemetryInfo.FunctionEndTime
+
+    out-logfile -string ("Time to calculate on premsies dependencies: "+ $telemetryDependencyOnPrem.toString())
+
+    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
+    out-logfile -string ("Summary of dependencies found:")
+    out-logfile -string ("The number of groups that the migrated DL is a member of = "+$allGroupsMemberOf.count)
+    out-logfile -string ("The number of groups that this group is a manager of: = "+$allGroupsManagedBy.count)
+    out-logfile -string ("The number of groups that this group has grant send on behalf to = "+$allGroupsGrantSendOnBehalfTo.count)
+    out-logfile -string ("The number of groups that have this group as bypass moderation = "+$allGroupsBypassModeration.count)
+    out-logfile -string ("The number of groups with accept permissions = "+$allGroupsAccept.count)
+    out-logfile -string ("The number of groups with reject permissions = "+$allGroupsReject.count)
+    out-logfile -string ("The number of mailboxes forwarding to this group is = "+$allUsersForwardingAddress.count)
+    out-logfile -string ("The number of groups this group is a co-manager on = "+$allGroupsCoManagedByBL.Count)
+    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
+
+    #Exit #Debug exit
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END RECORD DEPENDENCIES ON MIGRATED GROUP"
+    Out-LogFile -string "********************************************************************************"
+
+    Out-LogFile -string "Recording all gathered information to XML to preserve original values."
+    
+    if ($exchangeDLMembershipSMTP -ne $NULL)
+    {
+        Out-XMLFile -itemtoexport $exchangeDLMembershipSMTP -itemNameToExport $xmlFiles.exchangeDLMembershipSMTPXML.value
+    }
+
+    if ($exchangeRejectMessagesSMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeRejectMessagesSMTP -itemNameToExport $xmlFiles.exchangeRejectMessagesSMTPXML.value
+    }
+
+    if ($exchangeAcceptMessagesSMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeAcceptMessagesSMTP -itemNameToExport $xmlFiles.exchangeAcceptMessagesSMTPXML.value
+    }
+
+    if ($exchangeManagedBySMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeManagedBySMTP -itemNameToExport $xmlFiles.exchangeManagedBySMTPXML.value
+    }
+
+    if ($exchangeModeratedBySMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeModeratedBySMTP -itemNameToExport $xmlFiles.exchangeModeratedBySMTPXML.value
+    }
+
+    if ($exchangeBypassModerationSMTP -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $exchangeBypassModerationSMTP -itemNameToExport $xmlFiles.exchangeBypassModerationSMTPXML.value
+    }
+
+    if ($exchangeGrantSendOnBehalfToSMTP -ne $NULL)
+    {
+        out-xmlfile -itemToExport $exchangeGrantSendOnBehalfToSMTP -itemNameToExport $xmlFiles.exchangeGrantSendOnBehalfToSMTPXML.value
+    }
+
+    if ($allGroupsMemberOf -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $allGroupsMemberOf -itemNameToExport $xmlFiles.allGroupsMemberOfXML.value
+    }
+    
+    if ($allGroupsReject -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $allGroupsReject -itemNameToExport $xmlFiles.allGroupsRejectXML.value
+    }
+    
+    if ($allGroupsAccept -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $allGroupsAccept -itemNameToExport $xmlFiles.allGroupsAcceptXML.value
+    }
+
+    if ($allGroupsCoManagedByBL -ne $NULL)
+    {
+        out-xmlfile -itemToExport $allGroupsCoManagedByBL -itemNameToExport $xmlFiles.allGroupsCoManagedByXML.value
+    }
+
+    if ($allGroupsBypassModeration -ne $NULL)
+    {
+        out-xmlfile -itemtoexport $allGroupsBypassModeration -itemNameToExport $xmlFiles.allGroupsBypassModerationXML.value
+    }
+
+    if ($allUsersForwardingAddress -ne $NULL)
+    {
+        out-xmlFile -itemToExport $allUsersForwardingAddress -itemNameToExport $xmlFiles.allUsersForwardingAddressXML.value
+    }
+
+    if ($allGroupsManagedBy -ne $NULL)
+    {
+        out-xmlFile -itemToExport $allGroupsManagedBy -itemNameToExport $xmlFiles.allGroupsManagedByXML.value
+    }
+
+    if ($allGroupsGrantSendOnBehalfTo -ne $NULL)
+    {
+        out-xmlFile -itemToExport $allGroupsGrantSendOnBehalfTo -itemNameToExport $xmlFiles.allGroupsGrantSendOnBehalfToXML.value
     }
 }
