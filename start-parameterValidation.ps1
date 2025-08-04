@@ -153,7 +153,7 @@
             {
                 Out-LogFile -string "Only one method of Exchange Online authentication specified."
 
-                if ($functionParamterSetName -eq $exchangeOnlineParameterSetName)
+                if ($functionParameterSetName -eq $exchangeOnlineParameterSetName)
                 {
                     out-logfile -string "Validating the exchange online credential array"
 
