@@ -2158,8 +2158,6 @@ Function Start-DistributionListMigrationV3
         {
             out-logfile -string "There were no grant send on behalf to members to evaluate."    
         }
-
-        out-logfile -string "Begin evaluation all members with send as rights."
     }
 
     Out-LogFile -string "********************************************************************************"
