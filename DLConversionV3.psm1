@@ -2256,12 +2256,12 @@ Function Start-DistributionListMigrationV3
                 out-LogFile -string ("Testing = "+$member.primarySMTPAddressOrUPN)
 
                 try{
-                    $isTestError=test-O365Recipient -member $member
+                    $isTestError=test-o365Property -member $member -membership $office365DLConfiguration.AcceptMessagesOnlyFromSendersOrMembers
 
                     if ($isTestError -eq "Yes")
                     {
                         $member.isError = $TRUE
-                        $member.isErrorMessage = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+                        $member.isErrorMessage = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with AcceptMessagesFromSendersOrMembers rights not found on Office 365 DL."
 
                         out-logfile -string $member
 
