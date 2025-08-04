@@ -112,7 +112,11 @@
                     out-logfile -string $_ -isError:$TRUE
                 }
 
+                out-logfile -string "Creating the client secret credential."
+
                 $clientSecretCredential = new-object -typeName System.Management.Automation.PSCredential -argumentList $msGraphApplicationID,$securedPasswordPassword
+
+                out-logfile -string "Connecting to graph using the client secret credential."
 
                 try {
                     Connect-MgGraph -tenantID $msGraphTenantID -environment $msGraphEnvironmentName -ClientSecretCredential $clientSecretCredential -errorAction Stop
