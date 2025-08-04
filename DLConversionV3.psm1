@@ -1019,4 +1019,27 @@ Function Start-DistributionListMigrationV3
     {
         out-logfile "The group has no grant send on behalf to."    
     }
+
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END NORMALIZE DNS FOR ALL ATTRIBUTES"
+    Out-LogFile -string "********************************************************************************"
+
+    $telemetryInfo.FunctionEndTime = get-universalDateTime
+
+    $telemetryNormalizeDN = get-elapsedTime -startTime $telemetryInfo.FunctionStartTime -endTime $telemetryInfo.FunctionEndTime
+
+    out-logfile -string ("Time to Normalize DNs: "+$telemetryNormalizeDN.toString())
+
+    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
+    out-logFile -string "Summary of group information:"
+    out-logfile -string ("The number of objects included in the member migration: "+$exchangeDLMembershipSMTP.count)
+    out-logfile -string ("The number of objects included in the reject memebers: "+$exchangeRejectMessagesSMTP.count)
+    out-logfile -string ("The number of objects included in the accept memebers: "+$exchangeAcceptMessagesSMTP.count)
+    out-logfile -string ("The number of objects included in the managedBY memebers: "+$exchangeManagedBySMTP.count)
+    out-logfile -string ("The number of objects included in the moderatedBY memebers: "+$exchangeModeratedBySMTP.count)
+    out-logfile -string ("The number of objects included in the bypassModeration memebers: "+$exchangeBypassModerationSMTP.count)
+    out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
+    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
+
+    
 }
