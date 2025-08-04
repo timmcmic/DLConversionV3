@@ -341,6 +341,8 @@ Function Start-DistributionListMigrationV3
     $office365DLMembership=$NULL
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
 
+    $dlPropertySet = '*' #Clear all properties of a given object
+
     #Initilize the log file.
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
