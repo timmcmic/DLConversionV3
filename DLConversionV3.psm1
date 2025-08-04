@@ -249,5 +249,66 @@ Function Start-DistributionListMigration
     [array]$dlPropertiesToClearModern='authOrig','DisplayName','DisplayNamePrintable',$onPremADAttributes.onPremRejectMessagesfromDLMembers.Value,$onPremADAttributes.onPremAcceptMessagesfromDLMembers.Value,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$onPremADAttributes.onPremBypassModerationFromDL.Value,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$onPremADAttributes.onPremGrantSendOnBehalfTo.Value,'reportToOriginator','reportToOwner','unAuthOrig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchGroupSecurityFlags','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion' #Properties Exchange 2016 or newer schema.
     [array]$dlPropertiesToClearLegacy='authOrig','DisplayName','DisplayNamePrintable',$onPremADAttributes.onPremRejectMessagesfromDLMembers.Value,$onPremADAttributes.onPremAcceptMessagesfromDLMembers.Value,'extensionAttribute1','extensionAttribute10','extensionAttribute11','extensionAttribute12','extensionAttribute13','extensionAttribute14','extensionAttribute15','extensionAttribute2','extensionAttribute3','extensionAttribute4','extensionAttribute5','extensionAttribute6','extensionAttribute7','extensionAttribute8','extensionAttribute9','legacyExchangeDN','mail','mailNickName','msExchRecipientDisplayType','msExchRecipientTypeDetails','msExchRemoteRecipientType',$onPremADAttributes.onPremBypassModerationFromDL.Value,'msExchBypassModerationLink','msExchCoManagedByLink','msExchEnableModeration','msExchExtensionCustomAttribute1','msExchExtensionCustomAttribute2','msExchExtensionCustomAttribute3','msExchExtensionCustomAttribute4','msExchExtensionCustomAttribute5','msExchGroupDepartRestriction','msExchGroupJoinRestriction','msExchHideFromAddressLists','msExchModeratedByLink','msExchModerationFlags','msExchRequireAuthToSendTo','msExchSenderHintTranslations','oofReplyToOriginator','proxyAddresses',$onPremADAttributes.onPremGrantSendOnBehalfTo.Value,'reportToOriginator','reportToOwner','unAuthOrig','msExchArbitrationMailbox','msExchPoliciesIncluded','msExchUMDtmfMap','msExchVersion','showInAddressBook','msExchAddressBookFlags','msExchBypassAudit','msExchGroupExternalMemberCount','msExchGroupMemberCount','msExchLocalizationFlags','msExchMailboxAuditEnable','msExchMailboxAuditLogAgeLimit','msExchMailboxFolderSet','msExchMDBRulesQuota','msExchPoliciesIncluded','msExchProvisioningFlags','msExchRecipientSoftDeletedStatus','msExchRoleGroupType','msExchTransportRecipientSettingsFlags','msExchUMDtmfMap','msExchUserAccountControl','msExchVersion' #Properties Exchange 2013 or older schema
 
+    #On premises variables for the distribution list to be migrated.
+
+    $originalDLConfiguration=$NULL #This holds the on premises DL configuration for the group to be migrated.
+    $originalAzureADConfiguration=$NULL #This holds the azure ad DL configuration
+    $originalDLConfigurationUpdated=$NULL #This holds the on premises DL configuration post the rename operations.
+    $routingContactConfig=$NULL #Holds the mail routing contact configuration.
+    $routingDynamicGroupConfig=$NULL #Holds the dynamic distribution list configuration used for mail routing.
+    $routingContactConfiguration=$NULL #This is the empty routing contact configuration.
+    [array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
+    [array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
+    [array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
+    [array]$exchangeManagedBySMTP=@() #Array of members with manage by rights from AD.
+    [array]$exchangeModeratedBySMTP=@() #Array of members  with moderation rights.
+    [array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
+    [array]$exchangeGrantSendOnBehalfToSMTP=@() #Array of objects with grant send on behalf to normalized SMTP
+    [array]$exchangeSendAsSMTP=@() #Array of objects wtih send as rights normalized SMTP
+
+    #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
+
+    [array]$allGroupsMemberOf=$NULL #Complete AD information for all groups the migrated group is a member of.
+    [array]$allGroupsReject=$NULL #Complete AD inforomation for all groups that the migrated group has reject mesages from.
+    [array]$allGroupsAccept=$NULL #Complete AD information for all groups that the migrated group has accept messages from.
+    [array]$allGroupsBypassModeration=$NULL #Complete AD information for all groups that the migrated group has bypass moderations.
+    [array]$allUsersForwardingAddress=$NULL #All users on premsies that have this group as a forwarding DN.
+    [array]$allGroupsGrantSendOnBehalfTo=$NULL #All dependencies on premsies that have grant send on behalf to.
+    [array]$allGroupsManagedBy=$NULL #All dependencies on premises that have managed by rights
+    [array]$allObjectsFullMailboxAccess=$NULL #All dependencies on premises that have full mailbox access rights
+    [array]$allObjectSendAsAccess=$NULL #All dependencies on premises that have the migrated group with send as rights.
+    [array]$allObjectsSendAsAccessNormalized=@() #All dependencies send as rights normalized
+    [array]$allMailboxesFolderPermissions=@() #All dependencies on premises with mailbox folder permissions defined
+    [array]$allGroupsCoManagedByBL=$NULL #All groups on premises where the migrated group is a manager
+
+    #The following variables hold information regarding Office 365 objects that have dependencies on the migrated DL.
+
+    [array]$allOffice365MemberOf=$NULL #All cloud only groups the migrated group is a member of.
+    [array]$allOffice365Accept=$NULL #All cloud only groups the migrated group has accept messages from senders or members.
+    [array]$allOffice365Reject=$NULL #All cloud only groups the migrated group has reject messages from senders or members.
+    [array]$allOffice365BypassModeration=$NULL #All cloud only groups the migrated group has bypass moderation from senders or members.
+    [array]$allOffice365ManagedBy=$NULL #All cloud only groups the migrated group has managed by rights on.
+    [array]$allOffice365GrantSendOnBehalfTo=$NULL #All cloud only groups the migrated group has grant send on behalf to on.
+    [array]$allOffice365ForwardingAddress=$NULL #All cloud only recipients the migrated group has forwarding address 
+    [array]$allOffice365FullMailboxAccess=$NULL #All cloud only recipients the migrated group has full ,amilbox access on.
+    [array]$allOffice365SendAsAccess=$NULL #All cloud only groups the migrated group has send as access on.
+    [array]$allOffice365SendAsAccessOnGroup = $NULL #All send as permissions set on the on premises group that are set in the cloud.
+    [array]$allOffice365MailboxFolderPermissions=$NULL #All cloud only groups the migrated group has mailbox folder permissions on.
+
+    #Cloud variables for the distribution list to be migrated.
+
+    $office365DLConfiguration = $NULL #This holds the office 365 DL configuration for the group to be migrated.
+    $office365GroupConfiguration = $NULL #This holds the office 365 group configuration for the group to be migrated.
+    $msGraphDLConfiguration = $NULL #This holds the Azure AD DL configuration
+    $msGraphDlMembership = $NULL
+    $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
+    $office365DLMembership=$NULL
+    $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
+
+    #Exchange Schema Version
+
+    [int]$exchangeRangeUpper=$NULL
+    [int]$exchangeLegacySchemaVersion=15317 #Exchange 2016 Preview Schema - anything less is legacy.
+
     
 }
