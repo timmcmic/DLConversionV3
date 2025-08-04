@@ -16,7 +16,7 @@
 #############################################################################################
 
 
-Function Start-DistributionListMigration 
+Function Start-DistributionListMigrationV3 
 {
     
     <#
