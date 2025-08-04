@@ -129,7 +129,7 @@ Function Start-DistributionListMigrationV3
     #Create telemetry values.
 
     $telemetryInfo = @{
-        telemetryDLConversionV2Version = $NULL
+        telemetryDLConversionV3Version = $NULL
         telemetryExchangeOnlineVersion = $NULL
         telemetryAzureADVersion = $NULL
         telemetryMSGraphAuthentication = $NULL
@@ -485,5 +485,19 @@ Function Start-DistributionListMigrationV3
     Out-LogFile -string "ESTABLISH POWERSHELL SESSIONS"
     Out-LogFile -string "********************************************************************************"
 
-    
+    Out-LogFile -string "Calling Test-PowerShellModule to validate the Exchange Module is installed."
+
+    $telemetryInfo.telemetryExchangeOnlineVersion = Test-PowershellModule -powershellModuleName $corevariables.exchangeOnlinePowershellModuleName.value -powershellVersionTest:$TRUE
+
+    Out-LogFile -string "Calling Test-PowerShellModule to validate the Active Directory is installed."
+
+    $telemetryInfo.telemetryActiveDirectoryVersion = Test-PowershellModule -powershellModuleName $corevariables.activeDirectoryPowershellModuleName.value
+
+    out-logfile -string "Calling Test-PowershellModule to validate the DL Conversion Module version installed."
+
+    $telemetryInfo.telemetryDLConversionV3Version = Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
+
+    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
+
+    $telemetryInfo.telemetryMSGraphAuthentication = test-powershellModule -powershellmodulename $corevariables.msgraphauthenticationpowershellmodulename.value -powershellVersionTest:$TRUE
 }
