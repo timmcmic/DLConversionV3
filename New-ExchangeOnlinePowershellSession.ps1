@@ -44,7 +44,7 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            [AllowNull]
+            [AllowNull()]
             [pscredential]$exchangeOnlineCredentials,
             [Parameter(Mandatory = $true)]
             [string]$exchangeOnlineCertificateThumbPrint,
