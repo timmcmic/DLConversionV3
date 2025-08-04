@@ -66,7 +66,7 @@
         }
         elseif (($exchangeOnlineCertificateThumbPrint -ne "") -and (($exchangeOnlineOrganizationName -eq "") -and ($exchangeOnlineAppID -eq "")))
         {
-            out-logfile -string "Exchange Online organiztion name and app id required when specifying certificate thumbprint."
+            out-logfile -string "Exchange Online organization name and app id required when specifying certificate thumbprint."
         }
         elseif (($exchangeOnlineOrganizationName -ne "") -and (($exchangeOnlineCertificateThumbPrint -eq "") -and ($exchangeOnlineAppID -eq "")))
         {
