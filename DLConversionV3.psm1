@@ -525,5 +525,5 @@ Function Start-DistributionListMigrationV3
 
     #At this point we are ready to capture the original DL configuration.  We'll use the ad provider to gather this information.
 
-    $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential
+    $originalDLConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $groupSMTPAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential -isGroupTest $TRUE
 }

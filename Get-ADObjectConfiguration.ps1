@@ -62,6 +62,9 @@
             [Parameter(Mandatory = $false,ParameterSetName = "BySMTPAddress")]
             [Parameter(Mandatory = $false,ParameterSetName = "ByDN")]
             [boolean]$isValidTest=$FALSE
+            [Parameter(Mandatory = $false,ParameterSetName = "BySMTPAddress")]
+            [Parameter(Mandatory = $false,ParameterSetName = "ByDN")]
+            [boolean]$isGroupTest=$FALSE
         )
 
         #Output all parameters bound or unbound and their associated values.
@@ -179,6 +182,22 @@
         else 
         {
             out-logfile -string "Single object detected - returning DL configuration."
+        }
+
+        if ($isGroupTest -eq $TRUE)
+        {
+            if ($functionDLConfiguration.groupType -eq $NULL)
+            {
+                out-logfile -string "Object returned is not a group." -isError:$TRUE
+            }
+            else 
+            {
+                out-logfile -string "Object is a group - proceed."
+            }
+        }
+        else 
+        {
+            out-logfile -string "Group object test not performed - proceed."
         }
         
         if ($functionDLConfiguration -ne $NULL)
