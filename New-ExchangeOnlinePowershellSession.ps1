@@ -47,10 +47,13 @@
             [AllowNull()]
             [pscredential]$exchangeOnlineCredentials,
             [Parameter(Mandatory = $true)]
+            [AllowEmptyString()]
             [string]$exchangeOnlineCertificateThumbPrint,
             [Parameter(Mandatory = $true)]
+            [AllowEmptyString()]
             [string]$exchangeOnlineAppID,
             [Parameter(Mandatory = $true)]
+            [AllowEmptyString()]
             [string]$exchangeOnlineOrganizationName,
             [Parameter(Mandatory = $true)]
             [string]$exchangeOnlineEnvironmentName,
