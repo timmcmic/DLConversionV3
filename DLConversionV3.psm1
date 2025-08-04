@@ -551,5 +551,7 @@ Function Start-DistributionListMigrationV3
 
     out-xmlfile -itemToExport $office365GroupConfiguration -itemNameToExport $xmlFiles.office365GroupConfigurationXML.value
 
-    
+    $htmlCaptureGraphDLConfiguration = get-date
+
+    $msGraphDLConfiguration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration -errorAction STOP
 }
