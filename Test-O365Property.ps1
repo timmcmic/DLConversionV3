@@ -61,7 +61,7 @@
             out-logfile -string $functionDirectoryObjectID[1]
 
             try {
-                $functionRecipient = get-recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
+                $functionRecipient = get-o365recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
             }
             catch {
                 out-logfile -string "Unable to locate user by external directory object id."
@@ -73,7 +73,7 @@
             out-logfile -string "Primary smtp address or upn specified - test."
 
             try {
-                $functionRecipient = get-recipient -identity $member.primarySMTPAddressOrUPN -errorAction STOP
+                $functionRecipient = get-o365recipient -identity $member.primarySMTPAddressOrUPN -errorAction STOP
             }
             catch {
                 out-logfile -string "Unable to locate user by primary SMTP address or UPN."
