@@ -565,4 +565,13 @@ Function Start-DistributionListMigrationV3
     out-logfile -string "Create an XML file backup of the Azure AD DL Configuration"
 
     out-xmlFile -itemToExport $msGraphDLConfiguration -itemNameToExport $xmlFiles.msGraphDLConfigurationXML.value
+
+    $htmlCaptureGraphDLMembership = get-date
+
+    $msGraphDLMembership = get-msGraphMembership -groupobjectID $msGraphDLConfiguration.id -msGraphURL $msGraphURL -errorAction STOP
+
+    out-xmlFile -itemToExport $msGraphDLMembership -itemNameToExport $xmlFiles.msGraphDLMembershipXML.value
+
+
+
 }
