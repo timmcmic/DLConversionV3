@@ -15,7 +15,7 @@
         Param
         (
             [Parameter(Mandatory = $true)]
-            $mnsGraphTenantID,
+            $msGraphTenantID,
             [Parameter(Mandatory = $true)]
             $msGraphApplicationID,
             [Parameter(Mandatory = $true)]
