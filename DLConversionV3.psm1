@@ -473,32 +473,14 @@ Function Start-DistributionListMigrationV3
     Out-LogFile -string "ENTERING PARAMTER VALIDATION"
     Out-LogFile -string "********************************************************************************"
 
-    #Validate that only one method of engaging exchange online was specified.
+    #Validate any credentials passed are of type PS Credential
+
+    out-logfile -string "Testing global catalog credentials"
+    test-credentials -credentialToTest $activeDirectoryCredential
+
+    #Validate Exchange Online Credentials
 
     Out-LogFile -string "Validating Exchange Online Credentials."
 
-    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint
-
-    #Validating that all portions for exchange certificate auth are present.
-
-    out-logfile -string "Validating parameters for Exchange Online Certificate Authentication"
-
-    start-parametervalidation -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
-
-    if ($msGraphCertificateThumbprint -ne "")
-    {
-        out-logfile -string "Validation all components available for MSGraph Cert Auth"
-
-        start-parameterValidation -msGraphCertificateThumbPrint $msGraphCertificateThumbprint -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID -msGraphClientSecret $msGraphClientSecret
-    }
-    elseif ($msGraphClientSecret -ne "")
-    {
-        out-logfile -string "Validation all components available for MSGraph Client Secret Auth"
-
-        start-parameterValidation -msGraphClientSecret $msGraphClientSecret -msGraphTenantID $msGraphTenantID -msGraphApplicationID $msGraphApplicationID -msGraphCertificateThumbPrint $msGraphCertificateThumbprint
-    }
-    else
-    {
-        out-logfile -string "MS graph client secret is not being utilized - assume interactive auth."
-    }
+    start-parameterValidation -exchangeOnlineCredential $exchangeOnlineCredential -exchangeOnlineCertificateThumbprint $exchangeOnlineCertificateThumbprint -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineAppID $exchangeOnlineAppID
 }
