@@ -346,8 +346,8 @@ Function Start-DistributionListMigrationV3
     #Initilize the log file.
 
     $global:logFile=$NULL #This is the global variable for the calculated log file name
-    new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
     [string]$global:staticFolderName="\DLMigration\"
+    new-LogFile -groupSMTPAddress $groupSMTPAddress.trim() -logFolderPath $logFolderPath
     $traceFilePath = $logFolderPath + $global:staticFolderName
 
     out-logfile -string ("Log File: "+$global:logFile)
