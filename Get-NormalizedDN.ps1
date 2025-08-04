@@ -425,34 +425,6 @@
                     }
                 }
 
-                elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $TRUE) -and ($skipNestedGroupCheck -eq $TRUE)) 
-                {
-                    #The group is mail enabled and a member.  All nested groups have to be migrated first.
-
-                    out-logfile -string "A mail enabled group was found as a member of the DL or has permissions on the DL."
-                    
-                    $functionObject = New-Object PSObject -Property @{
-                        Alias = $functionTest.mailNickName
-                        Name = $functionTest.Name
-                        PrimarySMTPAddressOrUPN = $functionTest.mail
-                        GUID = $NULL
-                        RecipientType = $functionTest.objectClass
-                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
-                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
-                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
-                        GroupType = $functionTest.GroupType
-                        RecipientOrUser = "Recipient"
-                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
-                        OnPremADAttribute = $activeDirectoryAttribute
-                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
-                        DN = $DN
-                        ParentGroupSMTPAddress = $groupSMTPAddress
-                        isAlreadyMigrated = $false
-                        isError=$false
-                        isErrorMessage=""
-                    }
-                }
-                
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $TRUE)) 
                 {
                     #The group is mail enabled and a member.  All nested groups have to be migrated first.
@@ -476,12 +448,11 @@
                         DN = $DN
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
-                        isError=$true
-                        isErrorMessage="NESTED_GROUP_EXCEPTION: A mail enabled group is a child member of the migrated list.  The child group must be migrated first or removed from group membership."
+                        isError=$false
+                        isErrorMessage=""
                     }
                 }
-
-                elseif (($functionTest.mail -ne $NULL) -and ($isMember -eq $TRUE) -and ($skipNestedGroupCheck -eq $TRUE) -and (($functionTest.groupType -eq "-2147483640") -or ($functionTest.groupType -eq "-2147483646") -or ($functionTest.groupType -eq "-2147483644"))) 
+                elseif (($functionTest.mail -ne $NULL) -and ($isMember -eq $TRUE) -and (($functionTest.groupType -eq "-2147483640") -or ($functionTest.groupType -eq "-2147483646") -or ($functionTest.groupType -eq "-2147483644"))) 
                 {
                     #The group is mail enabled and a member.  All nested groups have to be migrated first.
 
@@ -506,34 +477,6 @@
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
-                    }
-                }
-
-                elseif (($functionTest.mail -ne $NULL) -and ($isMember -eq $TRUE) -and (($functionTest.groupType -eq "-2147483640") -or ($functionTest.groupType -eq "-2147483646") -or ($functionTest.groupType -eq "-2147483644"))) 
-                {
-                    #The group is mail enabled and a member.  All nested groups have to be migrated first.
-
-                    out-logfile -string "A nested group was found where only mail was specified - this should yield a valid recipient if group is also security.."
-                    
-                    $functionObject = New-Object PSObject -Property @{
-                        Alias = $functionTest.mailNickName
-                        Name = $functionTest.Name
-                        PrimarySMTPAddressOrUPN = $functionTest.mail
-                        GUID = $NULL
-                        RecipientType = $functionTest.objectClass
-                        ExchangeRecipientTypeDetails = $functionTest.msExchRecipientTypeDetails
-                        ExchangeRecipientDisplayType = $functionTest.msExchRecipientDisplayType
-                        ExchangeRemoteRecipientType = $functionTest.msExchRemoteRecipientType
-                        GroupType = $functionTest.GroupType
-                        RecipientOrUser = "Recipient"
-                        ExternalDirectoryObjectID = $functionTest.'msDS-ExternalDirectoryObjectId'
-                        OnPremADAttribute = $activeDirectoryAttribute
-                        OnPremADAttributeCommonName = $activeDirectoryAttributeCommon
-                        DN = $DN
-                        ParentGroupSMTPAddress = $groupSMTPAddress
-                        isAlreadyMigrated = $false
-                        isError=$true
-                        isErrorMessage="NESTED_GROUP_EXCEPTION: A mail enabled group is a child member of the migrated list.  The child group must be migrated first or removed from group membership."
                     }
                 }
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $FALSE)) 
