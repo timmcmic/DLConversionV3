@@ -51,7 +51,7 @@
 
         out-logfile -string "Obtain recipient information from Office 365."
 
-        if ($member.externalDirectoryObjectID -ne "")
+        if ($member.externalDirectoryObjectID -ne $null)
         {
             out-logfile -string "External directory object ID specified - test."
             out-logfile -string $member.externalDirectoryObjectID
@@ -68,7 +68,7 @@
                 $isTestError="Yes"
             }
         }
-        elseif ($member.primarySMTPAddressOrUPN -ne "") 
+        elseif ($member.primarySMTPAddressOrUPN -ne $null) 
         {
             out-logfile -string "Primary smtp address or upn specified - test."
 
