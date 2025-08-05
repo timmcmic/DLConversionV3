@@ -1130,7 +1130,7 @@ Function Start-DistributionListMigrationV3
 
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
 
-    $telemetryIngo.telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
+    $telemetryInfo.telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
 
     Out-LogFile -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
 
