@@ -20,13 +20,23 @@
             $office365DLConfiguration
         )
 
+        $functionURIType = "OnPremisesSyncBehavior"
+
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "START set-DLCloudOnly"
         Out-LogFile -string "********************************************************************************"
     
         out-logfile -string ("Acting on group: "+$office365DLConfiguration.externalDirectoryObjectID)
 
-        $functionURI = get-OnPremSyncBehaviorURI -msGraphURL $msGraphURL -externalDirectoryObjectID $office365DLConfiguration.externalDirectoryObjectID
+        try {
+            $functionURI = get-graphURI -msGraphURL $msGraphURL -externalDirectoryObjectID $office365DLConfiguration.externalDirectoryObjectID -uriType $functionURIType -errorAction STOP
+            out-logfile -string $functionURI
+        }
+        catch {
+            out-logfile -string "Unable to obtain the graph URI"
+            out-logfile -string $_ -isError:$TRUE
+        }
+
 
         try {
             Invoke-MgGraphRequest -Method Patch -Uri $functionURI -body @{isCloudManaged=$true} -errorAction STOP

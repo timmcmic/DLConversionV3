@@ -46,7 +46,15 @@
 
         #Get the recipient using the exchange online powershell session.
 
-        $functionURI = get-GraphURI -msGraphURL $msGraphURL -externalDirectoryObjectID $office365DLConfiguration.externalDirectoryObjectID -uriType $functionURIType
+        try {
+            $functionURI = get-GraphURI -msGraphURL $msGraphURL -externalDirectoryObjectID $office365DLConfiguration.externalDirectoryObjectID -uriType $functionURIType -errorAction STOP
+            out-logfile -string $functionURI
+        }
+        catch {
+           out-logfile -string "Unable to obtain the graphURI."
+           out-logfile -string $_ -isError:$true
+        }
+
         
         try{
             #$functionDLConfiguration = get-mgGroup -groupID $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP

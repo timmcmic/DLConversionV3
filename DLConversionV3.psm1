@@ -2733,7 +2733,9 @@ Function Start-DistributionListMigrationV3
 
     $htmlTestExchangeOnlineCloudOnly = get-universalDateTime
 
+    $telemetryInfo.functionStartTime = get-universalDateTime
+
     test-CloudDLPresentExchangeOnline -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
 
-
+    $telemetryInfo.functionEndTime = get-universalDateTime
 }

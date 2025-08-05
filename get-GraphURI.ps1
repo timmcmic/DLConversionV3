@@ -30,7 +30,7 @@ Function get-graphURI
     Out-LogFile -string "Start get-graphURI"
     Out-LogFile -string "********************************************************************************"
 
-    if ($uriType -eq $functionOnPremisesSyncBehavior)
+    if ($uriType -eq $functionOnPremSyncBehavior)
     {
         $functionURI = $msGraphURL + "groups/"
         out-logfile -string $functionURI

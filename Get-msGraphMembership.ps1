@@ -47,7 +47,15 @@
         Out-LogFile -string "BEGIN GET-msGraphMembership"
         Out-LogFile -string "********************************************************************************"
 
-        $functionURI = get-GraphURI -msGraphURL $msGraphURL -externalDirectoryObjectID $groupObjectID -uriType $functionURIType -errorAction STOP
+        try {
+            $functionURI = get-GraphURI -msGraphURL $msGraphURL -externalDirectoryObjectID $groupObjectID -uriType $functionURIType -errorAction STOP
+            out-logfile -string $functionURI
+        }
+        catch {
+            out-logfile -string "Unable to obtain the graph URI."
+            out-logfile -string $_ -isError:$TRUE
+        }
+
 
         #Get the recipient using the exchange online powershell session.
 
