@@ -773,6 +773,8 @@ Function Start-DistributionListMigrationV3
         dlConversionPowershellModule = @{ "Value" = "DLConversionV3" ; "Description" = "Static dlConversionv2 powershell module name" }
         globalCatalogPort = @{ "Value" = ":3268" ; "Description" = "Global catalog port definition" }
         globalCatalogWithPort = @{ "Value" = ($globalCatalogServer+($corevariables.globalCatalogPort.value)) ; "Description" = "Global catalog server with port" }
+        msGraphUsersPowershellModuleName = @{ "Value" = "Microsoft.Graph.Users" ; "Description" = "Static ms graph powershell name users" }
+        msGraphGroupsPowershellModuleName = @{ "Value" = "Microsoft.Graph.Groups" ; "Description" = "Static ms graph powershell name groups" }
     }
 
     #The variables below are utilized to define working parameter sets.
