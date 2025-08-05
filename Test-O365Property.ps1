@@ -60,24 +60,56 @@
 
             out-logfile -string $functionDirectoryObjectID[1]
 
-            try {
-                $functionRecipient = get-o365recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
+            if ($member.recipientOrUser -eq "Recipient")
+            {
+                out-logfile -string "Member is recipient - query recipient."
+
+                try {
+                    $functionRecipient = get-o365recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
+                }   
+                catch {
+                    out-logfile -string "Unable to locate user by external directory object id."
+                    $isTestError="Yes"
+                }
             }
-            catch {
-                out-logfile -string "Unable to locate user by external directory object id."
-                $isTestError="Yes"
+            else
+            {
+                out-logfile -string "Member is user - query user"
+
+                try {
+                    $functionRecipient = get-o365User -identity $functionDirectoryObjectID[1] -errorAction STOP
+                }   
+                catch {
+                    out-logfile -string "Unable to locate user by external directory object id."
+                    $isTestError="Yes"
+                }
             }
         }
         elseif ($member.primarySMTPAddressOrUPN -ne $null)
         {
             out-logfile -string "Primary smtp address or upn specified - test."
 
-            try {
-                $functionRecipient = get-o365recipient -identity $member.primarySMTPAddressOrUPN -errorAction STOP
+            out-logfile -string "Member is recipient - query recipient."
+
+                try {
+                    $functionRecipient = get-o365recipient -identity $member.primarySMTPAddressOrUPN -errorAction STOP
+                }   
+                catch {
+                    out-logfile -string "Unable to locate user by external directory object id."
+                    $isTestError="Yes"
+                }
             }
-            catch {
-                out-logfile -string "Unable to locate user by primary SMTP address or UPN."
-                $isTestError="Yes"
+            else
+            {
+                out-logfile -string "Member is user - query user"
+
+                try {
+                    $functionRecipient = get-o365User -identity $member.primarySMTPAddressOrUPN -errorAction STOP
+                }   
+                catch {
+                    out-logfile -string "Unable to locate user by external directory object id."
+                    $isTestError="Yes"
+                }
             }
         }
 
