@@ -2866,66 +2866,58 @@ Function Start-DistributionListMigrationV3
         OSVersion = $telemetryInfo.telemetryOSVersion
         MigrationStartTimeUTC = $telemetryInfo.telemetryStartTime
         MigrationEndTimeUTC = $telemetryInfo.telemetryEndTime
-        MigrationErrors = $telemetryError
+        MigrationErrors = $false
     }
 
     if (($allowTelemetryCollection -eq $TRUE) -and ($allowDetailedTelemetryCollection -eq $FALSE))
     {
         $telemetryEventMetrics = @{
-            MigrationElapsedSeconds = $telemetryElapsedSeconds
-            TimeToNormalizeDNs = $telemetryNormalizeDN
-            TimeToValidateCloudRecipients = $telemetryValidateCloudRecipients
-            TimeToCollectOnPremDependency = $telemetryDependencyOnPrem
-            TimeToCollectOffice365Dependency = $telemetryCollectOffice365Dependency
-            TimePendingRemoveDLOffice365 = $telemetryTimeToRemoveDL
-            TimeToCreateOffice365DLComplete = $telemetryCreateOffice365DL
-            TimeToCreateOffice365DLFirstPass = $telemetryCreateOffice365DLFirstPass
-            TimeToReplaceOnPremDependency = $telemetryReplaceOnPremDependency
-            TimeToReplaceOffice365Dependency = $telemetryReplaceOffice365Dependency
+            MigrationElapsedSeconds = [double]$telemetryInfo.telemetryElapsedSeconds
+            TimeToNormalizeDNs = [double]$telemetryNormalizeDN
+            TimeToValidateCloudRecipients = [double]$telemetryValidateCloudRecipients
+            TimeToCollectOnPremDependency = [double]$telemetryDependencyOnPrem
+            TimeToCollectOffice365Dependency = [double]$telemetryCollectOffice365Dependency
+            TimeToConvertGroupCloudOnlyEntraID = [double]$telemetryConvertGroupCloudOnly
+            TimeToConvertGroupCloudOnlyExchangeOnline = [double]$telemetryConvertGroupCloudOnlyExchangeOnline
+            TimeToCreateRoutingContact = [double]$telemetryCreateRoutingContact
         }
     }
     elseif (($allowTelemetryCollection -eq $TRUE) -and ($allowDetailedTelemetryCollection -eq $TRUE))
     {
         $telemetryEventMetrics = @{
-            MigrationElapsedSeconds = $telemetryElapsedSeconds
-            TimeToNormalizeDNs = $telemetryNormalizeDN
-            TimeToValidateCloudRecipients = $telemetryValidateCloudRecipients
-            TimeToCollectOnPremDependency = $telemetryDependencyOnPrem
-            TimeToCollectOffice365Dependency = $telemetryCollectOffice365Dependency
-            TimePendingRemoveDLOffice365 = $telemetryTimeToRemoveDL
-            TimeToCreateOffice365DLComplete = $telemetryCreateOffice365DL
-            TimeToReplaceOnPremDependency = $telemetryReplaceOnPremDependency
-            TimeToReplaceOffice365Dependency = $telemetryReplaceOffice365Dependency
-            NumberOfGroupMembers = $exchangeDLMembershipSMTP.count
-            NumberofGroupRejectSenders = $exchangeRejectMessagesSMTP.count
-            NumberofGroupAcceptSenders = $exchangeAcceptMessagesSMTP.count
-            NumberofGroupManagedBy = $exchangeManagedBySMTP.count
-            NumberofGroupModeratedBy = $exchangeModeratedBySMTP.count
-            NumberofGroupBypassModerators = $exchangeBypassModerationSMTP.count
-            NumberofGroupGrantSendOnBehalfTo = $exchangeGrantSendOnBehalfToSMTP.count
-            NumberofGroupSendAsOnGroup = $exchangeSendAsSMTP.Count
-            NumberofOnPremsiesMemberOf = $allGroupsMemberOf.Count
-            NumberofOnPremisesRejectSenders = $allGroupsReject.Count
-            NumberofOnPremisesAcceptSenders = $allGroupsAccept.Count
-            NumberofOnPremisesBypassModeration = $allGroupsBypassModeration.Count
-            NumberofOnPremisesMailboxForwarding = $allUsersForwardingAddress.Count
-            NumberofOnPrmiesesGrantSendBehalfTo = $allGroupsGrantSendOnBehalfTo.Count
-            NumberofOnPremisesManagedBy = $allGroupsManagedBy.Count
-            NumberofOnPremisesFullMailboxAccess = $allObjectsFullMailboxAccess.Count
-            NumberofOnPremsiesSendAs = $allObjectSendAsAccess.Count
-            NumberofOnPremisesFolderPermissions = $allMailboxesFolderPermissions.Count
-            NumberofOnPremisesCoManagers = $allGroupsCoManagedByBL.Count
-            NumberofOffice365Members = $allOffice365MemberOf.Count
-            NumberofOffice365AcceptSenders = $allOffice365Accept.Count
-            NumberofOffice365RejectSenders = $allOffice365Reject.Count
-            NumberofOffice365BypassModeration = $allOffice365BypassModeration.Count
-            NumberofOffice365ManagedBy = $allOffice365ManagedBy.Count
-            NumberofOffice365GrantSendOnBehalf = $allOffice365GrantSendOnBehalfTo.Count
-            NumberofOffice365ForwardingMailboxes= $allOffice365ForwardingAddress.Count
-            NumberofOffice365FullMailboxAccess = $allOffice365FullMailboxAccess.Count
+            MigrationElapsedSeconds = [double]$telemetryInfo.telemetryElapsedSeconds
+            TimeToNormalizeDNs = [double]$telemetryNormalizeDN
+            TimeToValidateCloudRecipients = [double]$telemetryValidateCloudRecipients
+            TimeToCollectOnPremDependency = [double]$telemetryDependencyOnPrem
+            TimeToCollectOffice365Dependency = [double]$telemetryCollectOffice365Dependency
+            TimeToConvertGroupCloudOnlyEntraID = [double]$telemetryConvertGroupCloudOnly
+            TimeToConvertGroupCloudOnlyExchangeOnline = [double]$telemetryConvertGroupCloudOnlyExchangeOnline
+            TimeToCreateRoutingContact = [double]$telemetryCreateRoutingContact
+            NumberOfGroupMembers = [double]$exchangeDLMembershipSMTP.count
+            NumberofGroupRejectSenders = [double]$exchangeRejectMessagesSMTP.count
+            NumberofGroupAcceptSenders = [double]$exchangeAcceptMessagesSMTP.count
+            NumberofGroupManagedBy = [double]$exchangeManagedBySMTP.count
+            NumberofGroupModeratedBy = [double]$exchangeModeratedBySMTP.count
+            NumberofGroupBypassModerators = [double]$exchangeBypassModerationSMTP.count
+            NumberofGroupGrantSendOnBehalfTo = [double]$exchangeGrantSendOnBehalfToSMTP.count
+            NumberofOnPremsiesMemberOf = [double]$allGroupsMemberOf.Count
+            NumberofOnPremisesRejectSenders = [double]$allGroupsReject.Count
+            NumberofOnPremisesAcceptSenders = [double]$allGroupsAccept.Count
+            NumberofOnPremisesBypassModeration = [double]$allGroupsBypassModeration.Count
+            NumberofOnPremisesMailboxForwarding = [double]$allUsersForwardingAddress.Count
+            NumberofOnPrmiesesGrantSendBehalfTo = [double]$allGroupsGrantSendOnBehalfTo.Count
+            NumberofOnPremisesManagedBy = [double]$allGroupsManagedBy.Count
+            NumberofOnPremisesFullMailboxAccess = [double]$allObjectsFullMailboxAccess.Count
+            NumberofOnPremisesCoManagers = [double]$allGroupsCoManagedByBL.Count
+            NumberofOffice365Members = [double]$allOffice365MemberOf.Count
+            NumberofOffice365AcceptSenders = [double]$allOffice365Accept.Count
+            NumberofOffice365RejectSenders = [double]$allOffice365Reject.Count
+            NumberofOffice365BypassModeration = [double]$allOffice365BypassModeration.Count
+            NumberofOffice365ManagedBy = [double]$allOffice365ManagedBy.Count
+            NumberofOffice365GrantSendOnBehalf = [double]$allOffice365GrantSendOnBehalfTo.Count
+            NumberofOffice365ForwardingMailboxes= [double]$allOffice365ForwardingAddress.Count
             NumberofOffice365SendAs = $allOffice365SendAsAccess.Count
             NumberofOffice365SendAsAccessOnGroup = $allOffice365SendAsAccessOnGroup.Count
-            NumberofOffice365MailboxFolderPermissions = $allOffice365MailboxFolderPermissions.Count
         }
     }
 
