@@ -213,7 +213,7 @@ Function Start-DistributionListMigrationV3
 
                     out-logfile -string "Generate HTML for test office 365 errors."
 
-                    if ($global:testOffice365PropertyErrors.count.count -gt 0)
+                    if ($global:testOffice365PropertyErrors.count -gt 0)
                     {
                         out-logfile -string "Test Office 365 Errors exist."
 
