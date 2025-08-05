@@ -405,7 +405,7 @@ Function Start-DistributionListMigrationV3
                 {
                     New-HTMLSection -HeaderText "Office 365 DL Configuration Post Migration (Exchange Online)" {
                         New-HTMLList{
-                            foreach ($object in  $$msGraphDLConfigurationPostMigration.psObject.properties)
+                            foreach ($object in $msGraphDLConfigurationPostMigration.psObject.properties)
                             {
                                 if ($object.Value.count -gt 1)
                                 {
