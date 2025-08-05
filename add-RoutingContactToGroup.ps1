@@ -18,18 +18,27 @@ Function add-RoutingContactToGroup
         [Parameter(Mandatory = $true)]
         $routingContact,
         [Parameter(Mandatory = $true)]
-        $originalDLConfiguration
+        $originalDLConfiguration,
+        [Parameter(Mandatory = $true)]
+        $globalCatalogServer,
+        [Parameter(Mandatory = $true)]
+        $activeDirectoryCredential,
+        [Parameter(Mandatory = $true)]
+        $activeDirectoryAuthenticationMethod
     )
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "Start add-RoutingContactToGroup"
     Out-LogFile -string "********************************************************************************"
 
-
-    foreach ($key in $hashtable.GetEnumerator())
-    {
-        out-logfile -string ("Key: "+$key.name+" is "+$key.Value.Description+" with value "+$key.Value.Value)
-    }      
+    try {
+        add-adGroupMember -identity $originalDLConfiguration.DN -Members $routingContact.DN -Credential $activeDirectoryCredential -Server $globalCatalogServer -errorAction STOP
+        out-logfile -string "Routing contact successfully added as group member."
+    }
+    catch {
+        out-logfile -string "Unable to add the routing contact as a member of the original on premises group."
+        out-logfile -string $_ -isError:$true
+    }
 
     out-LogFile -string "********************************************************************************"
     Out-LogFile -string "End add-RoutingContactToGroup"

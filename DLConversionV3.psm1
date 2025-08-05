@@ -2838,7 +2838,7 @@ Function Start-DistributionListMigrationV3
 
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactXML.value
 
-    add-routingContactToGroup -originalDLConfiguration $originalDLConfiguration -routingContact $routingContactConfiguration
+    add-routingContactToGroup -originalDLConfiguration $originalDLConfiguration -routingContact $routingContactConfiguration -globalCatalogServer $globalCatalogServer -activeDirectoryCredentil $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
 
     $telemtryInfo.telemetryfunctionEndTime = get-universalDateTime
 
