@@ -148,7 +148,7 @@ Function Start-DistributionListMigrationV3
 
                 New-HTMLTableOption -DataStore JavaScript
 
-                if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0) -or ($global:testOffice365PropertyErrors.count -gt 0))
+                if (($global:dlConversionV2Test.count -gt 0) -or ($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0) -or ($global:testOffice365PropertyErrors.count -gt 0))
                 {
                     New-HTMLText -Text "Migration Errors Detected - Summary Information Below" -FontSize 24 -Color White -BackGroundColor RED -Alignment center
 
@@ -159,6 +159,7 @@ Function Start-DistributionListMigrationV3
                                 new-htmlListItem -text ("Pre Office 365 Group Create Errors: "+$global:preCreateErrors.count) -fontSize 14
                                 new-htmlListItem -text ("Test Office 365 Errors: "+$global:testOffice365Errors.count) -fontSize 14
                                 new-htmlListItem -text ("Test Office 365 Property Errors: "+$global:testOffice365PropertyErrors.count) -fontSize 14
+                                new-htmlListItem -text ("DLConversionV2 Dependency Count: "+$global:dlConversionV2Test.count) -fontSize 14
                             }
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
 
@@ -170,6 +171,22 @@ Function Start-DistributionListMigrationV3
 
                         new-htmlSection -HeaderText ("Pre Office 365 Group Create Errors"){
                             new-htmlTable -DataTable ($global:preCreateErrors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessage) -Filtering  {
+                            } -AutoSize
+                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
+                    }
+                    else 
+                    {
+                        out-logfile -string "Precreate errors do not exist."
+                    }
+
+                    out-logfile -string "Generate HTML section for DLConversionV2 items."
+
+                    if ($global:dlConversionV2Test.count -gt 0)
+                    {
+                        out-logfile -string "Precreate errors exist."
+
+                        new-htmlSection -HeaderText ("DLConversionV2 Items on Group (Recommend Migration by DLConversionV2)"){
+                            new-htmlTable -DataTable ($global:dlConversionV2Test | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessage) -Filtering  {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                     }
@@ -1709,17 +1726,19 @@ Function Start-DistributionListMigrationV3
     out-logfile -string "If a group was migrated by DLConversionV2 it is possible it has special case objects on it that served the migration."
     out-logfile -string "Test each of the normalized arrays - if any of those were located recommend migration with DLConversionV2 so that all dependencies are handled in the migration."
 
-    $dlConversionV2Test=@()
-    $dlConversionV2Test+= @($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true })
-    $dlConversionV2Test+= @($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true })
-    $dlConversionV2Test+= @($exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true })
-    $dlConversionV2Test+= @($exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true })
-    $dlConversionV2Test+= @($exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true })
-    $dlConversionV2Test+= @($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true })
-    $dlConversionV2Test+= @($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true })
+    $global:dlConversionV2Test=@()
+    $global:dlConversionV2Test+= @($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true })
+    $global:dlConversionV2Test+= @($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true })
+    $global:dlConversionV2Test+= @($exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true })
+    $global:dlConversionV2Test+= @($exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true })
+    $global:dlConversionV2Test+= @($exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true })
+    $global:dlConversionV2Test+= @($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true })
+    $global:dlConversionV2Test+= @($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true })
 
-    if ($dlConversionV2Test.count -gt 0)
+    if ($global:dlConversionV2Test.count -gt 0)
     {
+        generate-HTMLFile
+
         out-logfile -string "Error - members or properties of this DL have dependencies on DLConversionV2 migration."
         out-logfile -string "Recommend the DL be migrated with DLConversionV2"
         out-logfile -string "ERROR_DLCONVERSIONV2_RECOMMENDED_EXCEPTION" -isError:$TRUE
