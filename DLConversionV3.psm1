@@ -1180,9 +1180,12 @@ Function Start-DistributionListMigrationV3
 
     $htmlCaptureGraphDLMembership = get-date
 
-    $msGraphDLMembership = get-msGraphMembership -groupobjectID $msGraphDLConfiguration.id -msGraphURL $msGraphURL -errorAction STOP
+    $msGraphDLMembership = @(get-msGraphMembership -groupobjectID $msGraphDLConfiguration.id -msGraphURL $msGraphURL -errorAction STOP)
 
-    out-xmlFile -itemToExport $msGraphDLMembership -itemNameToExport $xmlFiles.msGraphDLMembershipXML.value
+    if ($msGraphDLMembership.count -gt 0)
+    {
+            out-xmlFile -itemToExport $msGraphDLMembership -itemNameToExport $xmlFiles.msGraphDLMembershipXML.value
+    }
 
     $htmlCaptureOffice365DLMembership = get-date
 
