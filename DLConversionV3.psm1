@@ -1735,9 +1735,11 @@ Function Start-DistributionListMigrationV3
     $global:dlConversionV2Test+= @($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true })
     $global:dlConversionV2Test+= @($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true })
 
-    if ($global:dlConversionV2Test.count -gt 0)
+    if (($global:dlConversionV2Test.count -gt 0) -and ($isHealthCheck -eq $false))
     {
         generate-HTMLFile
+
+        start-sleep -s 10
 
         out-logfile -string "Error - members or properties of this DL have dependencies on DLConversionV2 migration."
         out-logfile -string "Recommend the DL be migrated with DLConversionV2"
