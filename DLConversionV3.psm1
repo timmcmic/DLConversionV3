@@ -1285,7 +1285,14 @@ Function Start-DistributionListMigrationV3
                 }
                 else 
                 {
-                    $exchangeDLMembershipSMTP+=$normalizedTest
+                    if ($normalizedTest.objectClass -eq "Group" -and $normalizedTest.isAlreadyMigrated -eq $true)
+                    {
+                        out-logfile -string 'Skipping group - this group represents a mail disabled group migrated by DLConversionV2'
+                    }
+                    else 
+                    {
+                        $exchangeDLMembershipSMTP+=$normalizedTest
+                    }
                 }
                 
             }
