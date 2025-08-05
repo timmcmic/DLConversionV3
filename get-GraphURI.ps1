@@ -63,5 +63,5 @@ Function get-graphURI
     Out-LogFile -string "End get-graphURI"
     Out-LogFile -string "********************************************************************************"
 
-    return $funcionURI
+    return $functionURI
 }
