@@ -252,6 +252,7 @@
                     isAlreadyMigrated = $false
                     isError=$false
                     isErrorMessage=""
+                    isMigrated=$FALSE
                 }
             }
             elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and (($functionTest.objectClass -eq "User") -or ($functionTest.objectClass -eq "Contact")))
@@ -284,6 +285,7 @@
                         isAlreadyMigrated = $true
                         isError=$false
                         isErrorMessage=""
+                        isMigrated=$TRUE
                     }
                 }
 
@@ -312,6 +314,7 @@
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
+                        isMigrated=$FALSE
                     }
                 }
             }
@@ -337,6 +340,7 @@
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
+                        isMigrated=$FALSE
                     }
             }
             elseif ($functionTest.objectClass -eq "User")
@@ -362,6 +366,7 @@
                         isAlreadyMigrated = $FALSE
                         isError=$false
                         isErrorMessage=""
+                        isMigrated=$FALSE
                 }
             }
             elseif ($functionTest.objectClass -eq "Group")
@@ -393,6 +398,7 @@
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
+                        isMigrated=$FALSE
                     }
                 }
 
@@ -422,6 +428,7 @@
                         isAlreadyMigrated = $true
                         isError=$false
                         isErrorMessage=""
+                        isMigrated=$true
                     }
                 }
 
@@ -450,6 +457,7 @@
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
+                        isMigrated=$FALSE
                     }
                 }
                 elseif (($functionTest.mail -ne $NULL) -and ($isMember -eq $TRUE) -and (($functionTest.groupType -eq "-2147483640") -or ($functionTest.groupType -eq "-2147483646") -or ($functionTest.groupType -eq "-2147483644"))) 
@@ -477,6 +485,7 @@
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
+                        isMigrated=$FALSE
                     }
                 }
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $FALSE)) 
@@ -505,6 +514,7 @@
                         isAlreadyMigrated = $false
                         isError=$false
                         isErrorMessage=""
+                        isMigrated=$FALSE
                     }
                 }
                 else 
@@ -530,6 +540,7 @@
                         isAlreadyMigrated = $false
                         isError=$true
                         isErrorMessage="OBJECT_NOT_MAIL_ENALBED_EXCEPTION: The member is not mail enabled.  The object must be removed or mail enabled to continue."
+                        isMigrated=$FALSE
                     }
                 }
             }
@@ -556,6 +567,7 @@
                     isAlreadyMigrated = $false
                     isError=$true
                     isErrorMessage="OBJECT_NOT_MAIL_ENABLED_EXCEPTION: The member is not mail enabled.  The object must be removed or mail enabled to continue."
+                    isMigrated=$FALSE
                 }
             }    
         }

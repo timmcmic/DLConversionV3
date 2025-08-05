@@ -51,7 +51,7 @@
 
         out-logfile -string "Obtain recipient information from Office 365."
 
-        if ($member.externalDirectoryObjectID -ne $null)
+        if (($member.externalDirectoryObjectID -ne $null) -and ($member.isMigrated -eq $FALSE))
         {
             out-logfile -string "External directory object ID specified - test."
             out-logfile -string $member.externalDirectoryObjectID
@@ -68,7 +68,7 @@
                 $isTestError="Yes"
             }
         }
-        elseif ($member.primarySMTPAddressOrUPN -ne $null) 
+        elseif (($member.primarySMTPAddressOrUPN -ne $null) -and ($member.isMigrated -eq $FALSE)) 
         {
             out-logfile -string "Primary smtp address or upn specified - test."
 
@@ -81,7 +81,7 @@
             }
         }
 
-        if ($isTestError -eq "No")
+        if (($isTestError -eq "No") -and ($member.isMigrated -eq $FALSE))
         {
             out-logfile -string "Previous errors not encountered - test further."
             out-logfile -string $functionRecipient.name
