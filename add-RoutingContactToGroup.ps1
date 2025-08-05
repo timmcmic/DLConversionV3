@@ -37,7 +37,8 @@ Function add-RoutingContactToGroup
     $functionDistinguishedNameContact = $routingContact.distinguishedName.tostring()
 
     try {
-        add-adGroupMember -identity $functionDistinguishName -Members $functionDistinguishedNameContact -Credential $activeDirectoryCredential -Server $globalCatalogServer -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+        #add-adGroupMember -identity $functionDistinguishName -Members $functionDistinguishedNameContact -Credential $activeDirectoryCredential -Server $globalCatalogServer -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+        Set-ADObject -Identity $functionDistinguishName -Add @{member=$functionDistinguishedNameContact}
         out-logfile -string "Routing contact successfully added as group member."
     }
     catch {

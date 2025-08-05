@@ -2758,7 +2758,7 @@ Function Start-DistributionListMigrationV3
         out-logfile -string "Calling new-routing contact without custom routing domain."
         do {
             try {
-                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -customRoutingDomain $mailOnMicrosoftComDomain
+                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $corevariables.globalCatalogWithPort.value -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -customRoutingDomain $mailOnMicrosoftComDomain
     
                 $stopLoop = $TRUE
             }
@@ -2780,7 +2780,7 @@ Function Start-DistributionListMigrationV3
         out-logfile -string "Calling new-routingContact with custom domain."
         do {
             try {
-                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -customRoutingDomain $mailOnMicrosoftComDomain -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
+                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $corevariables.globalCatalogWithPort.value -adCredential $activeDirectoryCredential -customRoutingDomain $mailOnMicrosoftComDomain -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
     
                 $stopLoop = $TRUE
             }
