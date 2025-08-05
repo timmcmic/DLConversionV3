@@ -119,7 +119,9 @@ Function Start-DistributionListMigrationV3
         [boolean]$testPropertyHealth=$true,
         #Define internal only paramters.
         [Parameter(Mandatory=$false)]
-        [boolean]$isHealthCheck = $false
+        [boolean]$isHealthCheck = $false,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$allowTelemetryCollection=$TRUE
     )
 
     function generate-HTMLFile
