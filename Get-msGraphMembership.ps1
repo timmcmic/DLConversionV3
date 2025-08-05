@@ -39,18 +39,15 @@
         #Declare function variables.
 
         $functionDLMembership=$NULL #Holds the return information for the group query.
-        $functionURI = $msGraphURL + "groups/"
-        out-logfile -string $functionURI
-        $functionURI = $functionURI + $groupObjectID
-        out-logfile -string $functionURI
-        $functionURI = $functionURI + "/members"
-        out-logfile -string $functionURI
+        $functionURIType = "Members"
 
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
         Out-LogFile -string "BEGIN GET-msGraphMembership"
         Out-LogFile -string "********************************************************************************"
+
+        $functionURI = get-GraphURI -msGraphURL $msGraphURL -externalDirectoryObjectID $groupObjectID -uriType $functionURIType -errorAction STOP
 
         #Get the recipient using the exchange online powershell session.
 

@@ -36,6 +36,8 @@
 
         write-functionParameters -keyArray $MyInvocation.MyCommand.Parameters.Keys -parameterArray $PSBoundParameters -variableArray (Get-Variable -Scope Local -ErrorAction Ignore)
 
+        $functionURIType = "Configuration"
+
         #Start function processing.
 
         Out-LogFile -string "********************************************************************************"
@@ -44,10 +46,7 @@
 
         #Get the recipient using the exchange online powershell session.
 
-        $functionURI = $msGraphURL + "groups/"
-        out-logfile -string $functionURI
-        $functionURI = $functionURI + $office365DLConfiguration.externalDirectoryObjectID.tostring()
-        out-logfile -string $functionURI
+        $functionURI = get-GraphURI -msGraphURL $msGraphURL -externalDirectoryObjectID $office365DLConfiguration.externalDirectoryObjectID -uriType $functionURIType
         
         try{
             #$functionDLConfiguration = get-mgGroup -groupID $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP

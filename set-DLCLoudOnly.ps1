@@ -26,12 +26,7 @@
     
         out-logfile -string ("Acting on group: "+$office365DLConfiguration.externalDirectoryObjectID)
 
-        $functionURI = $msGraphURL + "groups/"
-        out-logfile -string $functionURI
-        $functionURI = $functionURI + $office365DLConfiguration.externalDirectoryObjectID
-        out-logfile -string $functionURI
-        $functionURI = $functionURI + "/onPremisesSyncBehavior"
-        out-logfile -string $functionURI
+        $functionURI = get-OnPremSyncBehaviorURI -msGraphURL $msGraphURL -externalDirectoryObjectID $office365DLConfiguration.externalDirectoryObjectID
 
         try {
             Invoke-MgGraphRequest -Method Patch -Uri $functionURI -body @{isCloudManaged=$true} -errorAction STOP

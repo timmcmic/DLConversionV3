@@ -251,7 +251,7 @@ Function Start-DistributionListMigrationV3
                         new-htmlListItem -text ("TimeToValidateCloudRecipients = "+$telemetryValidateCloudRecipients) -fontSize 14
                         new-htmlListItem -text ("TimeToCollectOnPremDependency = "+$telemetryDependencyOnPrem) -fontSize 14
                         new-htmlListItem -text ("TimeToCollectOffice365Dependency = "+$telemetryCollectOffice365Dependency) -fontSize 14
-                        new-htmlListItem -text ("TimePendingRemoveDLOffice365 = "+$telemetryTimeToRemoveDL) -fontSize 14
+                        new-htmlListItem -text ("TimeToConvertDLCloudOnly = "+$telemetryConvertGroupCloudOnly) -fontSize 14
                         new-htmlListItem -text ("TimeToCreateOffice365DLComplete = "+$telemetryCreateOffice365DL) -fontSize 14
                         new-htmlListItem -text ("TimeToCreateOffice365DLFirstPass = "+$telemetryCreateOffice365DLFirstPass) -fontSize 14
                         new-htmlListItem -text ("TimeToReplaceOnPremDependency = "+$telemetryReplaceOnPremDependency) -fontSize 14
@@ -811,7 +811,8 @@ Function Start-DistributionListMigrationV3
                         new-HTMLTimeLineItem -HeadingText "Start OnPremises Property -> Cloud Validation" -Date $htmlStartCloudValidationOffice365
                         new-HTMLTimeLineItem -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
                         new-HTMLTimeLineItem -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
-                        new-HTMLTimeLineItem -HeadingText "Set Office 365 Group Cloud Only" -Date $htmlSetGroupCloudOnly
+                        new-HTMLTimeLineItem -HeadingText "Set EntraID Group Cloud Only" -Date $htmlSetGroupCloudOnly
+                        new-HTMLTimeLineItem -HeadingText "Set Exchange Online Group Cloud Only" -Date $htmlTestExchangeOnlineCloudOnly
                         new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
                         new-HTMLTimeLineItem -HeadingText "Rename Original Group" -Date $htmlRenameorOriginalGroup
                         new-HTMLTimeLineItem -HeadingText "Disable Original Group" -Date $htmlDisableOriginalGroup
@@ -2723,4 +2724,16 @@ Function Start-DistributionListMigrationV3
     out-logfile -string "Attempt to set the group to cloud only status."
 
     set-DLCloudOnly -msGraphURL $msGraphURL -office365DLConfiguration $office365DLConfiguration 
+
+    test-CloudDLPresentGraph -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -msGraphURL $msGraphURL -errorAction STOP
+
+    $telemetryInfo.FunctionEndTime = get-universalDateTime
+
+    $telemetryConvertGroupCloudOnly = get-elapsedTime -startTime $telemetryInfo.FunctionStartTime -endTime $telemetryInfo.FunctionEndTime
+
+    $htmlTestExchangeOnlineCloudOnly = get-universalDateTime
+
+    test-CloudDLPresentExchangeOnline -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
+
+
 }
