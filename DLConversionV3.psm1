@@ -252,10 +252,8 @@ Function Start-DistributionListMigrationV3
                         new-htmlListItem -text ("TimeToCollectOnPremDependency = "+$telemetryDependencyOnPrem) -fontSize 14
                         new-htmlListItem -text ("TimeToCollectOffice365Dependency = "+$telemetryCollectOffice365Dependency) -fontSize 14
                         new-htmlListItem -text ("TimeToConvertDLCloudOnly = "+$telemetryConvertGroupCloudOnly) -fontSize 14
-                        new-htmlListItem -text ("TimeToCreateOffice365DLComplete = "+$telemetryCreateOffice365DL) -fontSize 14
-                        new-htmlListItem -text ("TimeToCreateOffice365DLFirstPass = "+$telemetryCreateOffice365DLFirstPass) -fontSize 14
-                        new-htmlListItem -text ("TimeToReplaceOnPremDependency = "+$telemetryReplaceOnPremDependency) -fontSize 14
-                        new-htmlListItem -text ("TimeToReplaceOffice365Dependency = "+$telemetryReplaceOffice365Dependency) -fontSize 14
+                        new-htmlListItem -text ("TimeToConvertDLCloudOnlyExchangeOnline = "+$telemetryConvertGroupCloudOnlyExchangeOnline) -fontSize 14
+                        new-htmlListItem -text ("TimeToCreateRoutingContact = "+$telemetryCreateRoutingContact) -fontSize 14
                     }
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
 
@@ -2738,4 +2736,109 @@ Function Start-DistributionListMigrationV3
     test-CloudDLPresentExchangeOnline -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
 
     $telemetryInfo.functionEndTime = get-universalDateTime
+
+    $telemetryConvertGroupCloudOnlyExchangeOnline = get-elapsedTime -startTime $telmetryinfo.functionStartTime -endTime $telemetryInfo.telemetryFunctionEndTime
+
+    $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
+    out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $xmlFiles.office365DLConfigurationPostMigrationXML.value
+
+    $office365DLMembershipPostMigration = @(get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -errorAction STOP)
+    out-xmlFile -itemToExport $office365DLMembershipPostMigration -itemNametoExport $xmlFiles.office365DLMembershipPostMigrationXML.value
+
+    $htmlCreateRoutingContact = get-date
+
+    $telemtryInfo.functionStartTime = get-universalDateTime
+
+    [int]$loopCounter = 0
+    [boolean]$stopLoop = $FALSE
+
+    if ($customRoutingDomain -eq "")
+    {
+        out-logfile -string "Calling new-routing contact without custom routing domain."
+        do {
+            try {
+                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -customRoutingDomain $mailOnMicrosoftComDomain
+    
+                $stopLoop = $TRUE
+            }
+            catch {
+                if ($loopCounter -gt 4)
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+                else {
+                    start-sleepProgress -sleepString "Unable to create routing contact - try again." -sleepSeconds 5
+    
+                    $loopCounter = $loopCounter +1
+                }
+            }
+        } while ($stopLoop -eq $FALSE)
+    }
+    else
+    {
+        out-logfile -string "Calling new-routingContact with custom domain."
+        do {
+            try {
+                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $globalCatalogServer -adCredential $activeDirectoryCredential -customRoutingDomain $mailOnMicrosoftComDomain -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
+    
+                $stopLoop = $TRUE
+            }
+            catch {
+                if ($loopCounter -gt 4)
+                {
+                    out-logfile -string $_ -isError:$TRUE
+                }
+                else {
+                    start-sleepProgress -sleepString "Unable to create routing contact - try again." -sleepSeconds 5
+    
+                    $loopCounter = $loopCounter +1
+                }
+            }
+        } while ($stopLoop -eq $FALSE)
+    }
+
+    $stopLoop = $FALSE
+    [int]$loopCounter = 0
+
+    do {
+        $tempMailArray = $originalDLConfiguration.mail.split("@")
+
+        foreach ($member in $tempMailArray)
+        {
+            out-logfile -string ("Temp Mail Address Member: "+$member)
+        }
+
+        $tempMailAddress = $tempMailArray[0]+"-MigratedByScript"
+
+        out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
+
+        $tempMailAddress = $tempMailAddress+"@"+$tempMailArray[1]
+
+        out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
+        
+        try {
+            $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+
+            $stopLoop=$TRUE
+        }
+        catch 
+        {
+            if ($loopCounter -gt 5)
+            {
+                out-logfile -string "Unable to obtain routing contact information post creation."
+                out-logfile -string $_ -isError:$TRUE
+            }
+            else 
+            {
+                start-sleepProgress -sleepString "Unable to obtain routing contact after creation - sleep try again." -sleepSeconds 10
+                $loopCounter = $loopCounter + 1                
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
+
+    out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactXML.value
+
+    $telemtryInfo.functionEndTime = get-universalDateTime
+
+    $telemetryCreateRoutingContact = get-elapsedTime -startTime $telemetryInfo.functionStartTime -endTime $telemetryInfo.functionEndTime
 }
