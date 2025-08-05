@@ -86,15 +86,18 @@
             out-logfile -string "Previous errors not encountered - test further."
             out-logfile -string $functionRecipient.name
 
-            if ($membership.contains($functionRecipient.name))
+            if ($membership.count -gt 0)
             {
-                out-logfile -string "User was located successfully."
-            }
-            else 
-            {
-                out-logfile -string "User was not located successfully."
-                $isTestError="Yes"
-            }
+                 if ($membership.contains($functionRecipient.name))
+                {
+                    out-logfile -string "User was located successfully."
+                }
+                else 
+                {
+                    out-logfile -string "User was not located successfully."
+                    $isTestError="Yes"
+                }
+            }   
         }
         else 
         {
