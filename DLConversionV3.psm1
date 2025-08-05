@@ -989,6 +989,7 @@ Function Start-DistributionListMigrationV3
         allOffice365MailboxesFolderPermissionsXML = @{ "Value" =  'allOffice365MailboxesFolderPermissionsXML' ; "Description" = "XML file that holds all cloud only recipients where a mailbox folder permission is assigned to the migrated group"}
         allOffice365SendAsAccessOnGroupXML = @{ "Value" =  'allOffice365SendAsAccessOnGroupXML' ; "Description" = "XML file that holds all cloud only send as rights assigned to the migrated group"}
         routingContactXML= @{ "Value" = "routingContactXML" ; "Description" = "XML file holds the routing contact configuration when intially created"}
+        routingContactUpdatedXML= @{ "Value" = "routingContactUpdatedXML" ; "Description" = "XML file holds the routing contact configuration when intially created"}
         routingDynamicGroupXML= @{ "Value" = "routingDynamicGroupXML" ; "Description" = "XML file holds the routing contact configuration when mail enabled"}
         allGroupsCoManagedByXML= @{ "Value" = "allGroupsCoManagedByXML" ; "Description" = "XML file holds all on premises objects that the migrated group has managed by rights assigned"}
         retainOffice365RecipientFullMailboxAccessXML= @{ "Value" = "office365RecipientFullMailboxAccess.xml" ; "Description" = "Import XML file for pre-gathered full mailbox access rights in Office 365"}
@@ -2838,7 +2839,11 @@ Function Start-DistributionListMigrationV3
 
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactXML.value
 
-    add-routingContactToGroup -originalDLConfiguration $originalDLConfiguration -routingContact $routingContactConfiguration -globalCatalogServer $globalCatalogServer -activeDirectoryCredentil $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
+    add-routingContactToGroup -originalDLConfiguration $originalDLConfiguration -routingContact $routingContactConfiguration -globalCatalogServer $corevariables.globalCatalogWithPort.value -activeDirectoryCredentil $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
+
+    $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
+
+    out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactUpdatedXML.value
 
     $telemetryInfo.telemetryfunctionEndTime = get-universalDateTime
 
