@@ -30,7 +30,8 @@
         out-logfile -string $functionURI
         $functionURI = $functionURI + $office365DLConfiguration.externalDirectoryObjectID
         out-logfile -string $functionURI
-        $functionURI = $functionURI + "/onPremisesSyncBehavior"
+        $functionURI = $functionURI + "/onPremisesSyncBehavior".
+        out-logfile -string $functionURI
 
         try {
             Invoke-MgGraphRequest -Method Patch -Uri $functionURI -body @{isCloudManaged=$true} -errorAction STOP
