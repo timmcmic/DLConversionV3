@@ -2691,7 +2691,7 @@ Function Start-DistributionListMigrationV3
         out-xmlfile -itemToExport $allOffice365SendAsAccessOnGroup -itemNameToExport $xmlFiles.allOffice365SendAsAccessOnGroupXML.value
     }
 
-    $telemetryInfo.FunctionEndTime = get-universalDateTime
+    $telemetryInfo.telemetryFunctionEndTime = get-universalDateTime
 
     $telemetryCollectOffice365Dependency = ($telemetryInfo.FunctionEndTime - $telemetryInfo.FunctionStartTime).seconds
 
@@ -2717,7 +2717,7 @@ Function Start-DistributionListMigrationV3
 
     $htmlSetGroupCloudOnly = get-universalDateTime
 
-    $telemetryInfo.FunctionStartTime = get-universalDateTime
+    $telemetryInfo.telemetryFunctionStartTime = get-universalDateTime
 
     out-logfile -string "Attempt to set the group to cloud only status."
 
@@ -2725,29 +2725,29 @@ Function Start-DistributionListMigrationV3
 
     test-CloudDLPresentGraph -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -msGraphURL $msGraphURL -errorAction STOP
 
-    $telemetryInfo.FunctionEndTime = get-universalDateTime
+    $telemetryInfo.telemetryFunctionEndTime = get-universalDateTime
 
     $telemetryConvertGroupCloudOnly = get-elapsedTime -startTime $telemetryInfo.FunctionStartTime -endTime $telemetryInfo.FunctionEndTime
 
     $htmlTestExchangeOnlineCloudOnly = get-universalDateTime
 
-    $telemetryInfo.functionStartTime = get-universalDateTime
+    $telemetryInfo.telemetryfunctionStartTime = get-universalDateTime
 
     test-CloudDLPresentExchangeOnline -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
 
-    $telemetryInfo.functionEndTime = get-universalDateTime
+    $telemetryInfo.telemetryfunctionEndTime = get-universalDateTime
 
-    $telemetryConvertGroupCloudOnlyExchangeOnline = get-elapsedTime -startTime $telmetryinfo.functionStartTime -endTime $telemetryInfo.telemetryFunctionEndTime
+    $telemetryConvertGroupCloudOnlyExchangeOnline = get-elapsedTime -startTime $telemetryInfo.telemetryfunctionStartTime -endTime $telemetryInfo.telemetrytelemetryFunctionEndTime
 
-    $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfigurationPostMigration.GUID -errorAction STOP
+    $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
     out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $xmlFiles.office365DLConfigurationPostMigrationXML.value
 
-    $office365DLMembershipPostMigration = @(get-O365DLMembership -groupSMTPAddress $office365DLConfigurationPostMigration.guid -errorAction STOP)
+    $office365DLMembershipPostMigration = @(get-O365DLMembership -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP)
     out-xmlFile -itemToExport $office365DLMembershipPostMigration -itemNametoExport $xmlFiles.office365DLMembershipPostMigrationXML.value
 
     $htmlCreateRoutingContact = get-date
 
-    $telemtryInfo.functionStartTime = get-universalDateTime
+    $telemtryInfo.telemetryfunctionStartTime = get-universalDateTime
 
     [int]$loopCounter = 0
     [boolean]$stopLoop = $FALSE
@@ -2815,7 +2815,7 @@ Function Start-DistributionListMigrationV3
         $tempMailAddress = $tempMailAddress+"@"+$tempMailArray[1]
 
         out-logfile -string ("Temp routing contact address: "+$tempMailAddress)
-        
+
         try {
             $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
@@ -2838,7 +2838,9 @@ Function Start-DistributionListMigrationV3
 
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactXML.value
 
-    $telemtryInfo.functionEndTime = get-universalDateTime
+    add-routingContactToGroup -originalDLConfiguration $originalDLConfiguration -routingContact $routingContactConfiguration
 
-    $telemetryCreateRoutingContact = get-elapsedTime -startTime $telemetryInfo.functionStartTime -endTime $telemetryInfo.functionEndTime
+    $telemtryInfo.telemetryfunctionEndTime = get-universalDateTime
+
+    $telemetryCreateRoutingContact = get-elapsedTime -startTime $telemetryInfo.telemetryfunctionStartTime -endTime $telemetryInfo.telemetryFunctionEndTime
 }
