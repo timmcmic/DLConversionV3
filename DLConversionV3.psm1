@@ -750,7 +750,7 @@ Function Start-DistributionListMigrationV3
     $telemetryStartTime = get-universalDateTime
     $telemetryEndTime = $NULL
     [double]$telemetryElapsedSeconds = 0
-    $telemetryEventName = "Start-DistributionListMigration"
+    $telemetryEventName = "Start-DistributionListMigration-V3"
     $telemetryFunctionStartTime=$NULL
     $telemetryFunctionEndTime=$NULL
     [double]$telemetryNormalizeDN=0
