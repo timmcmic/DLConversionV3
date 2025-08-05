@@ -2507,7 +2507,7 @@ Function Start-DistributionListMigrationV3
 
     $htmlRecordOffice365Dependencies = get-date
 
-    $telemetryInfo.FunctionStartTime = get-universalDateTime
+    $telemetryInfo.telemetryFunctionStartTime = get-universalDateTime
 
     out-logfile -string "Obtain all office 365 member of."
     $allOffice365MemberOf = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365Members.value -errorAction STOP
@@ -2575,7 +2575,7 @@ Function Start-DistributionListMigrationV3
 
     $telemetryInfo.telemetryFunctionEndTime = get-universalDateTime
 
-    $telemetryCollectOffice365Dependency = ($telemetryInfo.FunctionEndTime - $telemetryInfo.FunctionStartTime).seconds
+    $telemetryCollectOffice365Dependency = ($telemetryInfo.telemetryFunctionEndTime - $telemetryInfo.telemetryFunctionStartTime).seconds
 
     out-logfile -string ("Time to gather Office 365 dependencies: "+$telemetryCollectOffice365Dependency.tostring())
 
