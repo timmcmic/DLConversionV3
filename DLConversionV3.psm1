@@ -1126,7 +1126,7 @@ Function Start-DistributionListMigrationV3
 
     out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
 
-    $telementryInfo.telemetryMSGraphUsers = test-powershellModule -powershellmodulename $corevariables.msgraphuserspowershellmodulename.value -powershellVersionTest:$TRUE
+    $telemetryInfo.telemetryMSGraphUsers = test-powershellModule -powershellmodulename $corevariables.msgraphuserspowershellmodulename.value -powershellVersionTest:$TRUE
 
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
 
