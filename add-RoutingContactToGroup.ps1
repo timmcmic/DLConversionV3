@@ -22,15 +22,20 @@ Function add-RoutingContactToGroup
         [Parameter(Mandatory = $true)]
         $globalCatalogServer,
         [Parameter(Mandatory = $true)]
-        $activeDirectoryCredential
+        $activeDirectoryCredential,
+        [Parameter(Mandatory = $true)]
+        $activeDirectoryAuthenticationMethod
     )
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "Start add-RoutingContactToGroup"
     Out-LogFile -string "********************************************************************************"
 
+    out-logfile -string $originalDLConfiguration.DN
+    out-logfile -string $routingContact.DN
+
     try {
-        add-adGroupMember -identity $originalDLConfiguration.DN -Members $routingContact.DN -Credential $activeDirectoryCredential -Server $globalCatalogServer -errorAction STOP
+        add-adGroupMember -identity $originalDLConfiguration.DN -Members $routingContact.DN -Credential $activeDirectoryCredential -Server $globalCatalogServer -authType $activeDirectoryAuthenticationMethod -errorAction STOP
         out-logfile -string "Routing contact successfully added as group member."
     }
     catch {

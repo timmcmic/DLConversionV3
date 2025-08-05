@@ -2839,7 +2839,7 @@ Function Start-DistributionListMigrationV3
 
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactXML.value
 
-    add-routingContactToGroup -originalDLConfiguration $originalDLConfiguration -routingContact $routingContactConfiguration -globalCatalogServer $corevariables.globalCatalogWithPort.value -activeDirectoryCredential $activeDirectoryCredential
+    add-routingContactToGroup -originalDLConfiguration $originalDLConfiguration -routingContact $routingContactConfiguration -globalCatalogServer $corevariables.globalCatalogWithPort.value -activeDirectoryCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
 
     $routingContactConfiguration = Get-ADObjectConfiguration -groupSMTPAddress $tempMailAddress -globalCatalogServer $corevariables.globalCatalogWithPort.value -parameterSet $dlPropertySet -errorAction STOP -adCredential $activeDirectoryCredential 
 
