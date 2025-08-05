@@ -1734,7 +1734,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member
+                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
                     }
                 }
                 catch{
@@ -1771,7 +1771,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member
+                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
                     }
                 }
                 catch{
@@ -1808,7 +1808,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member
+                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
                     }
                 }
                 catch{
@@ -1845,7 +1845,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member
+                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
                     }
                 }
                 catch{
@@ -1882,7 +1882,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member
+                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
                     }
                 }
                 catch{
@@ -1919,7 +1919,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member
+                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
                     }
                 }
                 catch{
@@ -1954,7 +1954,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member
+                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
                     }
                 }
                 catch{
