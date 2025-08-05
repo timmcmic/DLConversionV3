@@ -248,7 +248,7 @@ Function Start-DistributionListMigrationV3
 
                 New-HTMLSection -HeaderText "Telemetry Time" {
                     New-HTMLList{
-                        new-htmlListItem -text ("MigrationElapsedSeconds = "+$telemetryInfo.telemetryElapsedSeconds) -fontSize 14
+                        new-htmlListItem -text ("MigrationElapsedSeconds = "+$telemetryElapsedSeconds) -fontSize 14
                         new-htmlListItem -text ("TimeToNormalizeDNs = "+$telemetryNormalizeDN) -fontSize 14
                         new-htmlListItem -text ("TimeToValidateCloudRecipients = "+$telemetryValidateCloudRecipients) -fontSize 14
                         new-htmlListItem -text ("TimeToCollectOnPremDependency = "+$telemetryDependencyOnPrem) -fontSize 14
@@ -737,32 +737,30 @@ Function Start-DistributionListMigrationV3
 
     #Create telemetry values.
 
-    $telemetryInfo = @{
-        telemetryDLConversionV3Version = $NULL
-        telemetryExchangeOnlineVersion = $NULL
-        telemetryAzureADVersion = $NULL
-        telemetryMSGraphAuthentication = $NULL
-        telemetryMSGraphUsers = $NULL
-        telemetryMSGraphGroups = $NULL
-        telemetryActiveDirectoryVersion = $NULL
-        telemetryOSVersion = (Get-CimInstance Win32_OperatingSystem).version
-        telemetryStartTime = get-universalDateTime
-        telemetryEndTime = $NULL
-        telemetryElapsedSeconds = [double]0
-        telemetryEventName = "Start-DistributionListMigration-V3"
-        telemetryFunctionStartTime = $NULL
-        telemetryFunctionEndTime = $NULL
-        telemetryNormalizeDN = [double]0
-        telemetryValidateCloudRecipients = [double]0
-        telemetryDependencyOnPrem = [double]0
-        telemetryCollectOffice365Dependency = [double]0
-        telemetryTimeToRemoveDL = [double]0
-        telemetryCreateOffice365DL = [double]0
-        telemetryCreateOffice365DLFirstPass = [double]0
-        telemetryReplaceOnPremDependency = [double]0
-        telemetryReplaceOffice365Dependency = [double]0
-        telemetryError = [boolean]$FALSE
-    }
+    $telemetryDLConversionV2Version = $NULL
+    $telemetryExchangeOnlineVersion = $NULL
+    $telemetryAzureADVersion = $NULL
+    $telemetryMSGraphAuthentication = $NULL
+    $telemetryMSGraphUsers = $NULL
+    $telemetryMSGraphGroups = $NULL
+    $telemetryActiveDirectoryVersion = $NULL
+    $telemetryOSVersion = (Get-CimInstance Win32_OperatingSystem).version
+    $telemetryStartTime = get-universalDateTime
+    $telemetryEndTime = $NULL
+    [double]$telemetryElapsedSeconds = 0
+    $telemetryEventName = "Start-DistributionListMigration"
+    $telemetryFunctionStartTime=$NULL
+    $telemetryFunctionEndTime=$NULL
+    [double]$telemetryNormalizeDN=0
+    [double]$telemetryValidateCloudRecipients=0
+    [double]$telemetryDependencyOnPrem=0
+    [double]$telemetryCollectOffice365Dependency=0
+    [double]$telemetryTimeToRemoveDL=0
+    [double]$telemetryCreateOffice365DL=0
+    [double]$telemetryCreateOffice365DLFirstPass=0
+    [double]$telemetryReplaceOnPremDependency=0
+    [double]$telemetryReplaceOffice365Dependency=0
+    [boolean]$telemetryError=$FALSE
 
     $windowTitle = ("Start-DistributionListMigrationV3 "+$groupSMTPAddress)
     $host.ui.RawUI.WindowTitle = $windowTitle
@@ -998,7 +996,7 @@ Function Start-DistributionListMigrationV3
     Out-LogFile -string "BEGIN START-DISTRIBUTIONLISTMIGRATIONV3"
     Out-LogFile -string "================================================================================"
 
-    out-logfile -string ("Runtime start UTC: " + $telemetryInfo.telemetryStartTime.ToString())
+    out-logfile -string ("Runtime start UTC: " + $telemetryStartTime.ToString())
 
     if ($errorActionPreference -ne "Continue")
     {
@@ -1118,27 +1116,27 @@ Function Start-DistributionListMigrationV3
 
     Out-LogFile -string "Calling Test-PowerShellModule to validate the Exchange Module is installed."
 
-    $telemetryInfo.telemetryExchangeOnlineVersion = Test-PowershellModule -powershellModuleName $corevariables.exchangeOnlinePowershellModuleName.value -powershellVersionTest:$TRUE
+    $telemetryExchangeOnlineVersion = Test-PowershellModule -powershellModuleName $corevariables.exchangeOnlinePowershellModuleName.value -powershellVersionTest:$TRUE
 
     Out-LogFile -string "Calling Test-PowerShellModule to validate the Active Directory is installed."
 
-    $telemetryInfo.telemetryActiveDirectoryVersion = Test-PowershellModule -powershellModuleName $corevariables.activeDirectoryPowershellModuleName.value
+    $telemetryActiveDirectoryVersion = Test-PowershellModule -powershellModuleName $corevariables.activeDirectoryPowershellModuleName.value
 
     out-logfile -string "Calling Test-PowershellModule to validate the DL Conversion Module version installed."
 
-    $telemetryInfo.telemetryDLConversionV3Version = Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
+    $telemetryDLConversionV3Version = Test-PowershellModule -powershellModuleName $corevariables.dlConversionPowershellModule.value -powershellVersionTest:$TRUE
 
     out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Authentication versions installed."
 
-    $telemetryInfo.telemetryMSGraphAuthentication = test-powershellModule -powershellmodulename $corevariables.msgraphauthenticationpowershellmodulename.value -powershellVersionTest:$TRUE
+    $telemetryMSGraphAuthentication = test-powershellModule -powershellmodulename $corevariables.msgraphauthenticationpowershellmodulename.value -powershellVersionTest:$TRUE
 
     out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
 
-    $telemetryInfo.telemetryMSGraphUsers = test-powershellModule -powershellmodulename $corevariables.msgraphuserspowershellmodulename.value -powershellVersionTest:$TRUE
+    $telemetryMSGraphUsers = test-powershellModule -powershellmodulename $corevariables.msgraphuserspowershellmodulename.value -powershellVersionTest:$TRUE
 
    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
 
-    $telemetryInfo.telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
+    $telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
 
     Out-LogFile -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
 
@@ -1225,7 +1223,7 @@ Function Start-DistributionListMigrationV3
     Invoke-Office365SafetyCheck -o365dlconfiguration $office365DLConfiguration -azureADDLConfiguration $msGraphDLConfiguration -errorAction STOP
 
     $htmlStartAttributeNormalization = get-date
-    $telemetryInfo.FunctionStartTime = get-universalDateTime
+    $FunctionStartTime = get-universalDateTime
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN NORMALIZE DNS FOR ALL ATTRIBUTES"
@@ -1657,9 +1655,9 @@ Function Start-DistributionListMigrationV3
     Out-LogFile -string "END NORMALIZE DNS FOR ALL ATTRIBUTES"
     Out-LogFile -string "********************************************************************************"
 
-    $telemetryInfo.FunctionEndTime = get-universalDateTime
+    $FunctionEndTime = get-universalDateTime
 
-    $telemetryNormalizeDN = get-elapsedTime -startTime $telemetryInfo.FunctionStartTime -endTime $telemetryInfo.FunctionEndTime
+    $telemetryNormalizeDN = get-elapsedTime -startTime $FunctionStartTime -endTime $FunctionEndTime
 
     out-logfile -string ("Time to Normalize DNs: "+$telemetryNormalizeDN.toString())
 
@@ -1677,7 +1675,7 @@ Function Start-DistributionListMigrationV3
     $htmlStartCloudValidation = get-date
     $htmlStartCloudValidationOnPremises = get-Date
 
-    $telemetryInfo.FunctionStartTime = get-universalDateTime
+    $FunctionStartTime = get-universalDateTime
 
     Out-LogFile -string "********************************************************************************"
     Out-LogFile -string "BEGIN VALIDATE RECIPIENTS IN CLOUD"
@@ -2237,9 +2235,9 @@ Function Start-DistributionListMigrationV3
     Out-LogFile -string "END VALIDATE RECIPIENTS IN CLOUD"
     Out-LogFile -string "********************************************************************************"
 
-    $telemetryInfo.FunctionEndTime = get-universalDateTime
+    $FunctionEndTime = get-universalDateTime
 
-    $telemetryValidateCloudRecipients = get-elapsedTime -startTime $telemetryInfo.FunctionStartTime -endTime $telemetryInfo.FunctionEndTime
+    $telemetryValidateCloudRecipients = get-elapsedTime -startTime $FunctionStartTime -endTime $FunctionEndTime
 
     out-logfile -string ("Time to validate recipients in cloud: "+ $telemetryValidateCloudRecipients.toString())
 
@@ -2316,7 +2314,7 @@ Function Start-DistributionListMigrationV3
 
     $htmlCaptureOnPremisesDependencies = get-date
 
-    $telemetryInfo.FunctionStartTime = get-universalDateTime
+    $FunctionStartTime = get-universalDateTime
 
     out-logfile -string "Get all the groups that this user is a member of - normalize to canonicalname."
 
@@ -2418,9 +2416,9 @@ Function Start-DistributionListMigrationV3
         }
     }
 
-    $telemetryInfo.FunctionEndTime = get-universalDateTime
+    $FunctionEndTime = get-universalDateTime
 
-    $telemetryDependencyOnPrem = get-elapsedTime -startTime $telemetryInfo.FunctionStartTime -endTime $telemetryInfo.FunctionEndTime
+    $telemetryDependencyOnPrem = get-elapsedTime -startTime $FunctionStartTime -endTime $FunctionEndTime
 
     out-logfile -string ("Time to calculate on premsies dependencies: "+ $telemetryDependencyOnPrem.toString())
 
@@ -2531,7 +2529,7 @@ Function Start-DistributionListMigrationV3
 
     $htmlRecordOffice365Dependencies = get-date
 
-    $telemetryInfo.telemetryFunctionStartTime = get-universalDateTime
+    $telemetryFunctionStartTime = get-universalDateTime
 
     out-logfile -string "Obtain all office 365 member of."
     $allOffice365MemberOf = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365Members.value -errorAction STOP
@@ -2597,9 +2595,9 @@ Function Start-DistributionListMigrationV3
         out-xmlfile -itemToExport $allOffice365SendAsAccessOnGroup -itemNameToExport $xmlFiles.allOffice365SendAsAccessOnGroupXML.value
     }
 
-    $telemetryInfo.telemetryFunctionEndTime = get-universalDateTime
+    $telemetryFunctionEndTime = get-universalDateTime
 
-    $telemetryCollectOffice365Dependency = ($telemetryInfo.telemetryFunctionEndTime - $telemetryInfo.telemetryFunctionStartTime).seconds
+    $telemetryCollectOffice365Dependency = ($telemetryFunctionEndTime - $telemetryFunctionStartTime).seconds
 
     out-logfile -string ("Time to gather Office 365 dependencies: "+$telemetryCollectOffice365Dependency.tostring())
 
@@ -2623,7 +2621,7 @@ Function Start-DistributionListMigrationV3
 
     $htmlSetGroupCloudOnly = Get-Date
 
-    $telemetryInfo.telemetryFunctionStartTime = get-universalDateTime
+    $telemetryFunctionStartTime = get-universalDateTime
 
     out-logfile -string "Attempt to set the group to cloud only status."
 
@@ -2631,19 +2629,19 @@ Function Start-DistributionListMigrationV3
 
     test-CloudDLPresentGraph -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -msGraphURL $msGraphURL -errorAction STOP
 
-    $telemetryInfo.telemetryFunctionEndTime = get-universalDateTime
+    $telemetryFunctionEndTime = get-universalDateTime
 
-    $telemetryConvertGroupCloudOnly = get-elapsedTime -startTime $telemetryInfo.FunctionStartTime -endTime $telemetryInfo.FunctionEndTime
+    $telemetryConvertGroupCloudOnly = get-elapsedTime -startTime $FunctionStartTime -endTime $FunctionEndTime
 
     $htmlTestExchangeOnlineCloudOnly = Get-Date
 
-    $telemetryInfo.telemetryfunctionStartTime = get-universalDateTime
+    $telemetryfunctionStartTime = get-universalDateTime
 
     test-CloudDLPresentExchangeOnline -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
 
-    $telemetryInfo.telemetryfunctionEndTime = get-universalDateTime
+    $telemetryfunctionEndTime = get-universalDateTime
 
-    $telemetryConvertGroupCloudOnlyExchangeOnline = get-elapsedTime -startTime $telemetryInfo.telemetryfunctionStartTime -endTime $telemetryInfo.telemetryfunctionEndTime
+    $telemetryConvertGroupCloudOnlyExchangeOnline = get-elapsedTime -startTime $telemetryfunctionStartTime -endTime $telemetryfunctionEndTime
 
     $htmlCaptureOffice365InfoPostMigration = Get-Date
 
@@ -2655,7 +2653,7 @@ Function Start-DistributionListMigrationV3
 
     $htmlCreateRoutingContact = get-date
 
-    $telemetryInfo.telemetryFunctionStartTime = get-universalDateTime
+    $telemetryFunctionStartTime = get-universalDateTime
 
     [int]$loopCounter = 0
     [boolean]$stopLoop = $FALSE
@@ -2752,9 +2750,9 @@ Function Start-DistributionListMigrationV3
 
     out-xmlFile -itemToExport $routingContactConfiguration -itemNameTOExport $xmlFiles.routingContactUpdatedXML.value
 
-    $telemetryInfo.telemetryfunctionEndTime = get-universalDateTime
+    $telemetryfunctionEndTime = get-universalDateTime
 
-    $telemetryCreateRoutingContact = get-elapsedTime -startTime $telemetryInfo.telemetryfunctionStartTime -endTime $telemetryInfo.telemetryFunctionEndTime
+    $telemetryCreateRoutingContact = get-elapsedTime -startTime $telemetryfunctionStartTime -endTime $telemetryFunctionEndTime
 
     out-logfile -string "Calling function to disconnect all powershell sessions."
 
@@ -2762,26 +2760,26 @@ Function Start-DistributionListMigrationV3
 
     $htmlEndTime = get-date
 
-    $telemetryInfo.telemetryEndTime = get-universalDateTime
-    $telemetryInfo.telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryInfo.telemetryStartTime -endTime $telemetryInfo.telemetryEndTime
+    $telemetryEndTime = get-universalDateTime
+    $telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryStartTime -endTime $telemetryEndTime
 
     $telemetryEventProperties = @{
-        DLConversionV3Command = $telemetryInfo.telemetryEventName
-        DLConversionV3Version = $telemetryInfo.telemetryDLConversionV3Version
-        ExchangeOnlineVersion = $telemetryInfo.telemetryExchangeOnlineVersion
+        DLConversionV3Command = $telemetryEventName
+        DLConversionV3Version = $telemetryDLConversionV3Version
+        ExchangeOnlineVersion = $telemetryExchangeOnlineVersion
         MSGraphAuthentication = $telmetryInfo.telemetryMSGraphAuthentication
-        MSGraphGroups = $telemetryInfo.telemetryMSGraphGroups
-        MSGraphUsers = $telemetryInfo.telemetryMSGraphUsers
-        OSVersion = $telemetryInfo.telemetryOSVersion
-        MigrationStartTimeUTC = $telemetryInfo.telemetryStartTime
-        MigrationEndTimeUTC = $telemetryInfo.telemetryEndTime
+        MSGraphGroups = $telemetryMSGraphGroups
+        MSGraphUsers = $telemetryMSGraphUsers
+        OSVersion = $telemetryOSVersion
+        MigrationStartTimeUTC = $telemetryStartTime
+        MigrationEndTimeUTC = $telemetryEndTime
         MigrationErrors = $false
     }
 
     if (($allowTelemetryCollection -eq $TRUE) -and ($allowDetailedTelemetryCollection -eq $FALSE))
     {
         $telemetryEventMetrics = @{
-            MigrationElapsedSeconds = [double]$telemetryInfo.telemetryElapsedSeconds
+            MigrationElapsedSeconds = [double]$telemetryElapsedSeconds
             TimeToNormalizeDNs = [double]$telemetryNormalizeDN
             TimeToValidateCloudRecipients = [double]$telemetryValidateCloudRecipients
             TimeToCollectOnPremDependency = [double]$telemetryDependencyOnPrem
@@ -2794,7 +2792,7 @@ Function Start-DistributionListMigrationV3
     elseif (($allowTelemetryCollection -eq $TRUE) -and ($allowDetailedTelemetryCollection -eq $TRUE))
     {
         $telemetryEventMetrics = @{
-            MigrationElapsedSeconds = [double]$telemetryInfo.telemetryElapsedSeconds
+            MigrationElapsedSeconds = [double]$telemetryElapsedSeconds
             TimeToNormalizeDNs = [double]$telemetryNormalizeDN
             TimeToValidateCloudRecipients = [double]$telemetryValidateCloudRecipients
             TimeToCollectOnPremDependency = [double]$telemetryDependencyOnPrem
@@ -2835,7 +2833,7 @@ Function Start-DistributionListMigrationV3
         out-logfile -string "Telemetry1"
         out-logfile -string $traceModuleName
         out-logfile -string "Telemetry2"
-        out-logfile -string $telemetryInfo.telemetryEventName
+        out-logfile -string $telemetryEventName
         out-logfile -string "Telemetry3"
         out-logfile -string $telemetryEventMetrics
         out-logfile -string "Telemetry4"
