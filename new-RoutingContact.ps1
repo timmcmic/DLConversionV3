@@ -175,7 +175,6 @@
             }
         }
 
-        
         if ($functionTargetAddress -eq $NULL)
         {
             #This code was kinda cheap - essentailly there was no valid address for a target address.

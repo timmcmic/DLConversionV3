@@ -22,9 +22,7 @@ Function add-RoutingContactToGroup
         [Parameter(Mandatory = $true)]
         $globalCatalogServer,
         [Parameter(Mandatory = $true)]
-        $activeDirectoryCredential,
-        [Parameter(Mandatory = $true)]
-        $activeDirectoryAuthenticationMethod
+        $activeDirectoryCredential
     )
 
     Out-LogFile -string "********************************************************************************"
