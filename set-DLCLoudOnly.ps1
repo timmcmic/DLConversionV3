@@ -32,7 +32,7 @@
         out-logfile -string $functionURI
 
         try {
-            Invoke-MgGraphRequest -Method Patch -Uri $functionURI -errorAction STOP
+            Invoke-MgGraphRequest -Method Patch -Uri $functionURI -body @{isCloudManaged=$true} -errorAction STOP
         }
         catch {
             out-logfile -string "Unable to set the group to cloud only."

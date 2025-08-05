@@ -2722,5 +2722,5 @@ Function Start-DistributionListMigrationV3
 
     out-logfile -string "Attempt to set the group to cloud only status."
 
-    set-DLCloudOnly -msGraphURL $msGraphURL -office365DLConfiguration $office365DLConfiguration -body @{isCloudManaged=$true}
+    set-DLCloudOnly -msGraphURL $msGraphURL -office365DLConfiguration $office365DLConfiguration 
 }
