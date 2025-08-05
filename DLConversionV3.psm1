@@ -732,7 +732,7 @@ Function Start-DistributionListMigrationV3
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
-                if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0) -or ($global:testOffice365PropertyErrors.count -gt 0))
+                if (($global:dlConversionV2Test.count -gt 0) -or ($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0) -or ($global:testOffice365PropertyErrors.count -gt 0))
                 {
                     out-logfile -string "Do not generate timeline - there was a failure."
                 }
