@@ -739,7 +739,7 @@ Function Start-DistributionListMigrationV3
 
     #Create telemetry values.
 
-    $telemetryDLConversionV2Version = $NULL
+    $telemetryDLConversionV3Version = $NULL
     $telemetryExchangeOnlineVersion = $NULL
     $telemetryAzureADVersion = $NULL
     $telemetryMSGraphAuthentication = $NULL
@@ -2767,8 +2767,8 @@ Function Start-DistributionListMigrationV3
 
     # build the properties and metrics #
     $telemetryEventProperties = @{
-        DLConversionV2Command = $telemetryEventName
-        DLConversionV2Version = $telemetryDLConversionV2Version
+        DLConversionV3Command = $telemetryEventName
+        DLConversionV3Version = $telemetryDLConversionV3Version
         ExchangeOnlineVersion = $telemetryExchangeOnlineVersion
         MSGraphAuthentication = $telemetryMSGraphAuthentication
         MSGraphUsers = $telemetryMSGraphUsers
