@@ -681,32 +681,39 @@ Function Start-DistributionListMigrationV3
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
-                out-logfile -string "Generate timeline."
+                if (($global:preCreateErrors.count -gt 0) -or ($global:testOffice365Errors.count -gt 0) -or ($global:testOffice365PropertyErrors.count -gt 0))
+                {
+                    out-logfile -string "Do not generate timeline - there was a failure."
+                }
+                else 
+                {
+                    out-logfile -string "Generate timeline."
 
-                new-htmlSection -HeaderText ("Migration Timeline Highlights"){
-                    new-HTMLTimeLIne {
-                        new-HTMLTimeLineItem -HeadingText "Migration Start Time" -Date $htmlStartTime
-                        new-HTMLTimeLineItem -HeadingText "Start Parameter Validation" -Date $htmlStartValidationTime
-                        new-HTMLTimeLineItem -HeadingText "Start Powershell Session Initialization" -Date $htmlStartPowershellSessions
-                        new-HTMLTimeLineItem -HeadingText "Capture On-Premises DL Information" -Date $htmlCaptureOnPremisesDLInfo
-                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Information" -Date $htmlCaptureOffice365DLConfiguration
-                        new-HTMLTimeLineItem -HeadingText "Capture Graph DL Information" -Date $htmlCaptureGraphDLConfiguration
-                        new-HTMLTimeLineItem -HeadingText "Capture Graph DL Membership" -Date $htmlCaptureGraphDLMembership
-                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Membership" -Date $htmlCaptureOffice365DLMembership
-                        new-HTMLTimeLineItem -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
-                        new-HTMLTimeLineItem -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
-                        new-HTMLTimeLineItem -HeadingText "Start Cloud Validation" -Date $htmlStartCloudValidation
-                        new-HTMLTimeLineItem -HeadingText "Start OnPremises -> Cloud Validation" -Date $htmlStartCloudValidationOnPremises
-                        new-HTMLTimeLineItem -HeadingText "Start OnPremises Property -> Cloud Validation" -Date $htmlStartCloudValidationOffice365
-                        new-HTMLTimeLineItem -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
-                        new-HTMLTimeLineItem -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
-                        new-HTMLTimeLineItem -HeadingText "Set EntraID Group Cloud Only" -Date $htmlSetGroupCloudOnly
-                        new-HTMLTimeLineItem -HeadingText "Set Exchange Online Group Cloud Only" -Date $htmlTestExchangeOnlineCloudOnly
-                        new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
-                        new-HTMLTimeLineItem -HeadingText "Create Routing Contact" -Date $htmlCreateRoutingContact
-                        new-HTMLTimeLineItem -HeadingText "END" -Date $htmlEndTime
-                    }
-                } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                    new-htmlSection -HeaderText ("Migration Timeline Highlights"){
+                        new-HTMLTimeLIne {
+                            new-HTMLTimeLineItem -HeadingText "Migration Start Time" -Date $htmlStartTime
+                            new-HTMLTimeLineItem -HeadingText "Start Parameter Validation" -Date $htmlStartValidationTime
+                            new-HTMLTimeLineItem -HeadingText "Start Powershell Session Initialization" -Date $htmlStartPowershellSessions
+                            new-HTMLTimeLineItem -HeadingText "Capture On-Premises DL Information" -Date $htmlCaptureOnPremisesDLInfo
+                            new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Information" -Date $htmlCaptureOffice365DLConfiguration
+                            new-HTMLTimeLineItem -HeadingText "Capture Graph DL Information" -Date $htmlCaptureGraphDLConfiguration
+                            new-HTMLTimeLineItem -HeadingText "Capture Graph DL Membership" -Date $htmlCaptureGraphDLMembership
+                            new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Membership" -Date $htmlCaptureOffice365DLMembership
+                            new-HTMLTimeLineItem -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
+                            new-HTMLTimeLineItem -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
+                            new-HTMLTimeLineItem -HeadingText "Start Cloud Validation" -Date $htmlStartCloudValidation
+                            new-HTMLTimeLineItem -HeadingText "Start OnPremises -> Cloud Validation" -Date $htmlStartCloudValidationOnPremises
+                            new-HTMLTimeLineItem -HeadingText "Start OnPremises Property -> Cloud Validation" -Date $htmlStartCloudValidationOffice365
+                            new-HTMLTimeLineItem -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
+                            new-HTMLTimeLineItem -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
+                            new-HTMLTimeLineItem -HeadingText "Set EntraID Group Cloud Only" -Date $htmlSetGroupCloudOnly
+                            new-HTMLTimeLineItem -HeadingText "Set Exchange Online Group Cloud Only" -Date $htmlTestExchangeOnlineCloudOnly
+                            new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
+                            new-HTMLTimeLineItem -HeadingText "Create Routing Contact" -Date $htmlCreateRoutingContact
+                            new-HTMLTimeLineItem -HeadingText "END" -Date $htmlEndTime
+                        }
+                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
             }
         } -online -ShowHTML
     }
