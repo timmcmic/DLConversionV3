@@ -2747,7 +2747,7 @@ Function Start-DistributionListMigrationV3
 
     $htmlCreateRoutingContact = get-date
 
-    $telemtryInfo.telemetryfunctionStartTime = get-universalDateTime
+    $telemetryInfo.telemetryFunctionStartTime = get-universalDateTime
 
     [int]$loopCounter = 0
     [boolean]$stopLoop = $FALSE
@@ -2840,7 +2840,7 @@ Function Start-DistributionListMigrationV3
 
     add-routingContactToGroup -originalDLConfiguration $originalDLConfiguration -routingContact $routingContactConfiguration -globalCatalogServer $globalCatalogServer -activeDirectoryCredentil $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
 
-    $telemtryInfo.telemetryfunctionEndTime = get-universalDateTime
+    $telemetryInfo.telemetryfunctionEndTime = get-universalDateTime
 
     $telemetryCreateRoutingContact = get-elapsedTime -startTime $telemetryInfo.telemetryfunctionStartTime -endTime $telemetryInfo.telemetryFunctionEndTime
 }
