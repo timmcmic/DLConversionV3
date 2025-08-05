@@ -2817,6 +2817,8 @@ Function Start-DistributionListMigrationV3
 
     generate-HTMLFile
 
+    start-sleep -s 5
+
     if ($telemetryError -eq $TRUE)
     {
         out-logfile -string "" -isError:$TRUE
