@@ -38,7 +38,7 @@ Function add-RoutingContactToGroup
 
     try {
         #add-adGroupMember -identity $functionDistinguishName -Members $functionDistinguishedNameContact -Credential $activeDirectoryCredential -Server $globalCatalogServer -authType $activeDirectoryAuthenticationMethod -errorAction STOP
-        Set-ADObject -Identity $functionDistinguishName -Add @{member=$functionDistinguishedNameContact}
+        Set-ADObject -Identity $functionDistinguishName -Add @{member=$functionDistinguishedNameContact} -AuthType $activeDirectoryAuthenticationMethod -Credential $activeDirectoryCredential -Server $globalCatalogServer
         out-logfile -string "Routing contact successfully added as group member."
     }
     catch {

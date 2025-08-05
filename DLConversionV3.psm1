@@ -2619,7 +2619,7 @@ Function Start-DistributionListMigrationV3
 
     $telemetryInfo.telemetryfunctionEndTime = get-universalDateTime
 
-    $telemetryConvertGroupCloudOnlyExchangeOnline = get-elapsedTime -startTime $telemetryInfo.telemetryfunctionStartTime -endTime $telemetryInfo.telemetrytelemetryFunctionEndTime
+    $telemetryConvertGroupCloudOnlyExchangeOnline = get-elapsedTime -startTime $telemetryInfo.telemetryfunctionStartTime -endTime $telemetryInfo.telemetryfunctionEndTime
 
     $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
     out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $xmlFiles.office365DLConfigurationPostMigrationXML.value
@@ -2737,7 +2737,7 @@ Function Start-DistributionListMigrationV3
     $htmlEndTime = get-date
 
     $telemetryInfo.telemetryEndTime = get-universalDateTime
-    $telemetryInfo.telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryStartTime -endTime $telemetryEndTime
+    $telemetryInfo.telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryInfo.telemetryStartTime -endTime $telemetryInfo.telemetryEndTime
 
     $telemetryEventProperties = @{
         DLConversionV3Command = $telemetryInfo.telemetryEventName
