@@ -58,11 +58,19 @@
             out-logfile -string $_ -isError:$TRUE
         } 
 
-        do 
+        if ($functionRecipient.onPremisesSyncEnabled -eq $true)
         {
-            start-sleepProgress -sleepString "Group still directory synchronized in EntraID - sleep for 30 seconds - try again." -sleepSeconds 30
-            $functionRecipient = Invoke-MgGraphRequest -Method Get -Uri $functionURI
-        } while ($functionRecipient.onPremisesSyncEnabled -eq $true)
+            do 
+            {
+                start-sleepProgress -sleepString "Group still directory synchronized in EntraID - sleep for 30 seconds - try again." -sleepSeconds 30
+                $functionRecipient = Invoke-MgGraphRequest -Method Get -Uri $functionURI
+            } while ($functionRecipient.onPremisesSyncEnabled -eq $true)
+        }
+        else 
+        {
+            out-logfile -string "Bypass do while - group is already cloud only."
+        }
+        
 
         Out-LogFile -string "END test-ClouDLPresentGraph"
         Out-LogFile -string "********************************************************************************"

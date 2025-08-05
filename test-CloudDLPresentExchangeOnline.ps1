@@ -52,12 +52,20 @@
             out-logfile -string $_ -isError:$TRUE
         } 
 
-        do 
+        if ($functionRecipient.isDirSynced -eq $true)
         {
-            start-sleepProgress -sleepString "Group still directory synchronized in Exchange Online - sleep for 30 seconds - try again." -sleepSeconds 30
-            $functionRecipient = get-o365Recipient -identity $groupSMTPAddress -errorAction STOP
+             do 
+            {
+                start-sleepProgress -sleepString "Group still directory synchronized in Exchange Online - sleep for 30 seconds - try again." -sleepSeconds 30
+                $functionRecipient = get-o365Recipient -identity $groupSMTPAddress -errorAction STOP
 
-        } while ($functionRecipient.isDirSynced -eq $true)
+            } while ($functionRecipient.isDirSynced -eq $true)
+        }
+        else 
+        {
+            out-logfile -string "Bypass do while - group is already cloud only."
+        }
+       
 
         Out-LogFile -string "END test-CloudDLPresentExchangeOnline"
         Out-LogFile -string "********************************************************************************"
