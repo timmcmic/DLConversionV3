@@ -31,8 +31,8 @@ Function add-RoutingContactToGroup
     Out-LogFile -string "Start add-RoutingContactToGroup"
     Out-LogFile -string "********************************************************************************"
 
-    out-logfile -string $originalDLConfiguration.DN
-    out-logfile -string $routingContact.DN
+    out-logfile -string $originalDLConfiguration.distinguishedName
+    out-logfile -string $routingContact.distinguishedName
 
     try {
         add-adGroupMember -identity $originalDLConfiguration.DN -Members $routingContact.DN -Credential $activeDirectoryCredential -Server $globalCatalogServer -authType $activeDirectoryAuthenticationMethod -errorAction STOP
