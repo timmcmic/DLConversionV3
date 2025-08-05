@@ -1122,6 +1122,14 @@ Function Start-DistributionListMigrationV3
 
     $telemetryInfo.telemetryMSGraphAuthentication = test-powershellModule -powershellmodulename $corevariables.msgraphauthenticationpowershellmodulename.value -powershellVersionTest:$TRUE
 
+    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
+
+    $telementryInfo.telemetryMSGraphUsers = test-powershellModule -powershellmodulename $corevariables.msgraphuserspowershellmodulename.value -powershellVersionTest:$TRUE
+
+   out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
+
+    $telemetryIngo.telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
+
     Out-LogFile -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
 
     New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -debugLogPath $traceFilePath
@@ -2747,6 +2755,8 @@ Function Start-DistributionListMigrationV3
         DLConversionV3Version = $telemetryInfo.telemetryDLConversionV3Version
         ExchangeOnlineVersion = $telemetryInfo.telemetryExchangeOnlineVersion
         MSGraphAuthentication = $telmetryInfo.telemetryMSGraphAuthentication
+        MSGraphGroups = $telemetryInfo.telemetryMSGraphGroups
+        MSGraphUsers = $telemetryInfo.telemetryMSGraphUsers
         OSVersion = $telemetryInfo.telemetryOSVersion
         MigrationStartTimeUTC = $telemetryInfo.telemetryStartTime
         MigrationEndTimeUTC = $telemetryInfo.telemetryEndTime
