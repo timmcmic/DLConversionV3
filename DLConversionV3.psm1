@@ -246,7 +246,7 @@ Function Start-DistributionListMigrationV3
 
                 New-HTMLSection -HeaderText "Telemetry Time" {
                     New-HTMLList{
-                        new-htmlListItem -text ("MigrationElapsedSeconds = "+$telemetryElapsedSeconds) -fontSize 14
+                        new-htmlListItem -text ("MigrationElapsedSeconds = "+$telemetryInfo.telemetryElapsedSeconds) -fontSize 14
                         new-htmlListItem -text ("TimeToNormalizeDNs = "+$telemetryNormalizeDN) -fontSize 14
                         new-htmlListItem -text ("TimeToValidateCloudRecipients = "+$telemetryValidateCloudRecipients) -fontSize 14
                         new-htmlListItem -text ("TimeToCollectOnPremDependency = "+$telemetryDependencyOnPrem) -fontSize 14
@@ -283,36 +283,6 @@ Function Start-DistributionListMigrationV3
                         }
                     }
                 }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
-
-                out-logfile -string "Generate HTML for Original DL Configuration Updated"
-
-                if ($originalDLConfigurationPostMigration -ne $NULL)
-                {
-                    New-HTMLSection -HeaderText "Original DL Configuration Updated (Active Directory)" {
-                        New-HTMLList{
-                            foreach ($object in $originalDLConfigurationUpdated.psObject.properties)
-                            {
-                                if ($object.Value.count -gt 1)
-                                {
-                                    foreach ($value in $object.Value)
-                                    {
-                                        $string = ($object.name + " " + $value.tostring())
-                                        new-htmlListItem -text $string -fontSize 14
-                                    }
-                                }
-                                elseif ($object.value -ne $NULL)
-                                {
-                                    $string = ($object.name + " " + $object.value.tostring())
-                                    new-htmlListItem -text $string -fontSize 14                            }
-                                else
-                                {
-                                    $string = ($object.name)
-                                    new-htmlListItem -text $string -fontSize 14
-                                }
-                            }
-                        }
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
-                }
 
                 out-logfile -string "Generate HTML for Original Graph Configuration"
 
@@ -525,14 +495,6 @@ Function Start-DistributionListMigrationV3
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
-                if ($exchangeSendAsSMTP.count -gt 0)
-                {
-                    new-htmlSection -HeaderText ("On Premises SendAs Normalized"){
-                        new-htmlTable -DataTable ($exchangeSendAsSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
-                        } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
-                }
-
                 out-logfile -string "Generate HTML for all on premises dependencies."
 
                 if ($allGroupsMemberOf.count -gt 0)
@@ -595,30 +557,6 @@ Function Start-DistributionListMigrationV3
                 {
                     new-htmlSection -HeaderText ("On Premises Group FullMailboxAccess Objects"){
                         new-htmlTable -DataTable ($allObjectsFullMailboxAccess) -Filtering {
-                        } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
-                }
-
-                if ($allObjectSendAsAccess.count -gt 0)
-                {
-                    new-htmlSection -HeaderText ("On Premises Group SendAsAccess Objects"){
-                        new-htmlTable -DataTable ($allObjectSendAsAccess) -Filtering {
-                        } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
-                }
-
-                if ($allObjectsSendAsAccessNormalized.count -gt 0)
-                {
-                    new-htmlSection -HeaderText ("On Premises Group SendAsAccessNormalized Objects"){
-                        new-htmlTable -DataTable ($allObjectsSendAsAccessNormalized) -Filtering {
-                        } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
-                }
-
-                if ($allMailboxesFolderPermissions.count -gt 0)
-                {
-                    new-htmlSection -HeaderText ("On Premises Group MailboxFolderPermissions Objects"){
-                        new-htmlTable -DataTable ($allMailboxesFolderPermissions) -Filtering {
                         } -AutoSize
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
@@ -697,14 +635,6 @@ Function Start-DistributionListMigrationV3
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
-                if ($allOffice365FullMailboxAccess.count -gt 0)
-                {
-                    new-htmlSection -HeaderText ("Office 365 ForwardingAddress Groups Objects"){
-                        new-htmlTable -DataTable ($allOffice365FullMailboxAccess) -Filtering {
-                        } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
-                }
-
                 if ($allOffice365SendAsAccess.count -gt 0)
                 {
                     new-htmlSection -HeaderText ("Office 365 SendAs on Other Groups Objects"){
@@ -717,14 +647,6 @@ Function Start-DistributionListMigrationV3
                 {
                     new-htmlSection -HeaderText ("Office 365 SendAs On Group"){
                         new-htmlTable -DataTable ($allOffice365SendAsAccessOnGroup) -Filtering {
-                        } -AutoSize
-                    } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
-                }
-
-                if ($allOffice365MailboxFolderPermissions.count -gt 0)
-                {
-                    new-htmlSection -HeaderText ("Office 365 Mailbox Folder Permissions"){
-                        new-htmlTable -DataTable ($allOffice365MailboxFolderPermissions) -Filtering {
                         } -AutoSize
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
@@ -759,42 +681,11 @@ Function Start-DistributionListMigrationV3
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
-                out-logfile -string "Record routing contact configuration."
-
-                if ($routingDynamicGroupConfig -ne $NULL)
-                {
-                    New-HTMLSection -HeaderText "Hybrid Routing Group" {
-                        New-HTMLList{
-                            foreach ($object in  $routingDynamicGroupConfig.psObject.properties)
-                            {
-                                if ($object.Value.count -gt 1)
-                                {
-                                    foreach ($value in $object.Value)
-                                    {
-                                        $string = ($object.name + " " + $value.tostring())
-                                        new-htmlListItem -text $string -fontSize 14
-                                    }
-                                }
-                                elseif ($object.value -ne $NULL)
-                                {
-                                    $string = ($object.name + " " + $object.value.tostring())
-                                    new-htmlListItem -text $string -fontSize 14                            }
-                                else
-                                {
-                                    $string = ($object.name)
-                                    new-htmlListItem -text $string -fontSize 14
-                                }
-                            }
-                        }
-                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
-                }
-
                 out-logfile -string "Generate timeline."
 
                 new-htmlSection -HeaderText ("Migration Timeline Highlights"){
                     new-HTMLTimeLIne {
                         new-HTMLTimeLineItem -HeadingText "Migration Start Time" -Date $htmlStartTime
-                        new-HTMLTimeLineItem -HeadingText "Initialization Complete" -Date $htmlFunctionStartTime
                         new-HTMLTimeLineItem -HeadingText "Start Parameter Validation" -Date $htmlStartValidationTime
                         new-HTMLTimeLineItem -HeadingText "Start Powershell Session Initialization" -Date $htmlStartPowershellSessions
                         new-HTMLTimeLineItem -HeadingText "Capture On-Premises DL Information" -Date $htmlCaptureOnPremisesDLInfo
@@ -812,17 +703,7 @@ Function Start-DistributionListMigrationV3
                         new-HTMLTimeLineItem -HeadingText "Set EntraID Group Cloud Only" -Date $htmlSetGroupCloudOnly
                         new-HTMLTimeLineItem -HeadingText "Set Exchange Online Group Cloud Only" -Date $htmlTestExchangeOnlineCloudOnly
                         new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Info Post Migration" -Date $htmlCaptureOffice365InfoPostMigration
-                        new-HTMLTimeLineItem -HeadingText "Rename Original Group" -Date $htmlRenameorOriginalGroup
-                        new-HTMLTimeLineItem -HeadingText "Disable Original Group" -Date $htmlDisableOriginalGroup
-                        new-HTMLTimeLineItem -HeadingText "Move to Original OU" -Date $htmlMoveToOriginalOU.
                         new-HTMLTimeLineItem -HeadingText "Create Routing Contact" -Date $htmlCreateRoutingContact
-                        new-HTMLTimeLineItem -HeadingText "Enable Hybrid Mail Flow" -Date $htmlEnableHybridMailFlow
-                        new-HTMLTimeLineItem -HeadingText "Start AD Replication Third Pass" -Date $htmlStartADReplicationThirdPass
-                        new-HTMLTimeLineItem -HeadingText "Start Replace On-Premises Dependencies" -Date $htmlStartReplaceOnPremisesDependencies
-                        new-HTMLTimeLineItem -HeadingText "Start Replace Office 365 Dependencies" -Date $htmlStartReplaceOffice365Dependencies
-                        new-HTMLTimeLineItem -HeadingText "Remove On-Premises Group" -Date $htmlRemoveOnPremGroup
-                        new-HTMLTimeLineItem -HeadingText "Start AD Replication Fourth Pass" -Date $htmlStartADReplicationFourthPath
-                        new-HTMLTimeLineItem -HeadingText "Start AD Connect Third Pass" -Date $htmlStartADConnectThirdPass
                         new-HTMLTimeLineItem -HeadingText "END" -Date $htmlEndTime
                     }
                 } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
@@ -2716,7 +2597,7 @@ Function Start-DistributionListMigrationV3
     Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
     Out-LogFile -string "********************************************************************************"
 
-    $htmlSetGroupCloudOnly = get-universalDateTime
+    $htmlSetGroupCloudOnly = Get-Date
 
     $telemetryInfo.telemetryFunctionStartTime = get-universalDateTime
 
@@ -2730,7 +2611,7 @@ Function Start-DistributionListMigrationV3
 
     $telemetryConvertGroupCloudOnly = get-elapsedTime -startTime $telemetryInfo.FunctionStartTime -endTime $telemetryInfo.FunctionEndTime
 
-    $htmlTestExchangeOnlineCloudOnly = get-universalDateTime
+    $htmlTestExchangeOnlineCloudOnly = Get-Date
 
     $telemetryInfo.telemetryfunctionStartTime = get-universalDateTime
 
