@@ -52,7 +52,7 @@
         {
             out-logfile -string "Only perform test if the count of objects in Office 365 > 0"
 
-            if (($member.externalDirectoryObjectID -ne $NULL) -and ($member.isMigrated -eq $FALSE) -and ($member.RecipientType -ne "msExchDynamicDistributionList"))
+            if ($member.externalDirectoryObjectID -ne $NULL)
             {
                 out-logfile -string "External directory object ID specified - test."
                 out-logfile -string $member.externalDirectoryObjectID
@@ -70,7 +70,7 @@
                     $isTestError="Yes"
                 }
             }
-            elseif (($member.primarySMTPAddressOrUPN -ne $NULL) -and ($member.isMigrated -eq $FALSE) -and ($member.RecipientType -ne "msExchDynamicDistributionList"))
+            elseif ($member.primarySMTPAddressOrUPN -ne $NULL)
             {
                 out-logfile -string "Primary smtp address or upn specified - test."
 
