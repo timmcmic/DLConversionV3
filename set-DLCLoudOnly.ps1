@@ -24,7 +24,20 @@
         Out-LogFile -string "START set-DLCloudOnly"
         Out-LogFile -string "********************************************************************************"
     
-        
+        out-logfile -string ("Acting on group: "+$office365DLConfiguration.externalDirectoryObjectID)
+
+        $functionURI = $msGraphURL + "groups/"
+        out-logfile -string $functionURI
+        $functionURI = $functionURI + $office365DLConfiguration.externalDirectoryObjectID
+        out-logfile -string $functionURI
+
+        try {
+            Invoke-MgGraphRequest -Method Patch -Uri $functionURI -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to set the group to cloud only."
+            out-logfile -string $_
+        }
         
         Out-LogFile -string "END set-DLCloudOnly"
         Out-LogFile -string "********************************************************************************"
