@@ -121,7 +121,9 @@ Function Start-DistributionListMigrationV3
         [Parameter(Mandatory=$false)]
         [boolean]$isHealthCheck = $false,
         [Parameter(Mandatory =$FALSE)]
-        [boolean]$allowTelemetryCollection=$TRUE
+        [boolean]$allowTelemetryCollection=$TRUE,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$allowDetailedTelemetryCollection=$TRUE
     )
 
     function generate-HTMLFile
@@ -2836,6 +2838,10 @@ Function Start-DistributionListMigrationV3
             NumberofOffice365SendAsAccessOnGroup = $allOffice365SendAsAccessOnGroup.Count
             NumberofOffice365MailboxFolderPermissions = $allOffice365MailboxFolderPermissions.Count
         }
+    }
+    else 
+    {
+        $telemetryEventMetrics = @{}
     }
 
     if ($allowTelemetryCollection -eq $TRUE)
