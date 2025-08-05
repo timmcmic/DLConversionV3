@@ -2699,4 +2699,28 @@ Function Start-DistributionListMigrationV3
     {
         out-xmlfile -itemToExport $allOffice365SendAsAccessOnGroup -itemNameToExport $xmlFiles.allOffice365SendAsAccessOnGroupXML.value
     }
+
+    $telemetryInfo.FunctionEndTime = get-universalDateTime
+
+    $telemetryCollectOffice365Dependency = ($telemetryInfo.FunctionEndTime - $telemetryInfo.FunctionStartTime).seconds
+
+    out-logfile -string ("Time to gather Office 365 dependencies: "+$telemetryCollectOffice365Dependency.tostring())
+
+    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
+    out-logfile -string ("Summary of dependencies found:")
+    out-logfile -string ("The number of office 365 objects that the migrated DL is a member of = "+$allOffice365MemberOf.count)
+    out-logfile -string ("The number of office 365 objects that this group is a manager of: = "+$allOffice365ManagedBy.count)
+    out-logfile -string ("The number of office 365 objects that this group has grant send on behalf to = "+$allOffice365GrantSendOnBehalfTo.count)
+    out-logfile -string ("The number of office 365 objects that have this group as bypass moderation = "+$allOffice365BypassModeration.count)
+    out-logfile -string ("The number of office 365 objects with accept permissions = "+$allOffice365Accept.count)
+    out-logfile -string ("The number of office 365 objects with reject permissions = "+$allOffice365Reject.count)
+    out-logfile -string ("The number of office 365 mailboxes forwarding to this group is = "+$allOffice365ForwardingAddress.count)
+    out-logfile -string ("The number of recipients that have send as rights on the group to be migrated = "+$allOffice365SendAsAccessOnGroup.count)
+    out-logfile -string ("The number of office 365 recipients where the group has send as rights = "+$allOffice365SendAsAccess.count)
+    out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
+
+    
+    Out-LogFile -string "********************************************************************************"
+    Out-LogFile -string "END RETAIN OFFICE 365 GROUP DEPENDENCIES"
+    Out-LogFile -string "********************************************************************************"
 }
