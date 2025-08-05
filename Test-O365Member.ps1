@@ -48,36 +48,47 @@
         Out-LogFile -string "BEGIN Test-O365Member"
         Out-LogFile -string "********************************************************************************"
 
-        if ($member.externalDirectoryObjectID -ne "")
+        if ($membership.count -gt 0)
         {
-            out-logfile -string "External directory object ID specified - test."
-            out-logfile -string $member.externalDirectoryObjectID
+            out-logfile -string "Only perform test if the count of objects in Office 365 > 0"
 
-            $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
-
-            out-logfile -string $functionDirectoryObjectID[1]
-
-            if ($membership.externalDirectoryObjectID.contains($functionDirectoryObjectID[1]))
+            if ($member.externalDirectoryObjectID -ne "")
             {
-                out-logfile -string "Member was located by external directory object id."
+                out-logfile -string "External directory object ID specified - test."
+                out-logfile -string $member.externalDirectoryObjectID
+
+                $functionDirectoryObjectID=$member.externalDirectoryObjectID.Split("_")
+
+                out-logfile -string $functionDirectoryObjectID[1]
+
+                if ($membership.externalDirectoryObjectID.contains($functionDirectoryObjectID[1]))
+                {
+                    out-logfile -string "Member was located by external directory object id."
+                }
+                else 
+                {
+                    $isTestError="Yes"
+                }
             }
-            else 
+            elseif ($member.primarySMTPAddressOrUPN -ne "")
             {
-                $isTestError="Yes"
+                out-logfile -string "Primary smtp address or upn specified - test."
+
+                if ($membership.primarySMTPAddress.contains($member.primarySMTPAddressOrUPN))
+                {
+                    out-logfile -string "Member was lcoated by primary smtp address or UPN."
+                }
+                else 
+                {
+                    $isTestError="Yes"
+                }
             }
         }
-        elseif ($member.primarySMTPAddressOrUPN -ne "")
+        else 
         {
-            out-logfile -string "Primary smtp address or upn specified - test."
-
-            if ($membership.primarySMTPAddress.contains($member.primarySMTPAddressOrUPN))
-            {
-                out-logfile -string "Member was lcoated by primary smtp address or UPN."
-            }
-            else 
-            {
-                $isTestError="Yes"
-            }
+            out-logfile -string "To invoke this test the on premises attribute value has membership."
+            out-logfile -string "To get here the corresponding attribute does not hvae membership - this is an error."
+            $isTestError="Yes"
         }
 
         Out-LogFile -string "END Test-O365Member"
