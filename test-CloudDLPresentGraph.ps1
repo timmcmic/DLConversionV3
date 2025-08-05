@@ -20,7 +20,7 @@
     test-CloudDLPresent -groupSMTPAddress SMTPAddress
 
     #>
-    Function test-ClouDLPresentGraph
+    Function test-CloudDLPresentGraph
      {
         [cmdletbinding()]
 
