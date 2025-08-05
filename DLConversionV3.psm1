@@ -399,6 +399,36 @@ Function Start-DistributionListMigrationV3
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
+                out-logfile -string "Generate HTML for Graph Group post migration."
+
+                if ($msGraphDLConfigurationPostMigration -ne $NULL)
+                {
+                    New-HTMLSection -HeaderText "Office 365 DL Configuration Post Migration (Exchange Online)" {
+                        New-HTMLList{
+                            foreach ($object in  $$msGraphDLConfigurationPostMigration.psObject.properties)
+                            {
+                                if ($object.Value.count -gt 1)
+                                {
+                                    foreach ($value in $object.Value)
+                                    {
+                                        $string = ($object.name + " " + $value.tostring())
+                                        new-htmlListItem -text $string -fontSize 14
+                                    }
+                                }
+                                elseif ($object.value -ne $NULL)
+                                {
+                                    $string = ($object.name + " " + $object.value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14                            }
+                                else
+                                {
+                                    $string = ($object.name)
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                        }
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
+
                 out-logfile -string "Generate HTML for on premsies group membership."
 
                 if ($originalDLConfiguration.member.count -gt 0)
@@ -891,6 +921,7 @@ Function Start-DistributionListMigrationV3
         azureDLConfigurationXML = @{"Value" = "azureADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
         azureDLMembershipXML = @{"Value" = "azureADDLMembership" ; "Description" = "Export XML file holding the membership of the Azure AD group"}
         msGraphDLConfigurationXML = @{"Value" = "msGraphADDL" ; "Description" = "Export XML file holding the configuration from azure active directory"}
+        msGraphDLConfigurationPostMigrationXML = @{"Value" = "msGraphADDLPostMigration" ; "Description" = "Export XML file holding the configuration from azure active directory"}
         msGraphDLMembershipXML = @{"Value" = "msGraphADDLMembership" ; "Description" = "Export XML file holding the membership of the Azure AD group"}
         preCreateErrorsXML = @{"value" = "preCreateErrors" ; "Description" = "Export XML of all precreate errors for group to be migrated."}
         testOffice365ErrorsXML = @{"value" = "testOffice365Errors" ; "Description" = "Export XML of all tested recipient errors in Offic3 365."}
@@ -951,6 +982,7 @@ Function Start-DistributionListMigrationV3
     $msGraphDLConfiguration = $NULL #This holds the Azure AD DL configuration
     $msGraphDlMembership = $NULL
     $office365DLConfigurationPostMigration = $NULL #This hold the Office 365 DL configuration post migration.
+    $msGraphDLConfigurationPostMigration = $NULL
     $office365DLMembership=$NULL
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
     $msGraphURL = ""
@@ -2630,6 +2662,10 @@ Function Start-DistributionListMigrationV3
     set-DLCloudOnly -msGraphURL $msGraphURL -office365DLConfiguration $office365DLConfiguration 
 
     test-CloudDLPresentGraph -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -msGraphURL $msGraphURL -errorAction STOP
+
+    $msGraphDLConfigurationPostMigration = get-msGraphDLConfiguration -office365DLConfiguration $office365DLConfiguration -msGraphURL $msGraphURL -errorAction STOP
+
+    out-xmlFile -itemToExport $msGraphDLConfigurationPostMigration -itemNameToExport $xmlFiles.msGraphDLConfigurationPostMigrationXML.value
 
     $telemetryFunctionEndTime = get-universalDateTime
 
