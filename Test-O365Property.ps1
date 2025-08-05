@@ -50,7 +50,6 @@
         Out-LogFile -string "********************************************************************************"
 
         out-logfile -string "Obtain recipient information from Office 365."
-        out-logfile -string $member.primarySMTPAddressOrUPN
 
         if ($member.externalDirectoryObjectID -ne $null)
         {
