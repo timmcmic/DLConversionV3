@@ -2848,4 +2848,107 @@ Function Start-DistributionListMigrationV3
     $telemetryInfo.telemetryfunctionEndTime = get-universalDateTime
 
     $telemetryCreateRoutingContact = get-elapsedTime -startTime $telemetryInfo.telemetryfunctionStartTime -endTime $telemetryInfo.telemetryFunctionEndTime
+
+    out-logfile -string "Calling function to disconnect all powershell sessions."
+
+    disable-allPowerShellSessions
+
+    $htmlEndTime = get-date
+
+    $telemetryInfo.telemetryEndTime = get-universalDateTime
+    $telemetryInfo.telemetryElapsedSeconds = get-elapsedTime -startTime $telemetryStartTime -endTime $telemetryEndTime
+
+    $telemetryEventProperties = @{
+        DLConversionV3Command = $telemetryInfo.telemetryEventName
+        DLConversionV3Version = $telemetryInfo.telemetryDLConversionV3Version
+        ExchangeOnlineVersion = $telemetryInfo.telemetryExchangeOnlineVersion
+        MSGraphAuthentication = $telmetryInfo.telemetryMSGraphAuthentication
+        OSVersion = $telemetryInfo.telemetryOSVersion
+        MigrationStartTimeUTC = $telemetryInfo.telemetryStartTime
+        MigrationEndTimeUTC = $telemetryInfo.telemetryEndTime
+        MigrationErrors = $telemetryError
+    }
+
+    if (($allowTelemetryCollection -eq $TRUE) -and ($allowDetailedTelemetryCollection -eq $FALSE))
+    {
+        $telemetryEventMetrics = @{
+            MigrationElapsedSeconds = $telemetryElapsedSeconds
+            TimeToNormalizeDNs = $telemetryNormalizeDN
+            TimeToValidateCloudRecipients = $telemetryValidateCloudRecipients
+            TimeToCollectOnPremDependency = $telemetryDependencyOnPrem
+            TimeToCollectOffice365Dependency = $telemetryCollectOffice365Dependency
+            TimePendingRemoveDLOffice365 = $telemetryTimeToRemoveDL
+            TimeToCreateOffice365DLComplete = $telemetryCreateOffice365DL
+            TimeToCreateOffice365DLFirstPass = $telemetryCreateOffice365DLFirstPass
+            TimeToReplaceOnPremDependency = $telemetryReplaceOnPremDependency
+            TimeToReplaceOffice365Dependency = $telemetryReplaceOffice365Dependency
+        }
+    }
+    elseif (($allowTelemetryCollection -eq $TRUE) -and ($allowDetailedTelemetryCollection -eq $TRUE))
+    {
+        $telemetryEventMetrics = @{
+            MigrationElapsedSeconds = $telemetryElapsedSeconds
+            TimeToNormalizeDNs = $telemetryNormalizeDN
+            TimeToValidateCloudRecipients = $telemetryValidateCloudRecipients
+            TimeToCollectOnPremDependency = $telemetryDependencyOnPrem
+            TimeToCollectOffice365Dependency = $telemetryCollectOffice365Dependency
+            TimePendingRemoveDLOffice365 = $telemetryTimeToRemoveDL
+            TimeToCreateOffice365DLComplete = $telemetryCreateOffice365DL
+            TimeToReplaceOnPremDependency = $telemetryReplaceOnPremDependency
+            TimeToReplaceOffice365Dependency = $telemetryReplaceOffice365Dependency
+            NumberOfGroupMembers = $exchangeDLMembershipSMTP.count
+            NumberofGroupRejectSenders = $exchangeRejectMessagesSMTP.count
+            NumberofGroupAcceptSenders = $exchangeAcceptMessagesSMTP.count
+            NumberofGroupManagedBy = $exchangeManagedBySMTP.count
+            NumberofGroupModeratedBy = $exchangeModeratedBySMTP.count
+            NumberofGroupBypassModerators = $exchangeBypassModerationSMTP.count
+            NumberofGroupGrantSendOnBehalfTo = $exchangeGrantSendOnBehalfToSMTP.count
+            NumberofGroupSendAsOnGroup = $exchangeSendAsSMTP.Count
+            NumberofOnPremsiesMemberOf = $allGroupsMemberOf.Count
+            NumberofOnPremisesRejectSenders = $allGroupsReject.Count
+            NumberofOnPremisesAcceptSenders = $allGroupsAccept.Count
+            NumberofOnPremisesBypassModeration = $allGroupsBypassModeration.Count
+            NumberofOnPremisesMailboxForwarding = $allUsersForwardingAddress.Count
+            NumberofOnPrmiesesGrantSendBehalfTo = $allGroupsGrantSendOnBehalfTo.Count
+            NumberofOnPremisesManagedBy = $allGroupsManagedBy.Count
+            NumberofOnPremisesFullMailboxAccess = $allObjectsFullMailboxAccess.Count
+            NumberofOnPremsiesSendAs = $allObjectSendAsAccess.Count
+            NumberofOnPremisesFolderPermissions = $allMailboxesFolderPermissions.Count
+            NumberofOnPremisesCoManagers = $allGroupsCoManagedByBL.Count
+            NumberofOffice365Members = $allOffice365MemberOf.Count
+            NumberofOffice365AcceptSenders = $allOffice365Accept.Count
+            NumberofOffice365RejectSenders = $allOffice365Reject.Count
+            NumberofOffice365BypassModeration = $allOffice365BypassModeration.Count
+            NumberofOffice365ManagedBy = $allOffice365ManagedBy.Count
+            NumberofOffice365GrantSendOnBehalf = $allOffice365GrantSendOnBehalfTo.Count
+            NumberofOffice365ForwardingMailboxes= $allOffice365ForwardingAddress.Count
+            NumberofOffice365FullMailboxAccess = $allOffice365FullMailboxAccess.Count
+            NumberofOffice365SendAs = $allOffice365SendAsAccess.Count
+            NumberofOffice365SendAsAccessOnGroup = $allOffice365SendAsAccessOnGroup.Count
+            NumberofOffice365MailboxFolderPermissions = $allOffice365MailboxFolderPermissions.Count
+        }
+    }
+
+    if ($allowTelemetryCollection -eq $TRUE)
+    {
+        out-logfile -string "Telemetry1"
+        out-logfile -string $traceModuleName
+        out-logfile -string "Telemetry2"
+        out-logfile -string $telemetryEventName
+        out-logfile -string "Telemetry3"
+        out-logfile -string $telemetryEventMetrics
+        out-logfile -string "Telemetry4"
+        out-logfile -string $telemetryEventProperties
+        send-TelemetryEvent -traceModuleName $traceModuleName -eventName $telemetryEventName -eventMetrics $telemetryEventMetrics -eventProperties $telemetryEventProperties
+    }
+
+    generate-HTMLFile
+
+    if ($telemetryError -eq $TRUE)
+    {
+        out-logfile -string "" -isError:$TRUE
+    }
+
+    Start-ArchiveFiles -isSuccess:$TRUE -logFolderPath $logFolderPath
+
 }

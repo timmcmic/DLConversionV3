@@ -32,10 +32,12 @@ Function add-RoutingContactToGroup
     Out-LogFile -string "********************************************************************************"
 
     out-logfile -string $originalDLConfiguration.distinguishedName
+    $functionDistinguishName = $originalDLConfiguration.distinguishedName.tostring()
     out-logfile -string $routingContact.distinguishedName
+    $functionDistinguishedNameContact = $routingContact.distinguishedName.tostring()
 
     try {
-        add-adGroupMember -identity $originalDLConfiguration.DN -Members $routingContact.DN -Credential $activeDirectoryCredential -Server $globalCatalogServer -authType $activeDirectoryAuthenticationMethod -errorAction STOP
+        add-adGroupMember -identity $functionDistinguishName -Members $functionDistinguishedNameContact -Credential $activeDirectoryCredential -Server $globalCatalogServer -authType $activeDirectoryAuthenticationMethod -errorAction STOP
         out-logfile -string "Routing contact successfully added as group member."
     }
     catch {
