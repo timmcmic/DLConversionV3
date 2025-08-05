@@ -180,7 +180,7 @@ Function Start-DistributionListMigrationV3
                     {
                         out-logfile -string "Test Office 365 Errors exist."
 
-                        new-htmlSection -HeaderText ("Test Office 365 Dependency Errors"){
+                        new-htmlSection -HeaderText ("Test Office 365 Property Errors"){
                             new-htmlTable -DataTable ($global:testOffice365Errors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessage) -Filtering  {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
@@ -2286,6 +2286,9 @@ Function Start-DistributionListMigrationV3
         if ($isHealthCheck -eq $FALSE)
         {
             generate-HTMLFile
+
+            start-sleep -s 5
+
             out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
         }
         else
