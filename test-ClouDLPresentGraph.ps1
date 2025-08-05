@@ -39,6 +39,7 @@
         #Declare function variables.
 
         $functionRecipient = $NULL
+        $functionURIType = "OnPremisesSyncBehavior"
         $functionURI = ""
 
         #Start function processing.
@@ -47,10 +48,10 @@
         Out-LogFile -string "BEGIN test-ClouDLPresentGraph"
         Out-LogFile -string "********************************************************************************"
 
-        $functionURI = get-OnPremSyncBehaviorURI -msGraphURL $msGraphURL -externalDirectoryObjectID $office365DLConfiguration.externalDirectoryObjectID
+        $functionURI = get-graphURI -msGraphURL $msGraphURL -externalDirectoryObjectID $office365DLConfiguration.externalDirectoryObjectID -uriType $functionURIType -errorAction STOP
 
         try {
-            $functionRecipient = get-o365Recipient -identity $groupSMTPAddress -errorAction STOP
+            $functionRecipient = Invoke-MgGraphRequest -Method Get -Uri $functionURI
         }
         catch {
             out-logfile -string "Unable to obtain the Exchange Online distribution list."
@@ -59,8 +60,9 @@
 
         do 
         {
-            start-sleepProgress -sleepString "Group still directory synchronized in Exchange Online - sleep for 30 seconds - try again." -sleepSeconds 30
-        } while ($functionRecipient.isDirSynced -eq $true)
+            start-sleepProgress -sleepString "Group still directory synchronized in EntraID - sleep for 30 seconds - try again." -sleepSeconds 30
+            $functionRecipient = Invoke-MgGraphRequest -Method Get -Uri $functionURI
+        } while ($functionRecipient.onPremisesSyncEnabled -eq $true)
 
         Out-LogFile -string "END test-ClouDLPresentGraph"
         Out-LogFile -string "********************************************************************************"
