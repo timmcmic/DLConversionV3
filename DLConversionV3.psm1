@@ -701,7 +701,6 @@ Function Start-DistributionListMigrationV3
                             new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Membership" -Date $htmlCaptureOffice365DLMembership
                             new-HTMLTimeLineItem -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
                             new-HTMLTimeLineItem -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
-                            new-HTMLTimeLineItem -HeadingText "Start Cloud Validation" -Date $htmlStartCloudValidation
                             new-HTMLTimeLineItem -HeadingText "Start OnPremises -> Cloud Validation" -Date $htmlStartCloudValidationOnPremises
                             new-HTMLTimeLineItem -HeadingText "Start OnPremises Property -> Cloud Validation" -Date $htmlStartCloudValidationOffice365
                             new-HTMLTimeLineItem -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
@@ -2643,6 +2642,8 @@ Function Start-DistributionListMigrationV3
     $telemetryInfo.telemetryfunctionEndTime = get-universalDateTime
 
     $telemetryConvertGroupCloudOnlyExchangeOnline = get-elapsedTime -startTime $telemetryInfo.telemetryfunctionStartTime -endTime $telemetryInfo.telemetryfunctionEndTime
+
+    $htmlCaptureOffice365InfoPostMigration = Get-Date
 
     $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
     out-xmlFile -itemToExport $office365DLConfigurationPostMigration -itemNameToExport $xmlFiles.office365DLConfigurationPostMigrationXML.value
