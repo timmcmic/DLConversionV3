@@ -1706,6 +1706,26 @@ Function Start-DistributionListMigrationV3
     out-logfile -string ("The number of objects included in the grantSendOnBehalfTo memebers: "+$exchangeGrantSendOnBehalfToSMTP.count)
     out-logfile -string "/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/"
 
+    out-logfile -string "If a group was migrated by DLConversionV2 it is possible it has special case objects on it that served the migration."
+    out-logfile -string "Test each of the normalized arrays - if any of those were located recommend migration with DLConversionV2 so that all dependencies are handled in the migration."
+
+    $dlConversionV2Test=@()
+    $dlConversionV2Test+= @($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true })
+    $dlConversionV2Test+= @($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true })
+    $dlConversionV2Test+= @($exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true })
+    $dlConversionV2Test+= @($exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true })
+    $dlConversionV2Test+= @($exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true })
+    $dlConversionV2Test+= @($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true })
+    $dlConversionV2Test+= @($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true })
+
+    if ($dlConversionV2Test.count -gt 0)
+    {
+        out-logfile -string "Error - members or properties of this DL have dependencies on DLConversionV2 migration."
+        out-logfile -string "Recommend the DL be migrated with DLConversionV2"
+        out-logfile -string "ERROR_DLCONVERSIONV2_RECOMMENDED_EXCEPTION" -isError:$TRUE
+    }
+
+
     $htmlStartCloudValidation = get-date
     $htmlStartCloudValidationOnPremises = get-Date
 
