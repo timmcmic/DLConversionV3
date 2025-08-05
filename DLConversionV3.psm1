@@ -123,7 +123,9 @@ Function Start-DistributionListMigrationV3
         [Parameter(Mandatory =$FALSE)]
         [boolean]$allowTelemetryCollection=$TRUE,
         [Parameter(Mandatory =$FALSE)]
-        [boolean]$allowDetailedTelemetryCollection=$TRUE
+        [boolean]$allowDetailedTelemetryCollection=$TRUE,
+        [Parameter(Mandatory =$FALSE)]
+        [boolean]$iValidatedASupportedSyncVersion=$false
     )
 
     function generate-HTMLFile
@@ -1023,6 +1025,16 @@ Function Start-DistributionListMigrationV3
         $traceFilePath = $logFolderPath + $global:staticFolderName
         out-logfile -string ("Log File: "+$global:logFile)
         out-logfile -string ("Trace File: "+$traceFilePath)
+    }
+
+    if ($iValidatedASupportedSyncVersion -eq $FALSE)
+    {
+        out-logfile -string "It is a requirement to set this value to TRUE to migrate."
+        out-logfile -string "Setting this value to true signifies the following:"
+        out-logfile -string "All Entra Connect Servers are running version 2.5.76.0 or newer."
+        out-logfile -string "All Entra Cloud Sync Agents are running version 1.1.1373.0 or newer."
+        out-logfile -string "Failure to utilize a support version may result in migrations being reverted and lose of changes in EntraID / M365"
+        out-logfile -string "EXCEPTION_DID_NOT_VALIDATE_SUPPORTED_SYNC_VERSIONS" -isError:$true
     }
 
     $htmlFunctionStartTime = get-Date
