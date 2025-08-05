@@ -2835,7 +2835,7 @@ Function Start-DistributionListMigrationV3
         out-logfile -string "Telemetry1"
         out-logfile -string $traceModuleName
         out-logfile -string "Telemetry2"
-        out-logfile -string $telemetryEventName
+        out-logfile -string $telemetryInfo.telemetryEventName
         out-logfile -string "Telemetry3"
         out-logfile -string $telemetryEventMetrics
         out-logfile -string "Telemetry4"
