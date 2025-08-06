@@ -1758,13 +1758,13 @@ Function Start-DistributionListMigrationV3
 
     #>
     
-    $global:dlConversionV2Test.add(($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.add(($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.add(($exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.add(($exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.add(($exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.add(($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.add(($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addRange(@($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addRange(@($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addRange(@($exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addRange(@($exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addRange(@($exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.aaddRange(@($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addRange(@($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true }))
 
     if (($global:dlConversionV2Test.count -gt 0) -and ($isHealthCheck -eq $false))
     {
