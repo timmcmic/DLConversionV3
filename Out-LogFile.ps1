@@ -102,6 +102,9 @@
             {
                 Start-ArchiveFiles -isSuccess:$FALSE -logFolderPath $logFolderPath
             }
+
+            $errorActionPreference = "Stop"
+            write-error "Errors encountered - see log file."
             #exit
         }
     }
