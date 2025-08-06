@@ -1746,25 +1746,14 @@ Function Start-DistributionListMigrationV3
     out-logfile -string "If a group was migrated by DLConversionV2 it is possible it has special case objects on it that served the migration."
     out-logfile -string "Test each of the normalized arrays - if any of those were located recommend migration with DLConversionV2 so that all dependencies are handled in the migration."
 
-    <#
-    $functionTest = 
-    $global:dlConversionV2Test.addRange(($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.addRange(($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.addRange(($exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.addRange(($exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.addRange(($exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.addRange(($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.addRange(($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true }))
-
-    #>
-    
-    $global:dlConversionV2Test.addRange(@($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.addRange(@($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.addRange(@($exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.addRange(@($exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.addRange(@($exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.aaddRange(@($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $global:dlConversionV2Test.addRange(@($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true }))
+      
+    @($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true }).foreach({$global.dlConversionV2Test.add($_)})
+    @($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }).foreach({$global.dlConversionV2Test.add($_)})
+    @($exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }).foreach({$global.dlConversionV2Test.add($_)})
+    @($exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true }).foreach({$global.dlConversionV2Test.add($_)})
+    @($exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true }).foreach({$global.dlConversionV2Test.add($_)})
+    @($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true }).foreach({$global.dlConversionV2Test.add($_)})
+    @($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true }).foreach({$global.dlConversionV2Test.add($_)})
 
     if (($global:dlConversionV2Test.count -gt 0) -and ($isHealthCheck -eq $false))
     {
