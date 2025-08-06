@@ -1019,6 +1019,7 @@ Function Start-DistributionListMigrationV3
     [array]$global:testOffice365Errors=@()
     [array]$global:testOffice365PropertyErrors=@()
     [array]$global:generalErrors=@()
+    $global:dlConversionV2Test = New-Object System.Collections.ArrayList
     [string]$isTestError="No"
 
     #Initilize the log file.
@@ -1363,7 +1364,7 @@ Function Start-DistributionListMigrationV3
                 }
                 else 
                 {
-                    $exchangeRejectMessagesSMTP+=$normalizedTest
+                    $exchangeRejectMessagesSMTP.add($normalizedTest)
                 }
             }
             catch 
@@ -1390,7 +1391,7 @@ Function Start-DistributionListMigrationV3
                     $global:preCreateErrors+=$normalizedTest
                 }
                 else {
-                    $exchangeRejectMessagesSMTP+=$normalizedTest
+                    $exchangeRejectMessagesSMTP.add($normalizedTest)
                 }
             }
             catch 
@@ -1429,7 +1430,7 @@ Function Start-DistributionListMigrationV3
                     $global:preCreateErrors+=$normalizedTest
                 }
                 else {
-                    $exchangeAcceptMessagesSMTP+=$normalizedTest
+                    $exchangeAcceptMessagesSMTP.add($normalizedTest)
                 }
             }
             catch 
@@ -1457,7 +1458,7 @@ Function Start-DistributionListMigrationV3
                 }
                 else 
                 {
-                    $exchangeAcceptMessagesSMTP+=$normalizedTest
+                    $exchangeAcceptMessagesSMTP.add($normalizedTest)
                 }
             }
             catch 
@@ -1498,7 +1499,7 @@ Function Start-DistributionListMigrationV3
                 }
                 else 
                 {
-                    $exchangeManagedBySMTP+=$normalizedTest
+                    $exchangeManagedBySMTP.add($normalizedTest)
                 }
             }
             catch 
@@ -1526,7 +1527,7 @@ Function Start-DistributionListMigrationV3
                 }
                 else 
                 {
-                    $exchangeManagedBySMTP+=$normalizedTest
+                    $exchangeManagedBySMTP.add($normalizedTest)
                 }
                 
             }
@@ -1591,7 +1592,7 @@ Function Start-DistributionListMigrationV3
                 }
                 else 
                 {
-                    $exchangeModeratedBySMTP+=$normalizedTest
+                    $exchangeModeratedBySMTP.add($normalizedTest)
                 }
             }
             catch 
@@ -1632,7 +1633,7 @@ Function Start-DistributionListMigrationV3
                 }
                 else 
                 {
-                    $exchangeBypassModerationSMTP+=$normalizedTest
+                    $exchangeBypassModerationSMTP.add($normalizedTest)
                 }
             }
             catch 
@@ -1662,7 +1663,7 @@ Function Start-DistributionListMigrationV3
                 }
                 else 
                 {
-                    $exchangeBypassModerationSMTP+=$normalizedTest
+                    $exchangeBypassModerationSMTP.add($normalizedTest)
                 }
             }
             catch 
@@ -1699,7 +1700,7 @@ Function Start-DistributionListMigrationV3
                 }
                 else 
                 {
-                    $exchangeGrantSendOnBehalfToSMTP+=$normalizedTest
+                    $exchangeGrantSendOnBehalfToSMTP.add($normalizedTest)
                 }
                 
             }
@@ -1745,14 +1746,13 @@ Function Start-DistributionListMigrationV3
     out-logfile -string "If a group was migrated by DLConversionV2 it is possible it has special case objects on it that served the migration."
     out-logfile -string "Test each of the normalized arrays - if any of those were located recommend migration with DLConversionV2 so that all dependencies are handled in the migration."
 
-    $global:dlConversionV2Test=@()
-    $global:dlConversionV2Test+= @($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true })
-    $global:dlConversionV2Test+= @($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true })
-    $global:dlConversionV2Test+= @($exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true })
-    $global:dlConversionV2Test+= @($exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true })
-    $global:dlConversionV2Test+= @($exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true })
-    $global:dlConversionV2Test+= @($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true })
-    $global:dlConversionV2Test+= @($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true })
+    $global:dlConversionV2Test.addRange(($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addRange(($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addRange(($exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addRange(($exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addRange(($exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addRange(($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addRange(($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true }))
 
     if (($global:dlConversionV2Test.count -gt 0) -and ($isHealthCheck -eq $false))
     {
