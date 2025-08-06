@@ -1015,10 +1015,10 @@ Function Start-DistributionListMigrationV3
 
     $dlPropertySet = '*' #Clear all properties of a given object
 
-    [array]$global:preCreateErrors=@()
-    [array]$global:testOffice365Errors=@()
-    [array]$global:testOffice365PropertyErrors=@()
-    [array]$global:generalErrors=@()
+    $global:preCreateErrors = New-Object System.Collections.Generic.List[PSObject]
+    $global:testOffice365Errors = New-Object System.Collections.Generic.List[PSObject]
+    $global:testOffice365PropertyErrors = New-Object System.Collections.Generic.List[PSObject]
+    $global:generalErrors = New-Object System.Collections.Generic.List[PSObject]
     $global:dlConversionV2Test = New-Object System.Collections.Generic.List[PSObject]
     [string]$isTestError="No"
 
@@ -1318,7 +1318,7 @@ Function Start-DistributionListMigrationV3
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $global:preCreateErrors+=$normalizedTest
+                    $global:preCreateErrors.add($normalizedTest)
                 }
                 else 
                 {
@@ -1360,7 +1360,7 @@ Function Start-DistributionListMigrationV3
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $global:preCreateErrors+=$normalizedTest
+                    $global:preCreateErrors.add($normalizedTest)
                 }
                 else 
                 {
@@ -1388,7 +1388,7 @@ Function Start-DistributionListMigrationV3
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $global:preCreateErrors+=$normalizedTest
+                    $global:preCreateErrors.add($normalizedTest)
                 }
                 else {
                     $exchangeRejectMessagesSMTP.add($normalizedTest)
@@ -1427,7 +1427,7 @@ Function Start-DistributionListMigrationV3
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $global:preCreateErrors+=$normalizedTest
+                    $global:preCreateErrors.add($normalizedTest)
                 }
                 else {
                     $exchangeAcceptMessagesSMTP.add($normalizedTest)
@@ -1454,7 +1454,7 @@ Function Start-DistributionListMigrationV3
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $global:preCreateErrors+=$normalizedTest
+                    $global:preCreateErrors.add($normalizedTest)
                 }
                 else 
                 {
@@ -1495,7 +1495,7 @@ Function Start-DistributionListMigrationV3
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $global:preCreateErrors+=$normalizedTest
+                    $global:preCreateErrors.add($normalizedTest)
                 }
                 else 
                 {
@@ -1523,7 +1523,7 @@ Function Start-DistributionListMigrationV3
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $global:preCreateErrors+=$normalizedTest
+                    $global:preCreateErrors.add($normalizedTest)
                 }
                 else 
                 {
@@ -1555,7 +1555,7 @@ Function Start-DistributionListMigrationV3
                 
                 out-logfile -string object
 
-                $global:preCreateErrors+=$object
+                $global:preCreateErrors.add($object)
 
                 out-logfile -string "A distribution list (not security enabled) was found on managed by."
                 out-logfile -string "The group must be converted to security or removed from managed by."
@@ -1588,7 +1588,7 @@ Function Start-DistributionListMigrationV3
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $global:preCreateErrors+=$normalizedTest
+                    $global:preCreateErrors.add($normalizedTest)
                 }
                 else 
                 {
@@ -1629,7 +1629,7 @@ Function Start-DistributionListMigrationV3
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $global:preCreateErrors+=$normalizedTest
+                    $global:preCreateErrors.add($normalizedTest)
                 }
                 else 
                 {
@@ -1659,7 +1659,7 @@ Function Start-DistributionListMigrationV3
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $global:preCreateErrors+=$normalizedTest
+                    $global:preCreateErrors.add($normalizedTest)
                 }
                 else 
                 {
@@ -1696,7 +1696,7 @@ Function Start-DistributionListMigrationV3
 
                 if ($normalizedTest.isError -eq $TRUE)
                 {
-                    $global:preCreateErrors+=$normalizedTest
+                    $global:preCreateErrors.add($normalizedTest)
                 }
                 else 
                 {
@@ -1761,14 +1761,10 @@ Function Start-DistributionListMigrationV3
     $global:dlConversionV2Test.add(($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true }))
     $global:dlConversionV2Test.add(($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
     $global:dlConversionV2Test.add(($exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
-    $functionTest = $exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true }
-    $global:dlConversionV2Test.add($functionTest)
-    $functionTest = $exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true }
-    $global:dlConversionV2Test.add($functionTest)
-    $functionTest = $exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true }
-    $global:dlConversionV2Test.add($functionTest)
-    $functionTest = $exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true }
-    $global:dlConversionV2Test.add($functionTest)
+    $global:dlConversionV2Test.add(($exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.add(($exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.addf(($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true }))
+    $global:dlConversionV2Test.add(($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true }))
 
     if (($global:dlConversionV2Test.count -gt 0) -and ($isHealthCheck -eq $false))
     {
@@ -1843,7 +1839,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365Errors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -1880,7 +1876,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365Errors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -1917,7 +1913,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365Errors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -1954,7 +1950,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365Errors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -1991,7 +1987,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365Errors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -2028,7 +2024,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365Errors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -2063,7 +2059,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365Errors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365Errors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -2107,7 +2103,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -2144,7 +2140,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -2181,7 +2177,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -2218,7 +2214,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -2255,7 +2251,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -2292,7 +2288,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
@@ -2327,7 +2323,7 @@ Function Start-DistributionListMigrationV3
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors.add(($member | ConvertTo-JSON | ConvertFrom-JSON))
                     }
                 }
                 catch{
