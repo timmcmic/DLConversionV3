@@ -86,7 +86,7 @@
 
         #Declare function variables and output to screen.
 
-        [string]$functionCustomAttribute1="MigratedByScript"
+        [string]$functionCustomAttribute1="MigratedByDLConversionV3"
         out-logfile -string ("Function Custom Attribute 1 = "+$functionCustomAttribute1)
 
         [string]$functionCustomAttribute2=$office365DLConfiguration.externalDirectoryObjectID
