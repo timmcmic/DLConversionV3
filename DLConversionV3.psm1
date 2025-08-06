@@ -957,21 +957,21 @@ Function Start-DistributionListMigrationV3
     $routingDynamicGroupConfig=$NULL #Holds the dynamic distribution list configuration used for mail routing.
     $routingContactConfiguration=$NULL #This is the empty routing contact configuration.
     #[array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
-    $exchangeDLMembershipSMTP = New-Object System.Collections.Generic.List[PSObject]
+    $exchangeDLMembershipSMTP = New-Object System.Collections.Generic.List[PSCustomObject]
     #[array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
-    $exchangeRejectMessagesSMTP = New-Object System.Collections.Generic.List[PSObject]
+    $exchangeRejectMessagesSMTP = New-Object System.Collections.Generic.List[PSCustomObject]
     #[array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
-    $exchangeAcceptMessagesSMTP = New-Object System.Collections.Generic.List[PSObject]
+    $exchangeAcceptMessagesSMTP = New-Object System.Collections.Generic.List[PSCustomObject]
     #[array]$exchangeManagedBySMTP=@() #Array of members with manage by rights from AD.
-    $exchangeManagedBySMTP = New-Object System.Collections.Generic.List[PSObject]
+    $exchangeManagedBySMTP = New-Object System.Collections.Generic.List[PSCustomObject]
     #[array]$exchangeModeratedBySMTP=@() #Array of members  with moderation rights.
-    $exchangeModeratedBySMTP = New-Object System.Collections.Generic.List[PSObject]
+    $exchangeModeratedBySMTP = New-Object System.Collections.Generic.List[PSCustomObject]
     #[array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
-    $exchangeBypassModerationSMTP = New-Object System.Collections.Generic.List[PSObject]
+    $exchangeBypassModerationSMTP = New-Object System.Collections.Generic.List[PSCustomObject]
     #[array]$exchangeGrantSendOnBehalfToSMTP=@() #Array of objects with grant send on behalf to normalized SMTP
-    $exchangeGrantSendOnBehalfToSMTP = New-Object System.Collections.Generic.List[PSObject]
+    $exchangeGrantSendOnBehalfToSMTP = New-Object System.Collections.Generic.List[PSCustomObject]
     #[array]$exchangeSendAsSMTP=@() #Array of objects wtih send as rights normalized SMTP
-    $exchangeSendAsSMTP = New-Object System.Collections.Generic.List[PSObject]
+    $exchangeSendAsSMTP = New-Object System.Collections.Generic.List[PSCustomObject]
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
     [array]$allGroupsMemberOf=$NULL #Complete AD information for all groups the migrated group is a member of.
