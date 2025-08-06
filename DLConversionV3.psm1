@@ -957,7 +957,7 @@ Function Start-DistributionListMigrationV3
     $routingDynamicGroupConfig=$NULL #Holds the dynamic distribution list configuration used for mail routing.
     $routingContactConfiguration=$NULL #This is the empty routing contact configuration.
     #[array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
-    $exchangeDLMembershipSMTP = New-Object Syste m.Collections.ArrayList
+    $exchangeDLMembershipSMTP = New-Object System.Collections.ArrayList
     #[array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
     $exchangeRejectMessagesSMTP = New-Object System.Collections.ArrayList
     #[array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
