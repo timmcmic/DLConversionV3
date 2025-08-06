@@ -959,19 +959,19 @@ Function Start-DistributionListMigrationV3
     #[array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
     $exchangeDLMembershipSMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
-    $exchangeRejectMessagesSMTP = New-Object System.Collections.ArrayList
+    $exchangeRejectMessagesSMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
-    $exchangeAcceptMessagesSMTP = New-Object System.Collections.ArrayList
+    $exchangeAcceptMessagesSMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeManagedBySMTP=@() #Array of members with manage by rights from AD.
-    $exchangeManagedBySMTP = New-Object System.Collections.ArrayList
+    $exchangeManagedBySMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeModeratedBySMTP=@() #Array of members  with moderation rights.
-    $exchangeModeratedBySMTP = New-Object System.Collections.ArrayList
+    $exchangeModeratedBySMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
-    $exchangeBypassModerationSMTP = New-Object System.Collections.ArrayList
+    $exchangeBypassModerationSMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeGrantSendOnBehalfToSMTP=@() #Array of objects with grant send on behalf to normalized SMTP
-    $exchangeGrantSendOnBehalfToSMTP = New-Object System.Collections.ArrayList
+    $exchangeGrantSendOnBehalfToSMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeSendAsSMTP=@() #Array of objects wtih send as rights normalized SMTP
-    $exchangeSendAsSMTP = New-Object System.Collections.ArrayList
+    $exchangeSendAsSMTP = NNew-Object System.Collections.Generic.List[PSObject]
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
     [array]$allGroupsMemberOf=$NULL #Complete AD information for all groups the migrated group is a member of.
