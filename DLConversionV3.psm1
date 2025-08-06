@@ -491,7 +491,7 @@ Function Start-DistributionListMigrationV3
 
                 out-logfile -string "Generate HTML for all on premsies normalized attributes."
 
-                if ($exchangeDLMembership.count -gt 0)
+                if ($exchangeDLMembershipSMTP.count -gt 0)
                 {
                     new-htmlSection -HeaderText ("On Premises DL Membership Normalized"){
                         new-htmlTable -DataTable ($exchangeDLMembershipSMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
@@ -957,15 +957,21 @@ Function Start-DistributionListMigrationV3
     $routingDynamicGroupConfig=$NULL #Holds the dynamic distribution list configuration used for mail routing.
     $routingContactConfiguration=$NULL #This is the empty routing contact configuration.
     #[array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
-    $exchangeDLMembershipSMTP = New-Object System.Collections.ArrayList
-    [array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
-    [array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
-    [array]$exchangeManagedBySMTP=@() #Array of members with manage by rights from AD.
-    [array]$exchangeModeratedBySMTP=@() #Array of members  with moderation rights.
-    [array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
-    [array]$exchangeGrantSendOnBehalfToSMTP=@() #Array of objects with grant send on behalf to normalized SMTP
-    [array]$exchangeSendAsSMTP=@() #Array of objects wtih send as rights normalized SMTP
-
+    $exchangeDLMembershipSMTP = New-Object Syste m.Collections.ArrayList
+    #[array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
+    $exchangeRejectMessagesSMTP = New-Object System.Collections.ArrayList
+    #[array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
+    $exchangeAcceptMessagesSMTP = New-Object System.Collections.ArrayList
+    #[array]$exchangeManagedBySMTP=@() #Array of members with manage by rights from AD.
+    $exchangeManagedBySMTP = New-Object System.Collections.ArrayList
+    #[array]$exchangeModeratedBySMTP=@() #Array of members  with moderation rights.
+    $exchangeModeratedBySMTP = New-Object System.Collections.ArrayList
+    #[array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
+    $exchangeBypassModerationSMTP = New-Object System.Collections.ArrayList
+    #[array]$exchangeGrantSendOnBehalfToSMTP=@() #Array of objects with grant send on behalf to normalized SMTP
+    $exchangeGrantSendOnBehalfToSMTP = New-Object System.Collections.ArrayList
+    #[array]$exchangeSendAsSMTP=@() #Array of objects wtih send as rights normalized SMTP
+    $exchangeSendAsSMTP = New-Object System.Collections.ArrayList
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
     [array]$allGroupsMemberOf=$NULL #Complete AD information for all groups the migrated group is a member of.
