@@ -104,7 +104,7 @@
             }
 
             $errorActionPreference = "Stop"
-            write-error $_
+            write-error "A hard failure has occured - review log above for exception information."
             #exit
         }
     }
