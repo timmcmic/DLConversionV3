@@ -104,7 +104,7 @@
             }
 
             $errorActionPreference = "Stop"
-            write-error "Errors encountered - see log file."
+            write-error $_
             #exit
         }
     }
