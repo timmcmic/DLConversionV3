@@ -1019,7 +1019,7 @@ Function Start-DistributionListMigrationV3
     [array]$global:testOffice365Errors=@()
     [array]$global:testOffice365PropertyErrors=@()
     [array]$global:generalErrors=@()
-    $global:dlConversionV2Test = New-Object System.Collections.Generic.List[PSObject]
+    $global:dlConversionV2Test = New-Object System.Collections.Generic.List[PSCustomObject]
     [string]$isTestError="No"
 
     #Initilize the log file.
