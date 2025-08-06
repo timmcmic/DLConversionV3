@@ -1019,7 +1019,7 @@ Function Start-DistributionListMigrationV3
     [array]$global:testOffice365Errors=@()
     [array]$global:testOffice365PropertyErrors=@()
     [array]$global:generalErrors=@()
-    $global:dlConversionV2Test = New-Object System.Collections.ArrayList
+    $global:dlConversionV2Test = New-Object System.Collections.Generic.List[PSObject]
     [string]$isTestError="No"
 
     #Initilize the log file.
@@ -1746,6 +1746,7 @@ Function Start-DistributionListMigrationV3
     out-logfile -string "If a group was migrated by DLConversionV2 it is possible it has special case objects on it that served the migration."
     out-logfile -string "Test each of the normalized arrays - if any of those were located recommend migration with DLConversionV2 so that all dependencies are handled in the migration."
 
+    <#
     $functionTest = 
     $global:dlConversionV2Test.addRange(($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true }))
     $global:dlConversionV2Test.addRange(($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
@@ -1754,6 +1755,12 @@ Function Start-DistributionListMigrationV3
     $global:dlConversionV2Test.addRange(($exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true }))
     $global:dlConversionV2Test.addRange(($exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true }))
     $global:dlConversionV2Test.addRange(($exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true }))
+
+    #>
+    
+    $functionTest = $exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true }
+
+    $global:dlConversionV2Test.addRange($functionTest)
 
     if (($global:dlConversionV2Test.count -gt 0) -and ($isHealthCheck -eq $false))
     {
