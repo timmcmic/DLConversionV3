@@ -957,7 +957,7 @@ Function Start-DistributionListMigrationV3
     $routingDynamicGroupConfig=$NULL #Holds the dynamic distribution list configuration used for mail routing.
     $routingContactConfiguration=$NULL #This is the empty routing contact configuration.
     #[array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
-    $exchangeDLMembershipSMTP = New-Object System.Collections.ArrayList
+    $exchangeDLMembershipSMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
     $exchangeRejectMessagesSMTP = New-Object System.Collections.ArrayList
     #[array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
@@ -1746,6 +1746,7 @@ Function Start-DistributionListMigrationV3
     out-logfile -string "If a group was migrated by DLConversionV2 it is possible it has special case objects on it that served the migration."
     out-logfile -string "Test each of the normalized arrays - if any of those were located recommend migration with DLConversionV2 so that all dependencies are handled in the migration."
 
+    $functionTest = 
     $global:dlConversionV2Test.addRange(($exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true }))
     $global:dlConversionV2Test.addRange(($exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
     $global:dlConversionV2Test.addRange(($exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }))
