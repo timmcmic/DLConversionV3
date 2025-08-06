@@ -1759,7 +1759,18 @@ Function Start-DistributionListMigrationV3
     #>
     
     $functionTest = $exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true }
-
+    $global:dlConversionV2Test.addRange($functionTest)
+    $functionTest = $exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }
+    $global:dlConversionV2Test.addRange($functionTest)
+    $functionTest = $exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }
+    $global:dlConversionV2Test.addRange($functionTest)
+    $functionTest = $exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true }
+    $global:dlConversionV2Test.addRange($functionTest)
+    $functionTest = $exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true }
+    $global:dlConversionV2Test.addRange($functionTest)
+    $functionTest = $exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true }
+    $global:dlConversionV2Test.addRange($functionTest)
+    $functionTest = $exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true }
     $global:dlConversionV2Test.addRange($functionTest)
 
     if (($global:dlConversionV2Test.count -gt 0) -and ($isHealthCheck -eq $false))
