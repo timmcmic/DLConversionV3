@@ -102,6 +102,6 @@
             {
                 Start-ArchiveFiles -isSuccess:$FALSE -logFolderPath $logFolderPath
             }
-            exit
+            #exit
         }
     }

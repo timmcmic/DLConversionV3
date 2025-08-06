@@ -19,33 +19,6 @@
         Out-LogFile -string "BEGIN disable-allPowerShellSessions"
         Out-LogFile -string "********************************************************************************"
 
-        out-logfile -string "Determining if the temporary DL should be cleaned up."
-
-        if ($global:DLCleanupInfo -ne $NULL)
-        {
-            out-logfile -string "Failure occurred prior to full DL creation in Office 365.  Remove temporary DL."
-
-            remove-o365CloudOnlyGroup -office365DLConfiguration $global:DLCleanupInfo -dlCleanupRequired:$TRUE
-        }
-        else {
-            out-logfile -string "Skip temporary DL removal."
-        }
-
-        out-logfile -string "Determining if the original DL should be moved back to the original OU due to failure."
-
-        if ($global:DLMoveCleanup.originalDLConfiguration -ne $NULL)
-        {
-            out-logfile -string "The original DL should be moved back to the original group."
-
-            $tempOUSubstring = Get-OULocation -originalDLConfiguration $global:DLMoveCleanup.originalDLConfiguration -errorAction STOP
-
-            move-toNonSyncOU -OU $tempOUSubstring -dn $global:DLMoveCleanup.originalDLConfiguration.objectGUID -adCredential $global:DLMoveCleanup.adCredential -globalCatalogServer $global:DLMoveCleanup.globalCatalogServer -dlMoveCleanup:$TRUE -errorAction SilentlyContinue
-        }
-        else 
-        {
-            out-logfile -string "Skip moving original DL to original OU."
-        }
-
         out-logfile "Gathering all PS Sessions"
 
         try{
