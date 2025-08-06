@@ -971,7 +971,7 @@ Function Start-DistributionListMigrationV3
     #[array]$exchangeGrantSendOnBehalfToSMTP=@() #Array of objects with grant send on behalf to normalized SMTP
     $exchangeGrantSendOnBehalfToSMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeSendAsSMTP=@() #Array of objects wtih send as rights normalized SMTP
-    $exchangeSendAsSMTP = NNew-Object System.Collections.Generic.List[PSObject]
+    $exchangeSendAsSMTP = New-Object System.Collections.Generic.List[PSObject]
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
     [array]$allGroupsMemberOf=$NULL #Complete AD information for all groups the migrated group is a member of.
