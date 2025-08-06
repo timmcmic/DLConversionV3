@@ -957,21 +957,21 @@ Function Start-DistributionListMigrationV3
     $routingDynamicGroupConfig=$NULL #Holds the dynamic distribution list configuration used for mail routing.
     $routingContactConfiguration=$NULL #This is the empty routing contact configuration.
     #[array]$exchangeDLMembershipSMTP=@() #Array of DL membership from AD.
-    $exchangeDLMembershipSMTP = New-Object System.Collections.Generic.List[PSCustomObject]
+    $exchangeDLMembershipSMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeRejectMessagesSMTP=@() #Array of members with reject permissions from AD.
-    $exchangeRejectMessagesSMTP = New-Object System.Collections.Generic.List[PSCustomObject]
+    $exchangeRejectMessagesSMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeAcceptMessagesSMTP=@() #Array of members with accept permissions from AD.
-    $exchangeAcceptMessagesSMTP = New-Object System.Collections.Generic.List[PSCustomObject]
+    $exchangeAcceptMessagesSMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeManagedBySMTP=@() #Array of members with manage by rights from AD.
-    $exchangeManagedBySMTP = New-Object System.Collections.Generic.List[PSCustomObject]
+    $exchangeManagedBySMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeModeratedBySMTP=@() #Array of members  with moderation rights.
-    $exchangeModeratedBySMTP = New-Object System.Collections.Generic.List[PSCustomObject]
+    $exchangeModeratedBySMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeBypassModerationSMTP=@() #Array of objects with bypass moderation rights from AD.
-    $exchangeBypassModerationSMTP = New-Object System.Collections.Generic.List[PSCustomObject]
+    $exchangeBypassModerationSMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeGrantSendOnBehalfToSMTP=@() #Array of objects with grant send on behalf to normalized SMTP
-    $exchangeGrantSendOnBehalfToSMTP = New-Object System.Collections.Generic.List[PSCustomObject]
+    $exchangeGrantSendOnBehalfToSMTP = New-Object System.Collections.Generic.List[PSObject]
     #[array]$exchangeSendAsSMTP=@() #Array of objects wtih send as rights normalized SMTP
-    $exchangeSendAsSMTP = New-Object System.Collections.Generic.List[PSCustomObject]
+    $exchangeSendAsSMTP = New-Object System.Collections.Generic.List[PSObject]
     #The following variables hold information regarding other groups in the environment that have dependnecies on the group to be migrated.
 
     [array]$allGroupsMemberOf=$NULL #Complete AD information for all groups the migrated group is a member of.
@@ -1019,7 +1019,7 @@ Function Start-DistributionListMigrationV3
     [array]$global:testOffice365Errors=@()
     [array]$global:testOffice365PropertyErrors=@()
     [array]$global:generalErrors=@()
-    $global:dlConversionV2Test = New-Object System.Collections.Generic.List[PSCustomObject]
+    $global:dlConversionV2Test = New-Object System.Collections.Generic.List[PSObject]
     [string]$isTestError="No"
 
     #Initilize the log file.
@@ -1759,19 +1759,19 @@ Function Start-DistributionListMigrationV3
     #>
     
     $functionTest = $exchangeDLMembershipSMTP | where {$_.isAlreadyMigrated -eq $true }
-    $global:dlConversionV2Test.addRange($functionTest)
+    $global:dlConversionV2Test.add($functionTest)
     $functionTest = $exchangeRejectMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }
-    $global:dlConversionV2Test.addRange($functionTest)
+    $global:dlConversionV2Test.add($functionTest)
     $functionTest = $exchangeAcceptMessagesSMTP | where {$_.isAlreadyMigrated -eq $true }
-    $global:dlConversionV2Test.addRange($functionTest)
+    $global:dlConversionV2Test.add($functionTest)
     $functionTest = $exchangeManagedBySMTP | where {$_.isAlreadyMigrated -eq $true }
-    $global:dlConversionV2Test.addRange($functionTest)
+    $global:dlConversionV2Test.add($functionTest)
     $functionTest = $exchangeModeratedBySMTP | where {$_.isAlreadyMigrated -eq $true }
-    $global:dlConversionV2Test.addRange($functionTest)
+    $global:dlConversionV2Test.add($functionTest)
     $functionTest = $exchangeBypassModerationSMTP | where {$_.isAlreadyMigrated -eq $true }
-    $global:dlConversionV2Test.addRange($functionTest)
+    $global:dlConversionV2Test.add($functionTest)
     $functionTest = $exchangeGrantSendOnBehalfToSMTP | where {$_.isAlreadyMigrated -eq $true }
-    $global:dlConversionV2Test.addRange($functionTest)
+    $global:dlConversionV2Test.add($functionTest)
 
     if (($global:dlConversionV2Test.count -gt 0) -and ($isHealthCheck -eq $false))
     {
