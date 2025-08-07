@@ -117,6 +117,8 @@ Function Start-DistributionListMigrationV3
         [boolean]$testRecipientHealth=$true,
         [Parameter(Mandatory=$false)]
         [boolean]$testPropertyHealth=$true,
+        [Parameter(Mandatory=$false)]
+        [boolean]$testDLConversionV2=$true,
         #Define internal only paramters.
         [Parameter(Mandatory=$false)]
         [boolean]$isHealthCheck = $false,
