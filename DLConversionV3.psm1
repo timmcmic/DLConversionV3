@@ -2391,7 +2391,7 @@ Function Start-DistributionListMigrationV3
         {
             generate-HTMLFile
 
-            start-sleep -s 5
+            start-sleep -s 10
 
             out-logfile -string "Pre-requiste checks failed.  Please refer to the previous list of items that require addressing for migration to proceed." -isError:$TRUE
         }
@@ -2959,7 +2959,7 @@ Function Start-DistributionListMigrationV3
 
     generate-HTMLFile
 
-    start-sleep -s 5
+    start-sleep -s 10
 
     if ($telemetryError -eq $TRUE)
     {
