@@ -94,7 +94,7 @@
                 out-logfile -string "Member is recipient - query recipient."
 
                 try {
-                    $functionRecipient = get-o365recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
+                    $functionRecipient = get-o365recipient -identity $member.primarySMTPAddressOrUPN -errorAction STOP
                 }   
                 catch {
                     out-logfile -string "Unable to locate user by external directory object id."
@@ -106,7 +106,7 @@
                 out-logfile -string "Member is user - query user"
 
                 try {
-                    $functionRecipient = get-o365User -identity $functionDirectoryObjectID[1] -errorAction STOP
+                    $functionRecipient = get-o365User -identity $member.primarySMTPAddressOrUPN -errorAction STOP
                 }   
                 catch {
                     out-logfile -string "Unable to locate user by external directory object id."
