@@ -251,7 +251,8 @@
                     ParentGroupSMTPAddress = $groupSMTPAddress
                     isAlreadyMigrated = $false
                     isError=$false
-                    isErrorMessage=""
+                    isErrorMessageRecipient=""
+                    isErrorMessageProperty=""
                 }
             }
             elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and (($functionTest.objectClass -eq "User") -or ($functionTest.objectClass -eq "Contact")))
@@ -283,7 +284,8 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $true
                         isError=$false
-                        isErrorMessage=""
+                        isErrorMessageRecipient=""
+                        isErrorMessageProperty=""
                     }
                 }
 
@@ -311,7 +313,8 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=""
+                        isErrorMessageRecipient=""
+                        isErrorMessageProperty=""
                     }
                 }
             }
@@ -336,7 +339,8 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=""
+                        isErrorMessageRecipient=""
+                        isErrorMessageProperty=""
                     }
             }
             elseif ($functionTest.objectClass -eq "User")
@@ -361,7 +365,8 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $FALSE
                         isError=$false
-                        isErrorMessage=""
+                        isErrorMessageRecipient=""
+                        isErrorMessageProperty=""
                 }
             }
             elseif ($functionTest.objectClass -eq "Group")
@@ -392,7 +397,8 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=""
+                        isErrorMessageRecipient=""
+                        isErrorMessageProperty=""
                     }
                 }
 
@@ -421,7 +427,8 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $true
                         isError=$false
-                        isErrorMessage=""
+                        isErrorMessageRecipient=""
+                        isErrorMessageProperty=""
                     }
                 }
 
@@ -449,7 +456,8 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=""
+                        isErrorMessageRecipient=""
+                        isErrorMessageProperty=""
                     }
                 }
                 elseif (($functionTest.mail -ne $NULL) -and ($isMember -eq $TRUE) -and (($functionTest.groupType -eq "-2147483640") -or ($functionTest.groupType -eq "-2147483646") -or ($functionTest.groupType -eq "-2147483644"))) 
@@ -476,7 +484,8 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=""
+                        isErrorMessageRecipient=""
+                        isErrorMessageProperty=""
                     }
                 }
                 elseif (($functionTest.msExchRecipientDisplayType -ne $NULL) -and ($isMember -eq $FALSE)) 
@@ -504,7 +513,8 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$false
-                        isErrorMessage=""
+                        isErrorMessageRecipient=""
+                        isErrorMessageProperty=""
                     }
                 }
                 else 
@@ -529,7 +539,8 @@
                         ParentGroupSMTPAddress = $groupSMTPAddress
                         isAlreadyMigrated = $false
                         isError=$true
-                        isErrorMessage="OBJECT_NOT_MAIL_ENALBED_EXCEPTION: The member is not mail enabled.  The object must be removed or mail enabled to continue."
+                        isErrorMessageRecipient="OBJECT_NOT_MAIL_ENALBED_EXCEPTION: The member is not mail enabled.  The object must be removed or mail enabled to continue."
+                        isErrorMessageProperty=""
                     }
                 }
             }
@@ -555,7 +566,8 @@
                     ParentGroupSMTPAddress = $groupSMTPAddress
                     isAlreadyMigrated = $false
                     isError=$true
-                    isErrorMessage="OBJECT_NOT_MAIL_ENABLED_EXCEPTION: The member is not mail enabled.  The object must be removed or mail enabled to continue."
+                    isErrorMessageRecipient="OBJECT_NOT_MAIL_ENABLED_EXCEPTION: The member is not mail enabled.  The object must be removed or mail enabled to continue."
+                    isErrorMessageProperty=""
                 }
             }    
         }
