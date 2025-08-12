@@ -2095,11 +2095,11 @@ Function Start-DistributionListMigrationV3
                     if ($isTestError -eq "Yes")
                     {
                         $member.isError = $TRUE
-                        $member.isErrorMessage = "OFFICE_365_MEMBER_NOT_FOUND_IN_GROUP_EXCEPTION: An on premises group member was not found as a member of the Office 365 Distribution List."
+                        $member.isErrorMessageProperty = "OFFICE_365_MEMBER_NOT_FOUND_IN_GROUP_EXCEPTION: An on premises group member was not found as a member of the Office 365 Distribution List."
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors += $member
                     }
                 }
                 catch{
@@ -2132,11 +2132,11 @@ Function Start-DistributionListMigrationV3
                     if ($isTestError -eq "Yes")
                     {
                         $member.isError = $TRUE
-                        $member.isErrorMessage = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with RejectMessagesFromSendersOrMembers rights not found on Office 365 DL."
+                        $member.isErrorMessageProperty = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with RejectMessagesFromSendersOrMembers rights not found on Office 365 DL."
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors += $member
                     }
                 }
                 catch{
@@ -2169,11 +2169,11 @@ Function Start-DistributionListMigrationV3
                     if ($isTestError -eq "Yes")
                     {
                         $member.isError = $TRUE
-                        $member.isErrorMessage = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with AcceptMessagesFromSendersOrMembers rights not found on Office 365 DL."
+                        $member.isErrorMessageProperty = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with AcceptMessagesFromSendersOrMembers rights not found on Office 365 DL."
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors += $member
                     }
                 }
                 catch{
@@ -2206,11 +2206,11 @@ Function Start-DistributionListMigrationV3
                     if ($isTestError -eq "Yes")
                     {
                         $member.isError = $TRUE
-                        $member.isErrorMessage = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with ManagedBy rights not found on Office 365 DL."
+                        $member.isErrorMessageProperty = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with ManagedBy rights not found on Office 365 DL."
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors += $member
                     }
                 }
                 catch{
@@ -2243,11 +2243,11 @@ Function Start-DistributionListMigrationV3
                     if ($isTestError -eq "Yes")
                     {
                         $member.isError = $TRUE
-                        $member.isErrorMessage = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with ModeratedBy rights not found on Office 365 DL."
+                        $member.isErrorMessageProperty = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with ModeratedBy rights not found on Office 365 DL."
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors += $member
                     }
                 }
                 catch{
@@ -2280,11 +2280,11 @@ Function Start-DistributionListMigrationV3
                     if ($isTestError -eq "Yes")
                     {
                         $member.isError = $TRUE
-                        $member.isErrorMessage = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with BypassModerationFromSendersOrMembers rights not found on Office 365 DL."
+                        $member.isErrorMessageProperty = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with BypassModerationFromSendersOrMembers rights not found on Office 365 DL."
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors += $member
                     }
                 }
                 catch{
@@ -2315,11 +2315,11 @@ Function Start-DistributionListMigrationV3
                     if ($isTestError -eq "Yes")
                     {
                         $member.isError = $TRUE
-                        $member.isErrorMessage = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with GrantSendOnBehalfTo rights not found on Office 365 DL."
+                        $member.isErrorMessageProperty = "OFFICE_365_MEMBER_NOT_FOUND_EXCEPTION: An on-premsies recipient with GrantSendOnBehalfTo rights not found on Office 365 DL."
 
                         out-logfile -string $member
 
-                        $global:testOffice365PropertyErrors += $member | ConvertTo-JSON | ConvertFrom-JSON
+                        $global:testOffice365PropertyErrors += $member
                     }
                 }
                 catch{
