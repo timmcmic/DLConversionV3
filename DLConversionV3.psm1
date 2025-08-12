@@ -756,7 +756,7 @@ Function Start-DistributionListMigrationV3
                             new-HTMLTimeLineItem -HeadingText "Capture Office 365 DL Membership" -Date $htmlCaptureOffice365DLMembership
                             new-HTMLTimeLineItem -HeadingText "Start Cloud Group Validation" -Date $htmlStartGroupValidation
                             new-HTMLTimeLineItem -HeadingText "Start Attribute Normalization" -Date $htmlStartAttributeNormalization
-                            new-HTMLTimeLineItem -HeadingText "Start OnPremises -> Cloud Validation" -Date $htmlStartCloudValidationOnPremises
+                            new-HTMLTimeLineItem -HeadingText "Start Cloud Validation General" -Date $htmlStartCloudValidationGeneral
                             new-HTMLTimeLineItem -HeadingText "Start OnPremises Property -> Cloud Validation" -Date $htmlStartCloudValidationOffice365
                             new-HTMLTimeLineItem -HeadingText "Start Capture On-Premises Dependencies" -Date $htmlCaptureOnPremisesDependencies
                             new-HTMLTimeLineItem -HeadingText "Start Capture Office 365 Dependencies" -Date $htmlRecordOffice365Dependencies
@@ -1771,7 +1771,7 @@ Function Start-DistributionListMigrationV3
 
 
     $htmlStartCloudValidation = get-date
-    $htmlStartCloudValidationOnPremises = get-Date
+    $htmlStartCloudValidationGeneral = get-Date
 
     $FunctionStartTime = get-universalDateTime
 
@@ -1804,6 +1804,8 @@ Function Start-DistributionListMigrationV3
 
         $mailOnMicrosoftComDomain = $customRoutingDomain
     }
+
+    <#
 
     if ($testRecipientHealth -eq $TRUE)
     {
@@ -2064,6 +2066,8 @@ Function Start-DistributionListMigrationV3
             out-logfile -string "There were no grant send on behalf to members to evaluate."    
         }
     }
+
+    #>
 
     $htmlStartCloudValidationOffice365 = get-Date
 
