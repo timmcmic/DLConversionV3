@@ -708,7 +708,35 @@ Function Start-DistributionListMigrationV3
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
                 }
 
+                out-logfile -string "Record the ad recycle bin information."
+
                 out-logfile -string "Record routing contact configuration."
+
+                New-HTMLSection -HeaderText "Active Directory Recycle Bin Information" {
+                        New-HTMLList{
+                            foreach ($object in $adRecycleBinInfo.psObject.properties)
+                            {
+                                if ($object.Value.count -gt 1)
+                                {
+                                    foreach ($value in $object.Value)
+                                    {
+                                        $string = ($object.name + " " + $value.tostring())
+                                        new-htmlListItem -text $string -fontSize 14
+                                    }
+                                }
+                                elseif ($object.value -ne $NULL)
+                                {
+                                    $string = ($object.name + " " + $object.value.tostring())
+                                    new-htmlListItem -text $string -fontSize 14                            }
+                                else
+                                {
+                                    $string = ($object.name)
+                                    new-htmlListItem -text $string -fontSize 14
+                                }
+                            }
+                        }
+                    }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
+                }
 
                 if ($routingContactConfiguration -ne $NULL)
                 {
