@@ -119,6 +119,8 @@ Function Start-DistributionListMigrationV3
         [boolean]$testPropertyHealth=$true,
         [Parameter(Mandatory=$false)]
         [boolean]$testDLConversionV2=$true,
+        [Parameter(Mandatory=$false)]
+        [boolean]$skipADRecycleBinCheck=$false,
         #Define internal only paramters.
         [Parameter(Mandatory=$false)]
         [boolean]$isHealthCheck = $false,
@@ -1007,6 +1009,7 @@ Function Start-DistributionListMigrationV3
     $office365DLMembership=$NULL
     $office365DLMembershipPostMigration=$NULL #This holds the Office 365 DL membership information post migration
     $msGraphURL = ""
+    $adRecycleBinInfo = $NULL
 
     $dlPropertySet = '*' #Clear all properties of a given object
 
@@ -1031,12 +1034,37 @@ Function Start-DistributionListMigrationV3
 
     if ($iValidatedASupportedSyncVersion -eq $FALSE)
     {
+        out-logfile -string "------------------------------------------------------------------------------------------------------------------"
         out-logfile -string "It is a requirement to set this value to TRUE to migrate."
         out-logfile -string "Setting this value to true signifies the following:"
         out-logfile -string "All Entra Connect Servers are running version 2.5.76.0 or newer."
         out-logfile -string "All Entra Cloud Sync Agents are running version 1.1.1373.0 or newer."
         out-logfile -string "Failure to utilize a support version may result in migrations being reverted and lose of changes in EntraID / M365"
         out-logfile -string "EXCEPTION_DID_NOT_VALIDATE_SUPPORTED_SYNC_VERSIONS" -isError:$true
+    }
+
+    out-logfile -string "Record recycle bin info."
+    $adRecycleBinInfo = validate-ADRecycleBinEnabled
+
+    if ($skipADRecycleBinCheck -eq $FALSE)
+    {
+        if(($adRecycleBinInfo.EnabledScopes.count -gt 0) -or ($adRecycleBinInfo.EnabledScopes -ne $NULL))
+        {
+            out-logfile -string "The ad recycle bin is enabled - this is good proceed without worry."
+
+            foreach ($scope in $adRecycleBinInfo.EnabledScopes)
+            {
+                out-logfile -string $scope
+            }
+        }
+        else 
+        {
+            out-logfile -string "-----------------------------------------------------------------------------------------------------------------------"
+            out-logfile -string "It is a requirement to either enable the Active Directory Recycle Bin or specify -skipADRecycleBinCheck to FALSE."
+            out-logfile -string "The AD Recycle Bin is required to ensure efficient restoration of deleted migrated groups should rollback be required."
+            out-logfile -string "Not eanbling the recycle bin may result in the inability to revert the migration without deleting and recreating group."
+            out-logfile -string "EXCEPTION_DID_NOT_ENABLE_AD_RECYCLE_BIN_OR_SKIP_CHECK" -isError:$TRUE
+        }
     }
 
     $htmlFunctionStartTime = get-Date
