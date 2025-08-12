@@ -1066,6 +1066,12 @@ Function Start-DistributionListMigrationV3
             out-logfile -string "EXCEPTION_DID_NOT_ENABLE_AD_RECYCLE_BIN_OR_SKIP_CHECK" -isError:$TRUE
         }
     }
+    else 
+    {
+        out-logfile -string "Administrator choose to skip the ad recycle bin check."
+        out-logfile -string "This implies that the AD recycle bin is not enabled necessitating the bypass."
+        out-logfile -string "May the odds ever be in your favor."
+    }
 
     $htmlFunctionStartTime = get-Date
 
