@@ -169,22 +169,6 @@ Function Start-DistributionListMigrationV3
                             }
                     }-HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
 
-                    out-logfile -string "Generate HTML for pre create errors."
-
-                    if ($global:preCreateErrors.count -gt 0)
-                    {
-                        out-logfile -string "Precreate errors exist."
-
-                        new-htmlSection -HeaderText ("Pre Office 365 Group Create Errors"){
-                            new-htmlTable -DataTable ($global:preCreateErrors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessage) -Filtering  {
-                            } -AutoSize
-                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
-                    }
-                    else 
-                    {
-                        out-logfile -string "Precreate errors do not exist."
-                    }
-
                     out-logfile -string "Generate HTML section for DLConversionV2 items."
 
                     if ($global:dlConversionV2Test.count -gt 0)
@@ -203,28 +187,12 @@ Function Start-DistributionListMigrationV3
 
                     out-logfile -string "Generate HTML for test office 365 errors."
 
-                    if ($global:testOffice365Errors.count -gt 0)
-                    {
-                        out-logfile -string "Test Office 365 Errors exist."
-
-                        new-htmlSection -HeaderText ("Test Office 365 Property Errors"){
-                            new-htmlTable -DataTable ($global:testOffice365Errors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessage) -Filtering  {
-                            } -AutoSize
-                        } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
-                    }
-                    else 
-                    {
-                        out-logfile -string "Test Office 365 Errors do not exist."
-                    }
-
-                    out-logfile -string "Generate HTML for test office 365 errors."
-
                     if ($global:testOffice365PropertyErrors.count -gt 0)
                     {
                         out-logfile -string "Test Office 365 Errors exist."
 
                         new-htmlSection -HeaderText ("Test Office 365 Dependency Errors"){
-                            new-htmlTable -DataTable ($global:testOffice365PropertyErrors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessage) -Filtering  {
+                            new-htmlTable -DataTable ($global:testOffice365PropertyErrors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessageProperty,isErrorMessageRecipient) -Filtering  {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                     }
