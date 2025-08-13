@@ -114,27 +114,28 @@
         #Note:  In the main function if custom routing domain is specified we set the onmicrosoft.com domain to be it.
         #Note:  If the custom routing domain is not specified then we calculate the onmicorosft.com or microosftonline.com (legacy).
 
-        do{
-            foreach ($address in $office365DLConfiguration.emailAddresses)
+
+        foreach ($address in $office365DLConfiguration.emailAddresses)
+        {
+            out-logfile -string ("Testing address for remote routing address = "+$address)
+
+            if (($address.tolower()).contains($customRoutingDomain))
             {
-                out-logfile -string ("Testing address for remote routing address = "+$address)
+                out-logfile -string ("The remote routing address was found = "+$address)
 
-                if (($address.tolower()).contains($customRoutingDomain))
-                {
-                    out-logfile -string ("The remote routing address was found = "+$address)
-
-                    $functionTargetAddress=$address
-                    $functionTargetAddress=$functionTargetAddress.toUpper()
-                }
+                $functionTargetAddress=$address
+                $functionTargetAddress=$functionTargetAddress.toUpper()
+                break
             }
+            else 
+            {
+                $functionTargetAddress = ""
+            }
+        }
 
-            out-logfile -string "The remote routing address was not found in the list of addresses."
-
-            $functionTargetAddress = "None"
-
-        } until ($functionTargetAddress -ne "")
+        out-logfile -string ("Function Target Address: "+$functionTargetAddress)
         
-        if ($functionTargetAddress -ne "None")
+        if ($functionTargetAddress -ne "")
         {
             out-logfile -string "Remote routing address is located - use this for cross premises mail flow calculation."
 
@@ -171,7 +172,7 @@
             if(get-o365Recipient -identity $functionTargetAddress)
             {
                 out-logfile -string "Calcuated target routing address utilized in service - generate random."
-                
+
                 $isValidAddress = $false
 
                 $newAlias = ((Get-Random)+(Get-Random)+(Get-Random))
@@ -186,6 +187,7 @@
                 {
                     out-logfile -string $item
                 }
+
                 $functionTargetAddress = $functionEmailAddress[0]+"@"+$functionEmailAddress[1]
             }
             else 
