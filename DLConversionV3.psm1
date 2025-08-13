@@ -2715,8 +2715,8 @@ Function Start-DistributionListMigrationV3
     $allOffice365ManagedBy = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365ManagedBy.value -errorAction STOP
     out-logfile -string "Obtain all office 365 forwardingAddress."
     $allOffice365ForwardingAddress = Get-O365GroupDependency -dn $office365DLConfiguration.distinguishedName -attributeType $office365Attributes.office365ForwardingAddress.value -errorAction STOP
-    out-logfile -string "Obtain all office 365 Send As on Others."
-    $allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -isTrustee:$TRUE -office365GroupConfiguration $office365GroupConfiguration -errorAction STOP
+    #out-logfile -string "Obtain all office 365 Send As on Others."
+    #$allOffice365SendAsAccess = Get-O365DLSendAs -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -isTrustee:$TRUE -office365GroupConfiguration $office365GroupConfiguration -errorAction STOP
     out-logfile -string "Obtain all office 365 Send As on Group."
     $allOffice365SendAsAccessOnGroup = get-o365DLSendAs -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
 
