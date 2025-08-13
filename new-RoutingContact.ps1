@@ -72,6 +72,7 @@
         [int]$functionMaxLength = 64
         [string]$functionNameTest = ""
         $functionPoliciesExcluded = @("{26491cfc-9e50-4857-861b-0cb8df22b5d7}")
+        $functionTargetAddress = ""
 
 
         #Output all parameters bound or unbound and their associated values.
@@ -92,35 +93,6 @@
         [string]$functionCustomAttribute2=$office365DLConfiguration.externalDirectoryObjectID
         out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
 
-        <#
-
-        if ($originalDLConfiguration.mail -ne $NULL)
-        {
-            out-logfile -string "DL Configuration Contains Mail = use mail attribute."
-            [string]$functionCustomAttribute2=$originalDLConfiguration.mail
-            out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
-        }
-        else 
-        {
-            if ($office365DLConfiguration.recipientTypeDetails -ne "GroupMailbox")
-            {
-                out-logfile -string "Group is standard - use windows email address."
-                out-logfile -string ("DL Configuration based off Office 365 - use windowsEmailAddress attribute.")
-                [string]$functionCustomAttribute2=$office365DLConfiguration.WindowsEmailAddress
-                out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
-            }
-            else
-            {
-                out-logfile -string "Group is universal use primary SMTP address."
-                out-logfile -string ("DL Configuration based off Office 365 - use windowsEmailAddress attribute.")
-                [string]$functionCustomAttribute2=$office365DLConfiguration.primarySMTPAddress
-                out-logfile -string ("Function Custom Attribute 2 = "+$functionCustomAttribute2)
-            }
-
-        }
-
-        #>
-
         out-logfile -string "Evaluate OU location to utilize."
 
         if ($isRetry -eq $FALSE)
@@ -136,132 +108,86 @@
 
         out-logfile -string ("Function OU = "+$functionOU)
 
-        if ($customRoutingDomain -eq "")
-        {
+        out-logfile -string "Attempting to locate the existing routing address on the group."
+
+        #Note:  The custom routing domain is ALWAYS the domain we should be using.
+        #Note:  In the main function if custom routing domain is specified we set the onmicrosoft.com domain to be it.
+        #Note:  If the custom routing domain is not specified then we calculate the onmicorosft.com or microosftonline.com (legacy).
+
+        do{
             foreach ($address in $office365DLConfiguration.emailAddresses)
             {
                 out-logfile -string ("Testing address for remote routing address = "+$address)
-    
-                if (($address.tolower()).contains("mail.onmicrosoft.com"))
+
+                if (($address.tolower()).contains($customRoutingDomain))
                 {
                     out-logfile -string ("The remote routing address was found = "+$address)
-    
+
                     $functionTargetAddress=$address
                     $functionTargetAddress=$functionTargetAddress.toUpper()
                 }
-                elseif (($address.tolower()).contains("microsoftonline.com"))
-                {
-                    out-logfile -string ("The remote routing domain based on legacy address was found = "+$address)
-
-                    $functionTargetAddress = $address
-                    $functionTargetAddress = $functionTargetAddress.toUpper()
-                }
             }
+
+            $functionTargetAddress = "None"
+
+        } until ($functionTargetAddress -ne "")
+        
+        if ($functionTargetAddress -ne "None")
+        {
+            out-logfile -string "Remote routing address is located - use this for cross premises mail flow calculation."
+
+            $functionEmailAddress = $functionTargetAddress.split("@")
+
+            foreach ($item in $functionEmailAddress)
+            {
+                out-logfile -string $item
+            }
+
+            $functionEmailAddress[0] = $functionEmailAddress[0] + "-migratedByV3"
+
+            foreach ($item in $functionEmailAddress)
+            {
+                out-logfile -string $item
+            }
+
+            $functionTargetAddress = $functionEmailAddress[0]+"@"+$functionEmailAddress[1]
+
+            out-logfile -string $functionTargetAddress
         }
         else 
         {
-            out-logfile -string "Testing based on the custom remote routing address."
-            foreach ($address in $office365DLConfiguration.emailAddresses)
-            {
-                out-logfile -string ("Testing address for remote routing address = "+$address)
-    
-                if (($address.tolower()).contains($customRoutingDomain.tolower()))
-                {
-                    out-logfile -string ("The remote routing address was found = "+$address)
-    
-                    $functionTargetAddress=$address
-                    $functionTargetAddress=$functionTargetAddress.toUpper()
-                }
-            }
+            $functionTargetAddress = $office365DLConfiguration.alias+"@"+$customRoutingDomain
+
+            out-logfile -string $functionTargetAddress 
         }
 
-        if ($functionTargetAddress -eq $NULL)
-        {
-            #This code was kinda cheap - essentailly there was no valid address for a target address.
-            #This really should not just fail - we should create and set one.
+        $isValidAddress = $FALSE
 
-            out-logfile -string "Group does not have a mail.onmicrosoft.com address or address at the custom routing domain - one must be calculated."
-
-            out-logfile -string ("Domain that will be utilized for the remote routing domain: "+$customRoutingDomain)
-
-            out-logfile -string ("Utilize the alias of the group to build the new onmicrosoft.com address: "+$office365DLConfiguration.alias)
-
-            $usefulRoutingAddress = $office365DLConfiguration.alias + "@"
-            out-logfile -string $usefulRoutingAddress
-            $usefulRoutingAddress = $usefulRoutingAddress + $customRoutingDomain
-            out-logfile -string $usefulRoutingAddress
-
-            out-logfile -string "Test to ensure that calcluated address is not present in Office 365."
-
-            if (get-o365Recipient -identity $usefulRoutingAddress)
+        do {
+            if(get-o365Recipient -identity $functionTargetAddress)
             {
-                out-logfile -string "The address was found - at this point use something random."
-
-                $newAddressOK = $false
-
-                do {
-                    $newAlias = ((Get-Random)+(Get-Random)+(Get-Random))
-                    out-logfile -string ("New alias calculated: "+$newAlias)
-                    $usefulRoutingAddress = $usefulRoutingAddress.replace($office365DLConfiguration.alias,$newAlias)
-                    out-logfile -string $usefulRoutingAddress 
-
-                    if (-not (get-o365Recipient -identity $usefulRoutingAddress))
-                    {
-                        out-logfile -string "Random address is not present in Office 365 - proceed."
-                        $newAddressOK = $true
-                    }
-                    else 
-                    {
-                        out-logfile -string "Random address is present in Office 365 - do it again."
-                        $newAddressOK = $false                        
-                    }
-                } until (
-                    $newAddressOK -eq $true
-                )
+                $isValidAddress = $TRUE
             }
             else 
             {
-                out-logfile -string "The address was not found - allow to be target address."
+                $newAlias = ((Get-Random)+(Get-Random)+(Get-Random))
+                out-logfile -string $newAlias
+                $functionEmailAddress = $functionTargetAddress.split("@")
+                foreach ($item in $functionEmailAddress)
+                {
+                    out-logfile -string $item
+                }
+                $functionEmailAddress[0]=$newAlias
+                foreach ($item in $functionEmailAddress)
+                {
+                    out-logfile -string $item
+                }
+                $functionTargetAddress = $functionEmailAddress[0]+"@"+$functionEmailAddress[1]
             }
 
-            $functionTargetAddress = "smtp:"+$usefulRoutingAddress
-            out-logfile -string $functionTargetAddress
-            $functionTargetAddress = $functionTargetAddress.ToUpper()
-            out-logfile -string $functionTargetAddress
-
-            out-logfile -string "Setting the target address on the Office 365 distribution group."
-
-            if ($office365DLConfiguration.recipientTypeDetails -ne "GroupMailbox")
-            {
-                out-logfile -string "Group type is distribution - set email address with distribution."
-
-                try {
-                    set-o365DistributionGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress.toLower()} -errorAction STOP -bypassSecurityGroupManagerCheck
-                }
-                catch {
-                    out-logfile -string $_
-                    out-logfile -string "Unable to add the calculated routing address to the distribution group." -isError:$TRUE
-                }
-            }
-            else
-            {
-                out-logfile -string "Group type is unified - set email address with unified."
-
-                try {
-                    set-o365UnifiedGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress.toLower()} -errorAction STOP
-                }
-                catch {
-                    out-logfile -string $_
-                    out-logfile -string "Unable to add the calculated routing address to the unified group." -isError:$TRUE
-                }
-            }
-
-            out-logfile -string "New remote routing address calculated and stamped - moving on to creating contact."
-        }
-        else
-        {
-            out-logfile -string $functionTargetAddress
-        }
+        } until (
+            $isValidAddress -eq $TRUE
+        )
 
         out-logfile -string ("Function target address = "+$functionTargetAddress)
 
