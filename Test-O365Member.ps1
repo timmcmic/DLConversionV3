@@ -105,7 +105,7 @@
                 out-logfile -string $_ -isError:$true
             }
 
-            if ($functionTestError -eq $isNotOk)
+            if ($functionTest -eq $isNotOk)
             {
                 out-logfile -string "Recipient not located in Office 365."
                 $member.isErrorMessageRecipient = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
