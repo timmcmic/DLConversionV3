@@ -67,10 +67,14 @@
 
                 try {
                     $functionRecipient = get-o365recipient -identity $functionDirectoryObjectID[1] -errorAction STOP
+                    $member.isErrorMessageRecipient = "N/A"
                 }   
                 catch {
                     out-logfile -string "Unable to locate user by external directory object id."
                     $isTestError="Yes"
+
+                    out-logfile -string "Recipient not located in Office 365."
+                    $member.isErrorMessageRecipient = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
                 }
             }
             else
@@ -79,10 +83,14 @@
 
                 try {
                     $functionRecipient = get-o365User -identity $functionDirectoryObjectID[1] -errorAction STOP
+                    $member.isErrorMessageRecipient = "N/A"
                 }   
                 catch {
                     out-logfile -string "Unable to locate user by external directory object id."
                     $isTestError="Yes"
+
+                    out-logfile -string "Recipient not located in Office 365."
+                    $member.isErrorMessageRecipient = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
                 }
             }
         }
@@ -96,10 +104,15 @@
 
                 try {
                     $functionRecipient = get-o365recipient -identity $member.primarySMTPAddressOrUPN -errorAction STOP
+                    out-logfile -string "Recipient located successfully."
+                    $member.isErrorMessageRecipient = "N/A"
                 }   
                 catch {
                     out-logfile -string "Unable to locate user by external directory object id."
                     $isTestError="Yes"
+
+                    out-logfile -string "Recipient not located in Office 365."
+                    $member.isErrorMessageRecipient = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
                 }
             }
             else
@@ -108,10 +121,14 @@
 
                 try {
                     $functionRecipient = get-o365User -identity $member.primarySMTPAddressOrUPN -errorAction STOP
+                    $member.isErrorMessageRecipient = "N/A"
                 }   
                 catch {
                     out-logfile -string "Unable to locate user by external directory object id."
                     $isTestError="Yes"
+
+                    out-logfile -string "Recipient not located in Office 365."
+                    $member.isErrorMessageRecipient = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
                 }
             }
         }
