@@ -86,7 +86,7 @@ Function Start-DistributionListMigrationV3
         [string]$aadConnectServer=$NULL,
         #Exchange Online Parameters
         [Parameter(Mandatory = $false)]
-        [pscredential]$exchangeOnlineCredential=([System.Management.Automation.PSCredential]::Empty),
+        [pscredential]$exchangeOnlineCredential=$NULL,
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineCertificateThumbPrint="",
         [Parameter(Mandatory = $false)]
@@ -1229,11 +1229,21 @@ Function Start-DistributionListMigrationV3
 
     $telemetryMSGraphUsers = test-powershellModule -powershellmodulename $corevariables.msgraphuserspowershellmodulename.value -powershellVersionTest:$TRUE
 
-   out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
+    out-logfile -string "Calling Test-PowershellModule to validate the Microsoft Graph Users versions installed."
 
     $telemetryMSGraphGroups = test-powershellModule -powershellmodulename $corevariables.msgraphgroupspowershellmodulename.value -powershellVersionTest:$TRUE
 
     Out-LogFile -string "Calling New-ExchangeOnlinePowershellSession to create session to office 365."
+
+    if ($exchangeOnlineCredential -eq $NULL)
+    {
+        out-logfile -string "Setting exchange online credential to empty."
+        $exchangeOnlineCredential=([System.Management.Automation.PSCredential]::Empty)
+    }
+    else 
+    {
+        out-logfile -string "Exchange online credential specified - proceed."
+    }
 
     New-ExchangeOnlinePowershellSession -exchangeOnlineCredentials $exchangeOnlineCredential -exchangeOnlineEnvironmentName $exchangeOnlineEnvironmentName -exchangeOnlineAppID $exchangeOnlineAppID -exchangeOnlineOrganizationName $exchangeOnlineOrganizationName -exchangeOnlineCertificateThumbPrint $exchangeOnlineCertificateThumbPrint -debugLogPath $traceFilePath
 
