@@ -141,23 +141,24 @@
         }
         else 
         {
-            if ($isTestError -eq $TRUE)
+            out-logfile -string "The member was not located in Office 365 attribute - test recipient for presence."
+
+            try {
+                $functionTest = Test-O365Recipient -member $member -errorAction STOP
+            }
+            catch {
+                out-logfile -string "Unable to test the recipient presence in Office 365."
+                out-logfile -string $_ -isError:$true
+            }
+
+            if ($functionTestError -eq $isNotOk)
             {
-                out-logfile -string "The member was not located in Office 365 attribute - test recipient for presence."
-
-                try {
-                    $functionTest = get-o365Recipient -member $member -errorAction STOP
-                }
-                catch {
-                    out-logfile -string "Unable to test the recipient presence in Office 365."
-                    out-logfile -string $_ -isError:$true
-                }
-
-                if ($functionTestError -eq $isNotOk)
-                {
-                    out-logfile -string "Recipient not located in Office 365."
-                    $member.isErrorMessageRecipient = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
-                }
+                out-logfile -string "Recipient not located in Office 365."
+                $member.isErrorMessageRecipient = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
+            }
+            else 
+            {
+                $member.isErrorMessageRecipient = "N/A"
             }
         }
 
