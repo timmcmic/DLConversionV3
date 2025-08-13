@@ -121,7 +121,7 @@
             out-logfile -string "Previous errors not encountered - test further."
             out-logfile -string $functionRecipient.name
 
-            if ($membership.count -gt 0)
+            if (($membership.count -gt 0) -or ($membership -ne $NULL))
             {
                 if ($membership.contains($functionRecipient.name))
                 {
