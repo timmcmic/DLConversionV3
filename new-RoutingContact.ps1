@@ -169,7 +169,7 @@
         $isValidAddress = $FALSE
 
         do {
-            if(get-o365Recipient -identity $functionTargetAddress)
+            if(get-o365Recipient -identity $functionTargetAddress.replace("SMTP:",""))
             {
                 out-logfile -string "Calcuated target routing address utilized in service - generate random."
 
