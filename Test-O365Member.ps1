@@ -93,7 +93,7 @@
             $isTestError="Yes"
         }
 
-        if ($isTestError -eq $TRUE)
+        if ($isTestError -eq $isNotOk)
         {
             out-logfile -string "The member was not located in Office 365 attribute - test recipient for presence."
 
