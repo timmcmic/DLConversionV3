@@ -2817,6 +2817,33 @@ Function Start-DistributionListMigrationV3
 
     $telemetryConvertGroupCloudOnlyExchangeOnline = get-elapsedTime -startTime $telemetryfunctionStartTime -endTime $telemetryfunctionEndTime
 
+    $htmlCreateRoutingContact = get-date
+
+    $telemetryFunctionStartTime = get-universalDateTime
+
+    [int]$loopCounter = 0
+    [boolean]$stopLoop = $FALSE
+    do {
+        try {
+            new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $corevariables.globalCatalogWithPort.value -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -customRoutingDomain $mailOnMicrosoftComDomain
+
+            $stopLoop = $TRUE
+        }
+        catch {
+            if ($loopCounter -gt 4)
+            {
+                out-logfile -string $_ -isError:$TRUE
+            }
+            else {
+                start-sleepProgress -sleepString "Unable to create routing contact - try again." -sleepSeconds 5
+
+                $loopCounter = $loopCounter +1
+            }
+        }
+    } while ($stopLoop -eq $FALSE)
+
+    #Capturing Office 365 information here and exporting since the preceeding function maniuplated addresses.
+
     $htmlCaptureOffice365InfoPostMigration = Get-Date
 
     $office365DLConfigurationPostMigration = Get-O365DLConfiguration -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP
@@ -2824,58 +2851,6 @@ Function Start-DistributionListMigrationV3
 
     $office365DLMembershipPostMigration = @(get-O365DLMembership -groupSMTPAddress $office365DLConfiguration.externalDirectoryObjectID -errorAction STOP)
     out-xmlFile -itemToExport $office365DLMembershipPostMigration -itemNametoExport $xmlFiles.office365DLMembershipPostMigrationXML.value
-
-    $htmlCreateRoutingContact = get-date
-
-    $telemetryFunctionStartTime = get-universalDateTime
-
-    [int]$loopCounter = 0
-    [boolean]$stopLoop = $FALSE
-
-    if ($customRoutingDomain -eq "")
-    {
-        out-logfile -string "Calling new-routing contact without custom routing domain."
-        do {
-            try {
-                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $corevariables.globalCatalogWithPort.value -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -customRoutingDomain $mailOnMicrosoftComDomain
-    
-                $stopLoop = $TRUE
-            }
-            catch {
-                if ($loopCounter -gt 4)
-                {
-                    out-logfile -string $_ -isError:$TRUE
-                }
-                else {
-                    start-sleepProgress -sleepString "Unable to create routing contact - try again." -sleepSeconds 5
-    
-                    $loopCounter = $loopCounter +1
-                }
-            }
-        } while ($stopLoop -eq $FALSE)
-    }
-    else
-    {
-        out-logfile -string "Calling new-routingContact with custom domain."
-        do {
-            try {
-                new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $corevariables.globalCatalogWithPort.value -adCredential $activeDirectoryCredential -customRoutingDomain $mailOnMicrosoftComDomain -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod
-    
-                $stopLoop = $TRUE
-            }
-            catch {
-                if ($loopCounter -gt 4)
-                {
-                    out-logfile -string $_ -isError:$TRUE
-                }
-                else {
-                    start-sleepProgress -sleepString "Unable to create routing contact - try again." -sleepSeconds 5
-    
-                    $loopCounter = $loopCounter +1
-                }
-            }
-        } while ($stopLoop -eq $FALSE)
-    }
 
     $stopLoop = $FALSE
     [int]$loopCounter = 0
