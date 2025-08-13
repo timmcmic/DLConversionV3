@@ -159,7 +159,7 @@
         else 
         {
             out-logfile -string "Constructing the remote routing address based on alias and domain."
-            
+
             $functionTargetAddress = $office365DLConfiguration.alias+"@"+$customRoutingDomain
 
             out-logfile -string $functionTargetAddress 
@@ -170,10 +170,10 @@
         do {
             if(get-o365Recipient -identity $functionTargetAddress)
             {
-                $isValidAddress = $TRUE
-            }
-            else 
-            {
+                out-logfile -string "Calcuated target routing address utilized in service - generate random."
+                
+                $isValidAddress = $false
+
                 $newAlias = ((Get-Random)+(Get-Random)+(Get-Random))
                 out-logfile -string $newAlias
                 $functionEmailAddress = $functionTargetAddress.split("@")
@@ -187,6 +187,11 @@
                     out-logfile -string $item
                 }
                 $functionTargetAddress = $functionEmailAddress[0]+"@"+$functionEmailAddress[1]
+            }
+            else 
+            {
+                out-logfile -string "Target routing address as calculated not utilized in serivce otherwise."
+                $isValidAddress = $true
             }
 
         } until (
