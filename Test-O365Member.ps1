@@ -98,7 +98,7 @@
             out-logfile -string "The member was not located in Office 365 attribute - test recipient for presence."
 
             try {
-                $functionTest = get-o365Recipient -member $member -errorAction STOP
+                $functionTest = Test-O365Recipient -member $member -errorAction STOP
             }
             catch {
                 out-logfile -string "Unable to test the recipient presence in Office 365."
