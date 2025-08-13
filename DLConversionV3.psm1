@@ -2131,6 +2131,10 @@ Function Start-DistributionListMigrationV3
 
                         $global:testOffice365PropertyErrors += $member
                     }
+                    else 
+                    {
+                        $member.isErrorMessageProperty = "N/A"
+                    }
                 }
                 catch{
                     out-logfile -string $_ -isError:$TRUE
@@ -2167,6 +2171,10 @@ Function Start-DistributionListMigrationV3
                         out-logfile -string $member
 
                         $global:testOffice365PropertyErrors += $member
+                    }
+                    else 
+                    {
+                        $member.isErrorMessageProperty = "N/A"
                     }
                 }
                 catch{
@@ -2205,6 +2213,10 @@ Function Start-DistributionListMigrationV3
 
                         $global:testOffice365PropertyErrors += $member
                     }
+                    else 
+                    {
+                        $member.isErrorMessageProperty = "N/A"
+                    }
                 }
                 catch{
                     out-logfile -string $_ -isError:$TRUE
@@ -2241,6 +2253,10 @@ Function Start-DistributionListMigrationV3
                         out-logfile -string $member
 
                         $global:testOffice365PropertyErrors += $member
+                    }
+                    else 
+                    {
+                        $member.isErrorMessageProperty = "N/A"
                     }
                 }
                 catch{
@@ -2279,6 +2295,10 @@ Function Start-DistributionListMigrationV3
 
                         $global:testOffice365PropertyErrors += $member
                     }
+                    else 
+                    {
+                        $member.isErrorMessageProperty = "N/A"
+                    }
                 }
                 catch{
                     out-logfile -string $_ -isError:$TRUE
@@ -2316,6 +2336,10 @@ Function Start-DistributionListMigrationV3
 
                         $global:testOffice365PropertyErrors += $member
                     }
+                    else 
+                    {
+                        $member.isErrorMessageProperty = "N/A"
+                    }
                 }
                 catch{
                     out-logfile -string $_ -isError:$TRUE
@@ -2350,6 +2374,10 @@ Function Start-DistributionListMigrationV3
                         out-logfile -string $member
 
                         $global:testOffice365PropertyErrors += $member
+                    }
+                    else 
+                    {
+                        $member.isErrorMessageProperty = "N/A"
                     }
                 }
                 catch{
