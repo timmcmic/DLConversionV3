@@ -8,7 +8,7 @@
     This function validates the graph context and ensures necessary scopes exist.
 
     #>
-    Function validate-ADRecycleBinDisabled
+    Function validate-ADRecycleBinEnabled
     {
         $functionTest = $null
         $functionGood = "Good"
