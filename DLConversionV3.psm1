@@ -86,7 +86,7 @@ Function Start-DistributionListMigrationV3
         [string]$aadConnectServer=$NULL,
         #Exchange Online Parameters
         [Parameter(Mandatory = $false)]
-        [pscredential]$exchangeOnlineCredential=$NULL,
+        [pscredential]$exchangeOnlineCredential=([System.Management.Automation.PSCredential]::Empty),
         [Parameter(Mandatory = $false)]
         [string]$exchangeOnlineCertificateThumbPrint="",
         [Parameter(Mandatory = $false)]
