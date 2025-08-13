@@ -489,7 +489,7 @@ Function Start-DistributionListMigrationV3
 
                 if ($exchangeManagedBySMTP.count -gt 0)
                 {
-                    new-htmlSection -HeaderText ("On Premises Accept Normalized"){
+                    new-htmlSection -HeaderText ("On Premises ManagedBy Normalized"){
                         new-htmlTable -DataTable ($exchangeManagedBySMTP | select-object PrimarySMTPAddressOrUPN,Alias,ExternalDirectoryObjectID,DN,isAlreadyMigrated,RecipientOrUser,OnPremADAttributeCommonName,OnPremADAttribute) -Filtering {
                         } -AutoSize
                     } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Black"  -CanCollapse -BorderRadius 10px -collapsed
