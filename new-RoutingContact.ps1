@@ -190,6 +190,16 @@
         )
 
         out-logfile -string ("Function target address = "+$functionTargetAddress)
+        
+        out-logfile -string "Add the email address to the migrated office 365 dl."
+
+        try {
+            set-o365DistributionGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress} -errorAction STOP
+        }
+        catch {
+            out-logfile -string "Unable to update the migrated cloud dl with the cross premises routing address."
+            out-logfile -string $_ -isError:$TRUE
+        }
 
         #This logic allows the code to be re-used when only the Office 365 information is available.
 
