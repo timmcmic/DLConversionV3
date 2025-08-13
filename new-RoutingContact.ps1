@@ -205,7 +205,7 @@
         out-logfile -string "Add the email address to the migrated office 365 dl."
 
         try {
-            set-o365DistributionGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress} -errorAction STOP
+            set-o365DistributionGroup -identity $office365DLConfiguration.externalDirectoryObjectID -emailAddresses @{add=$functionTargetAddress.toLower()} -errorAction STOP
         }
         catch {
             out-logfile -string "Unable to update the migrated cloud dl with the cross premises routing address."
