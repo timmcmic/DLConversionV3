@@ -128,6 +128,8 @@
                 }
             }
 
+            out-logfile -string "The remote routing address was not found in the list of addresses."
+
             $functionTargetAddress = "None"
 
         } until ($functionTargetAddress -ne "")
@@ -156,6 +158,8 @@
         }
         else 
         {
+            out-logfile -string "Constructing the remote routing address based on alias and domain."
+            
             $functionTargetAddress = $office365DLConfiguration.alias+"@"+$customRoutingDomain
 
             out-logfile -string $functionTargetAddress 

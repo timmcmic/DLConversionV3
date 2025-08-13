@@ -2825,7 +2825,7 @@ Function Start-DistributionListMigrationV3
     [boolean]$stopLoop = $FALSE
     do {
         try {
-            new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfigurationPostMigration -globalCatalogServer $corevariables.globalCatalogWithPort.value -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -customRoutingDomain $mailOnMicrosoftComDomain
+            new-routingContact -originalDLConfiguration $originalDLConfiguration -office365DlConfiguration $office365DLConfiguration -globalCatalogServer $corevariables.globalCatalogWithPort.value -adCredential $activeDirectoryCredential -activeDirectoryAuthenticationMethod $activeDirectoryAuthenticationMethod -customRoutingDomain $mailOnMicrosoftComDomain
 
             $stopLoop = $TRUE
         }
