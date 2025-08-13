@@ -115,6 +115,11 @@
                 }
             }
         }
+        else 
+        {
+            Out-logfile -string "Recipient is neither mail enabled nor potentially synced - not good."
+            $isTestError="Yes"
+        }
 
         if ($isTestError -eq "No")
         {
