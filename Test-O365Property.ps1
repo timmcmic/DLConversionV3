@@ -132,6 +132,10 @@
                     out-logfile -string "User was not located successfully."
                     $isTestError="Yes"
                 }
+            }
+            else
+            {
+                out-logfile -string "Membership was not evaluated."
             }   
         }
         else 
