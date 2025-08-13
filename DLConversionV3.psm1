@@ -176,7 +176,7 @@ Function Start-DistributionListMigrationV3
                         out-logfile -string "Precreate errors exist."
 
                         new-htmlSection -HeaderText ("DLConversionV2 Items on Group (Recommend Migration by DLConversionV2)"){
-                            new-htmlTable -DataTable ($global:dlConversionV2Test | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessage) -Filtering  {
+                            new-htmlTable -DataTable ($global:dlConversionV2Test | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessageProperty,isErrorMessageRecipient) -Filtering  {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                     }
@@ -192,7 +192,7 @@ Function Start-DistributionListMigrationV3
                         out-logfile -string "Test Office 365 Errors exist."
 
                         new-htmlSection -HeaderText ("Test Office 365 Dependency Errors"){
-                            new-htmlTable -DataTable ($global:testOffice365PropertyErrors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessageProperty) -Filtering  {
+                            new-htmlTable -DataTable ($global:testOffice365PropertyErrors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessageProperty,isErrorMessageRecipient) -Filtering  {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                     }
