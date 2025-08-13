@@ -135,7 +135,7 @@
             }
             else
             {
-                out-logfile -string "Membership was not evaluated."
+                $isTestError="Yes"
             }   
         }
         else 
