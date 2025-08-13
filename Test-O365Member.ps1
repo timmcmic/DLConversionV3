@@ -88,7 +88,7 @@
             else
             {
                 out-logfile -string "Normalization failed to determine a UPN or External Directory Object ID."
-                $isTetError="Yes"
+                $isTestError="Yes"
             }
         }
         else 
