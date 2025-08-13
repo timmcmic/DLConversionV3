@@ -123,7 +123,7 @@
 
             if ($membership.count -gt 0)
             {
-                 if ($membership.contains($functionRecipient.name))
+                if ($membership.contains($functionRecipient.name))
                 {
                     out-logfile -string "User was located successfully."
                 }

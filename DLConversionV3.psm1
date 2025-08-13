@@ -192,7 +192,7 @@ Function Start-DistributionListMigrationV3
                         out-logfile -string "Test Office 365 Errors exist."
 
                         new-htmlSection -HeaderText ("Test Office 365 Dependency Errors"){
-                            new-htmlTable -DataTable ($global:testOffice365PropertyErrors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessageProperty,isErrorMessageRecipient) -Filtering  {
+                            new-htmlTable -DataTable ($global:testOffice365PropertyErrors | select-object Alias,Name,PrimarySMTPAddressOrUPN,RecipientType,GroupType,RecipientOrUser,ExternalDirectoryObjectID,OnPremADAttribute,DN,isErrorMessageProperty) -Filtering  {
                             } -AutoSize
                         } -HeaderTextAlignment "Left" -HeaderTextSize "16" -HeaderTextColor "White" -HeaderBackGroundColor "Red"  -CanCollapse -BorderRadius 10px -collapsed
                     }
