@@ -90,7 +90,7 @@
             }
 
         }
-        elseif ($exchangeOnlineCredentials -ne $NULL)
+        elseif ($exchangeOnlineCredentials -ne ([System.Management.Automation.PSCredential]::Empty))
         {
             out-logfile -string "Attempting interactive authentication with credentials."
 
