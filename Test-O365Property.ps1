@@ -135,6 +135,7 @@
             }
             else
             {
+                out-logfile -string "No membership exists in Office 365 - this must be an error."
                 $isTestError="Yes"
             }   
         }
