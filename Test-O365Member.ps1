@@ -111,6 +111,10 @@
                 $member.isErrorMessageRecipient = "OFFICE_365_DEPENDENCY_NOT_FOUND_EXCEPTION: A group dependency was not found in Office 365.  Please either ensure the dependency is present or remove the dependency from the group."
             }
         }
+        else 
+        {
+            $member.isErrorMessageRecipient = "N/A"
+        }
 
         Out-LogFile -string "END Test-O365Member"
         Out-LogFile -string "********************************************************************************"    
