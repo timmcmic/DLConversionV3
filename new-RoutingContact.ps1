@@ -124,12 +124,12 @@
         else
         {
             $functionPrefix = convert-id -id $originalDLConfiguration.ObjectGuid
-            out-logfile -string $functionPrefix
+            out-logfile -string $functionPrefix.object
         }
 
         out-logfile -string "Calculate the cross premises routing address."
 
-        $functionTargetAddress = "SMTP:"+$functionPrefix+"@"+$customRoutingDomain
+        $functionTargetAddress = "SMTP:"+$functionPrefix.object+"@"+$customRoutingDomain
 
         <#
 
