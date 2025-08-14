@@ -118,12 +118,23 @@
 
         if ($originalDLConfiguration.'ms-ds-ConsistencyGuid' -ne $NULL)
         {
-            $functionPrefix = convert-id -id $originalDLConfiguration.'ms-ds-ConsistencyGuid'
-            out-logfile -string $functionPrefix
+            out-logfile -string "MS-DS-ConsistencyGuid utilized."
+            $guid = $originalDLConfiguration.'ms-ds-ConsistencyGuid'
+            out-logfile -string $guid
         }
         else
         {
-            $functionPrefix = convert-id -id $originalDLConfiguration.ObjectGuid
+            out-logfile -string "ObjectGUID utilized"
+            $guid = $originalDLConfiguration.ObjectGUID
+            out-logfile -string $functionPrefix.$guid
+        }
+
+        try {
+            out-logfile -string "Calculate immutable ID."
+            $functionPrefix = convert-ID -id $GUID -errorAction STOP
+        }   
+        catch {
+            out-logfile -string 'Unable to obtain immutable id.'
             out-logfile -string $functionPrefix.object
         }
 
