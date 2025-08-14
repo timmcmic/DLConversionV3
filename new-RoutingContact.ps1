@@ -143,6 +143,40 @@
 
         $functionTargetAddress = "SMTP:"+$functionPrefix+"@"+$customRoutingDomain
 
+        out-logfile -string "Perform safety check on the address calculated."
+
+        do {
+            if(get-o365Recipient -identity $functionTargetAddress.replace("SMTP:",""))
+            {
+                out-logfile -string "Calcuated target routing address utilized in service - generate random."
+
+                $isValidAddress = $false
+
+                $newAlias = ((Get-Random)+(Get-Random)+(Get-Random))
+                out-logfile -string $newAlias
+                $functionEmailAddress = $functionTargetAddress.split("@")
+                foreach ($item in $functionEmailAddress)
+                {
+                    out-logfile -string $item
+                }
+                $functionEmailAddress[0]=$newAlias
+                foreach ($item in $functionEmailAddress)
+                {
+                    out-logfile -string $item
+                }
+
+                $functionTargetAddress = $functionEmailAddress[0]+"@"+$functionEmailAddress[1]
+            }
+            else 
+            {
+                out-logfile -string "Target routing address as calculated not utilized in serivce otherwise."
+                $isValidAddress = $true
+            }
+
+        } until (
+            $isValidAddress -eq $TRUE
+        )
+        
         <#
 
         foreach ($address in $office365DLConfiguration.emailAddresses)
