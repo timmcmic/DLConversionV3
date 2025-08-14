@@ -141,7 +141,7 @@
 
         out-logfile -string "Calculate the cross premises routing address."
 
-        $functionTargetAddress = "SMTP:"+$functionPrefix.object+"@"+$customRoutingDomain
+        $functionTargetAddress = "SMTP:"+$functionPrefix+"@"+$customRoutingDomain
 
         <#
 
