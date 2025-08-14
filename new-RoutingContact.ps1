@@ -126,7 +126,7 @@
         {
             out-logfile -string "ObjectGUID utilized"
             $guid = $originalDLConfiguration.ObjectGUID
-            out-logfile -string $functionPrefix.$guid
+            out-logfile -string $guid
         }
 
         try {
