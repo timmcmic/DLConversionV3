@@ -132,7 +132,7 @@
         try {
             out-logfile -string "Calculate immutable ID."
             $functionPrefix = convert-ID -id $GUID -errorAction STOP
-            out-logfile -string $functionPrefix.object
+            out-logfile -string $functionPrefix
         }   
         catch {
             out-logfile -string 'Unable to obtain immutable id.'
