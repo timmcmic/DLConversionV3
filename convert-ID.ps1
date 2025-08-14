@@ -24,34 +24,12 @@ function Convert-Id {
         $Id
     )
 
-    
-    try {
-        out-logfile -string $Id
-        $Guid = [GUID]$Id
-        out-logfile -string $guid
-        $Byte = $Guid.ToByteArray()
-        out-logfile -string $Byte
-        $functionObject = New-Object PSObject -Property@{
-            Object = [system.convert]::ToBase64String($Byte)
-            Type   = 'immutableID'
-        }
-    }
-    catch {
-        if ($Decoded = [system.convert]::frombase64string($Id)) {
-            if ($Guid = [GUID]$Decoded) {
-                $functionObject = New-Object PSObject -Property@{
-                    Object = $Guid.ToString()
-                    Type   = 'ObjectGuid'
-                }
-            }
-            else {
-                Write-Warning "Not an ObjectGuid or ImmutableID"
-            }
-        }
-        else {
-            Write-Warning "Not an ObjectGuid or ImmutableID"
-        }
-    }
+    out-logfile -string $Id
+    $Guid = [GUID]$Id
+    out-logfile -string $guid
+    $Byte = $Guid.ToByteArray()
+    out-logfile -string $Byte
+    $Object = [system.convert]::ToBase64String($Byte)
 
-    return $functionObject
+    return $Object
 }
