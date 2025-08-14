@@ -119,13 +119,13 @@
         if ($originalDLConfiguration.'ms-ds-ConsistencyGuid' -ne $NULL)
         {
             out-logfile -string "MS-DS-ConsistencyGuid utilized."
-            $guid = $originalDLConfiguration.'ms-ds-ConsistencyGuid'
+            $guid = $originalDLConfiguration.'ms-ds-ConsistencyGuid'.tostring()
             out-logfile -string $guid
         }
         else
         {
             out-logfile -string "ObjectGUID utilized"
-            $guid = $originalDLConfiguration.ObjectGUID
+            $guid = $originalDLConfiguration.ObjectGUID.tostring()
             out-logfile -string $guid
         }
 
