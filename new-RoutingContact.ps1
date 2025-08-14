@@ -132,10 +132,11 @@
         try {
             out-logfile -string "Calculate immutable ID."
             $functionPrefix = convert-ID -id $GUID -errorAction STOP
+            out-logfile -string $functionPrefix.object
         }   
         catch {
             out-logfile -string 'Unable to obtain immutable id.'
-            out-logfile -string $functionPrefix.object
+            out-logfile -string $_ -isError:$TRUE
         }
 
         out-logfile -string "Calculate the cross premises routing address."
