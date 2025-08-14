@@ -26,8 +26,11 @@ function Convert-Id {
 
     
     try {
+        out-logfile -string $Id
         $Guid = [GUID]$Id
+        out-logfile -string $guid
         $Byte = $Guid.ToByteArray()
+        out-logfile -string $Byte
         $functionObject = New-Object PSObject -Property@{
             Object = [system.convert]::ToBase64String($Byte)
             Type   = 'immutableID'
