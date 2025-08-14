@@ -114,6 +114,24 @@
         #Note:  In the main function if custom routing domain is specified we set the onmicrosoft.com domain to be it.
         #Note:  If the custom routing domain is not specified then we calculate the onmicorosft.com or microosftonline.com (legacy).
 
+        out-logfile -string "Calculate the SMTP address prefix that will be utilized for routing."
+
+        if ($originalDLConfiguration.'ms-ds-ConsistencyGuid' -ne $NULL)
+        {
+            $functionPrefix = convert-id -id $originalDLConfiguration.'ms-ds-ConsistencyGuid'
+            out-logfile -string $functionPrefix
+        }
+        else
+        {
+            $functionPrefix = convert-id -id $originalDLConfiguration.ObjectGuid
+            out-logfile -string $functionPrefix
+        }
+
+        out-logfile -string "Calculate the cross premises routing address."
+
+        $functionTargetAddress = "SMTP:"+$functionPrefix+"@"+$customRoutingDomain
+
+        <#
 
         foreach ($address in $office365DLConfiguration.emailAddresses)
         {
@@ -146,7 +164,19 @@
                 out-logfile -string $item
             }
 
-            $functionEmailAddress[0] = $functionEmailAddress[0] + "-migratedByV3"
+            if ($originalDLConfiguration.'ms-ds-ConsistencyGuid' -ne $NULL)
+            {
+                $functionPrefix = convert-id -id $originalDLConfiguration.'ms-ds-ConsistencyGuid'
+                out-logfile -string $functionPrefix
+            }
+            else
+            {
+                $functionPrefix = convert-id -id $originalDLConfiguration.ObjectGuid
+                out-logfile -string $functionPrefix
+            }
+
+            $functionEmailAddress[0] = "SMTP:"+$functionPrefix+"-migratedByV3"
+            out-logfile -string $functionEmailAddress[0]
 
             foreach ($item in $functionEmailAddress)
             {
@@ -165,6 +195,8 @@
 
             out-logfile -string $functionTargetAddress 
         }
+
+        
 
         $isValidAddress = $FALSE
 
@@ -199,6 +231,8 @@
         } until (
             $isValidAddress -eq $TRUE
         )
+
+        #>
 
         out-logfile -string ("Function target address = "+$functionTargetAddress)
         
