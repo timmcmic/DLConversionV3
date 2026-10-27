@@ -12,7 +12,7 @@
 RootModule = '.\DLConversionV3.psm1'
 
 # Version number of this module.
-ModuleVersion = '3.1'
+ModuleVersion = '3.2'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -57,7 +57,7 @@ RequiredModules = @(@{ModuleName = 'ExchangeOnlineManagement'; ModuleVersion = '
                @{ModuleName = 'Microsoft.Graph.Users'; ModuleVersion = '2.41.2'; }, 
                @{ModuleName = 'Microsoft.Graph.Groups'; ModuleVersion = '2.41.2'; }, 
                @{ModuleName = 'PSWriteHTML'; ModuleVersion = '1.41.0'; }, 
-               @{ModuleName = 'DLHierarchy'; ModuleVersion = '1.9.33'; }, 
+               @{ModuleName = 'DLHierarchy'; ModuleVersion = '1.9.35'; }, 
                @{ModuleName = 'PowerShellGet'; ModuleVersion = '2.2.5'; }, 
                'ActiveDirectory')
 
